@@ -4,5 +4,12 @@
 # include "Client.hpp"
 # include <poll.h>
 
+class	Server
+{
+	private:
+
+	public:
+			
+};
 
 #endif

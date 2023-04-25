@@ -12,12 +12,15 @@ SERV_PATH = server
 
 CLIENT_PATH = client
 
+CHANNEL_PATH = client
+
 CXX = c++
 CXXFLAGS = -MMD -Wall -Wextra -Werror -std=c++98
 RM = rm -rf
 OBJS		=   $(addprefix $(OBJ_PATH)/,$(SRCS:.cpp=.o))	 \
 				$(addprefix $(SERV_PATH)/,$(SRCS:.cpp=.o)) 	 \
 				$(addprefix $(CLIENT_PATH)/,$(SRCS:.cpp=.o)) \
+				$(addprefix $(CHANNEL_PATH)/,$(SRCS:.cpp=.o)) \
 DEPS		= $(OBJS:.o=.d)
 
 vpath %.h $(HEADERS)

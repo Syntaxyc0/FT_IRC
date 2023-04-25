@@ -3,5 +3,12 @@
 
 # include "Client.hpp"
 
+class Channel
+{
+	private:
+
+	public:
+			
+};
 
 #endif
