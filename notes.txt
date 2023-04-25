@@ -1,3 +1,27 @@
+Le serveur est compose d'un tableau de channels
+
+les channels contiennent un tableau de clients representant les gens presents dans celui ci ainsi qu'un tableau de clients representant les admins (operators)
+les admins ont acces a plus de commandes que les users normaux
+
+liste des commandes a implementer:
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+
+
+						Pour le serveur
+
+
+
 Sockets: Fonctionne comme une sorte de pipe, il permet d'echanger des donnees entre le serveur et le client
 etapes d'utilisation:
 
@@ -40,7 +64,7 @@ Details des fonctions requises:
 
 	addrlen:		la longueur en bytes de l'element addr, en pratique on met sizeof(&notre_addr)
 
-	return value:	en cas d'echec renvoie -1 et modifie errno en cas de reusste renvoie 0
+	return value:	en cas d'echec renvoie -1 et modifie errno en cas de reussite renvoie 0
 
 
 
@@ -50,7 +74,7 @@ Details des fonctions requises:
 
 	backlog:		le nombre max de requetes en suspend que l'on accepte, si le nombre de requetes en cours atteint ce max on rejette toute nouvelle requete
 
-	return value:	en cas d'echec renvoie -1 et modifie errno en cas de reusste renvoie 0
+	return value:	en cas d'echec renvoie -1 et modifie errno en cas de reussite renvoie 0
 
 
 - int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);

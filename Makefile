@@ -12,10 +12,10 @@ SERV_PATH = server
 
 CLIENT_PATH = client
 
-CHANNEL_PATH = client
+CHANNEL_PATH = channel
 
 CXX = c++
-CXXFLAGS = -MMD -Wall -Wextra -Werror -std=c++98
+CXXFLAGS = -MMD -Wall -Wextra -Werror -std=c++98 -g3
 RM = rm -rf
 OBJS		=   $(addprefix $(OBJ_PATH)/,$(SRCS:.cpp=.o))	 \
 				$(addprefix $(SERV_PATH)/,$(SRCS:.cpp=.o)) 	 \
