@@ -85,8 +85,3 @@ Details des fonctions requises:
 					que l'on va vouloir utiliser, a savoir le type de transfert de donnees
 
 	addrlen:		la longueur en bytes de l'element addr, en pratique on met sizeof(&notre_addr)
-
-
-
-
-test
