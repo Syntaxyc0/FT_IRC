@@ -6,7 +6,9 @@
 class Channel
 {
 	private:
-
+			std::string		_name;
+			Client			*_channelClients;
+			Client			*_operators;
 	public:
 			
 };

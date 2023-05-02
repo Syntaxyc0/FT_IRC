@@ -7,11 +7,26 @@
 class	Client
 {
 	private:
-			_username;
-			_nickname;
+			int fd;
+			std::string	_username;
+			std::string	_nickname;
+			std::string	_hostname;
 	public:
-			void	set_nickname(std::string name);
+
+			Client(int fd, std::string hostname);
+			~Clien();
+
+		// Setters
+			void	set_fd(int fd);
 			void	set_username(std::string name);
+			void	set_nickname(std::string name);
+			void	set_hostname(std::string name);
+
+		// Getters
+			int				get_fd();
+			std::string		get_username();
+			std::string		get_nickname();
+			std::string		get_hostname();
 };
 
 #endif
