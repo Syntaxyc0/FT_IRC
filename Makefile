@@ -18,13 +18,14 @@ CXX = c++
 CXXFLAGS = -MMD -Wall -Wextra -Werror -std=c++98 -g3
 RM = rm -rf
 OBJS		=   $(addprefix $(OBJ_PATH)/,$(SRCS:.cpp=.o))	 \
-				$(addprefix $(SERV_PATH)/,$(SRCS:.cpp=.o)) 	 \
-				$(addprefix $(CLIENT_PATH)/,$(SRCS:.cpp=.o)) \
-				$(addprefix $(CHANNEL_PATH)/,$(SRCS:.cpp=.o)) \
+		
 DEPS		= $(OBJS:.o=.d)
 
 vpath %.h $(HEADERS)
-vpath %.cpp $(SRCSPATH)
+vpath %.cpp $(SRCSPATH) 					\
+			$(SRCSPATH)/$(SERV_PATH)		\
+			$(SRCSPATH)/$(CLIENT_PATH)		\
+			$(SRCSPATH)/$(CHANNEL_PATH) 	\
 vpath %.o $(OBJ_PATH)
 
 all: $(NAME)
