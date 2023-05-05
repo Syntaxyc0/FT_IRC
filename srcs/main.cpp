@@ -20,7 +20,7 @@ void errorin(int err, const std::string msg)
         exit(EXIT_FAILURE);
     }
 }
-
+//Code snippet
 int main(int argc, char *argv[])
 {
     errorin(argc != 3, "Invalid arguments.");
