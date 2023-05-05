@@ -6,7 +6,7 @@
 /*   By: elise <elise@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 13:45:06 by elise             #+#    #+#             */
-/*   Updated: 2023/05/05 13:59:25 by elise            ###   ########.fr       */
+/*   Updated: 2023/05/05 14:15:29 by elise            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 Server::Server():port(""), password("")
 {
-    errorin(std::atoi(port) <= 0, "Invalid port.\n");
+    errorin(std::atoi(port) <= 0, "Invalid port.");
 }
 
 int Server::shut_down()
