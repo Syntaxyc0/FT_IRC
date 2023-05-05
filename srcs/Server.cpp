@@ -54,7 +54,7 @@ void Server::monitoring()
             std::cerr << "/!\\ Warning: An error occurred on a file descriptor.\n";
         if (sockets[j].revents != POLLIN)
             continue;
-        // sockets[j].revents = 0;
+        sockets[j].revents = 0;
         if (sockets[j].fd == sockets[0].fd)
             new_connection();
         else //handle message function needed, below is just a snippet
