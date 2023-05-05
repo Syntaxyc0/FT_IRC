@@ -14,7 +14,7 @@ class	Client
 	public:
 
 			Client(int fd, std::string hostname);
-			~Clien();
+			~Client();
 
 		// Setters
 			void	set_fd(int fd);

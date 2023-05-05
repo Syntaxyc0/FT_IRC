@@ -7,6 +7,7 @@ HEADERS		= includes
 SRCSPATH 	= srcs
 
 SRCS =  main.cpp  \
+		Server.cpp
 
 SERV_PATH = server
 
