@@ -1,48 +1,69 @@
 #include "Client.hpp"
 
+Client::Client(int fd, std::string hostname): _fd(fd), _hostname(hostname)
+{
+	_is_registered = 0;
+}
 
-
-
-
-
+Client::~Client()
+{
+}
 
 	// Setters
 
-void	set_fd(int fd)
+void	Client::set_fd(int fd)
 {
 	_fd = fd;
 }
 
-void	set_username(std::string username)
+void	Client::set_username(std::string username)
 {
 	_username = username;
 }
 
-void	set_hostname(std::string hostname)
+void	Client::set_hostname(std::string hostname)
 {
 	_hostname = hostname;
 }
 
-void	set_nickname(std::string nickname)
+void	Client::set_nickname(std::string nickname)
 {
 	_nickname = nickname;
 }
 
+void	Client::set_register(bool state)
+{
+	_is_registered = state;
+}
+
 	// Getters
 
-int	get_fd()
+int	Client::get_fd()
 {
 	return _fd;
 }
 
-std::string	get_username()
+std::string	Client::get_username()
 {
 	return _username;
 }
 
-std::string get_hostname()
+std::string	Client::get_realname()
+{
+	return _realname;
+}
+
+std::string Client::get_hostname()
 {
 	return _hostname;
 }
 
-std::string 
+std::string Client::get_nickname()
+{
+	return _nickname;
+}
+
+bool	Client::get_registered()
+{
+	return _is_registered;
+}

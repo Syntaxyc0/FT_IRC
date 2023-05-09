@@ -6,8 +6,11 @@ HEADERS		= includes
 
 SRCSPATH 	= srcs
 
-SRCS =  main.cpp  \
-		Server.cpp
+SRCS =  main.cpp   \
+		Client.cpp \
+		Parser.cpp \
+		Server.cpp \
+		USER.cpp   \
 
 SERV_PATH = server
 
@@ -15,11 +18,13 @@ CLIENT_PATH = client
 
 CHANNEL_PATH = channel
 
+COMMANDS_PATH = commands
+
 CXX = c++
 CXXFLAGS = -MMD -Wall -Wextra -Werror -std=c++98 -g3
 RM = rm -rf
 OBJS		=   $(addprefix $(OBJ_PATH)/,$(SRCS:.cpp=.o))	 \
-		
+
 DEPS		= $(OBJS:.o=.d)
 
 vpath %.h $(HEADERS)
@@ -27,6 +32,8 @@ vpath %.cpp $(SRCSPATH) 					\
 			$(SRCSPATH)/$(SERV_PATH)		\
 			$(SRCSPATH)/$(CLIENT_PATH)		\
 			$(SRCSPATH)/$(CHANNEL_PATH) 	\
+			$(SRCSPATH)/$(COMMANDS_PATH) 	\
+
 vpath %.o $(OBJ_PATH)
 
 all: $(NAME)
