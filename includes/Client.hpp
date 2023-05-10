@@ -18,6 +18,7 @@ class	Client
 			std::string	_nickname;
 
 			bool		_is_registered;
+
 	public:
 
 			Client(int fd, std::string hostname);
