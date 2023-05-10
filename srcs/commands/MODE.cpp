@@ -10,8 +10,7 @@
 
 #include "Commands.hpp"
 
-std::string	mode_invite_only(Channel &current)
+void	mode_invite_only(Channel &current)
 {
-	if (current.get_invite_only())
-		cu
+	
 }

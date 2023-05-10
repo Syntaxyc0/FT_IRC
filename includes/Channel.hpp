@@ -8,13 +8,16 @@ class Channel
 	private:
 
 		std::string	_name;
+		std::string	_topic;
 		Client		*_channelClients;
 		Client		*_operators;
 		Client		_primordial;
 
+// MODE
 		bool		_invite_only; //set to 0 when init
 		bool		_channel_key; //set to 0 when init
 		std::string _password;
+		bool		_restriction_TOPIC_cmd;
 		bool		_user_limit; //set to 0 when init
 		int			_user_limit_nb;
 
@@ -24,11 +27,13 @@ class Channel
 		void		set_invite_only();
 		void		set_channel_key(std::string password);
 		void		set_user_limit(int limit);
+		void		set_restriction_TOPIC_cmd();
 
 // GETTER
 		bool		get_invite_only();
 		bool		get_channel_key();
 		bool		get_user_limit();
+		bool		get_restriction_TOPIC_cmd();
 
 	class ERR_NB_LIMIT : public std::exception{
 		public:

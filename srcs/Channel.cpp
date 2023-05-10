@@ -1,5 +1,9 @@
 #include "Channel.hpp"
 
+//****************************************************//
+//                      Setter                        //
+//****************************************************//
+
 void	Channel::set_invite_only()
 {
 	if (_invite_only)
@@ -19,6 +23,14 @@ void	Channel::set_channel_key(std::string password)
 	}
 }
 
+void	Channel::set_restriction_TOPIC_cmd()
+{
+	if (_restriction_TOPIC_cmd)
+		_restriction_TOPIC_cmd = 0;
+	else 
+		_restriction_TOPIC_cmd = 1;
+}
+
 void	Channel::set_user_limit(int limit)
 {
 	if (limit <= 0 && !_user_limit)
@@ -28,7 +40,13 @@ void	Channel::set_user_limit(int limit)
 		_user_limit = 1;
 		_user_limit_nb = limit;
 	}
+	else
+		_user_limit = 0;
 }
+
+//****************************************************//
+//                      Getter                        //
+//****************************************************//
 
 bool	Channel::get_invite_only()
 {
@@ -38,6 +56,11 @@ bool	Channel::get_invite_only()
 bool	Channel::get_channel_key()
 {
 	return (_channel_key);
+}
+
+bool Channel::get_restriction_TOPIC_cmd()
+{
+	return (_restriction_TOPIC_cmd);
 }
 
 bool	Channel::get_user_limit()
