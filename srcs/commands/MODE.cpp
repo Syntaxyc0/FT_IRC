@@ -66,7 +66,7 @@ std::string mode_limit_user(Channel &current, int limit_nb)
 // -o give/take channel operator privilege
 // 
 
-std::string	mode_give_operator_privilege(Client &me, std::string target)
-{
-	while ()
-}
+// std::string	mode_give_operator_privilege(Channel &current, std::string target)
+// {
+// 	for (int i = 0; i <)
+// }
