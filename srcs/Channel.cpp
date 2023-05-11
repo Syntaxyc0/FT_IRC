@@ -33,9 +33,9 @@ void	Channel::set_restriction_TOPIC_cmd()
 
 void	Channel::set_user_limit(int limit)
 {
-	if (limit <= 0 && !_user_limit)
+	if (limit < 0 && !_user_limit)
 		throw ERR_NB_LIMIT();
-	if (!_user_limit)
+	if (limit)
 	{
 		_user_limit = 1;
 		_user_limit_nb = limit;

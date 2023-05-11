@@ -9,16 +9,16 @@ class Channel
 
 		std::string	_name;
 		std::string	_topic;
-		Client		*_channelClients;
-		Client		*_operators;
-		Client		_primordial;
+		Client		*_channelClients;	// Tout les client du channel sont dans *_channelClient;
+		Client		*_operators;		// Les modo dont dans *_channelClient && *_operators;
+		Client		_primordial;		// Le primordial est dans les 3
 
 // MODE
-		bool		_invite_only; //set to 0 when init
-		bool		_channel_key; //set to 0 when init
+		bool		_invite_only;			//set to 0 when init
+		bool		_channel_key; 			//set to 0 when init
 		std::string _password;
-		bool		_restriction_TOPIC_cmd;
-		bool		_user_limit; //set to 0 when init
+		bool		_restriction_TOPIC_cmd;	//set to 0 when init
+		bool		_user_limit; 			//set to 0 when init
 		int			_user_limit_nb;
 
 	public:

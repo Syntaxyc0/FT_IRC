@@ -18,6 +18,7 @@ class	Client
 			std::string	_nickname;
 
 			bool		_is_registered;
+			Channel		_current_channel;
 
 	public:
 
