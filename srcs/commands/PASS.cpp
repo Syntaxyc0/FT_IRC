@@ -10,12 +10,12 @@ void    Pass(Client *client, std::vector<std::strings> args)
 {
     if (args.empty())
     {
-        std::cerr<<ERR_NEEDMOREPARAMS(Client->get_hostname(), "PASS")<<std::endl;
+        client->send_reply(ERR_NEEDMOREPARAMS(Client->get_hostname(), "PASS"));
         return ;
     }
     else if (client->get_registered())
     {
-        std::cerr<<ERR_ALREADYREGISTERED(Client->get_nickname())<<std::endl;
+        client->send_reply(ERR_ALREADYREGISTERED(Client->get_nickname()));
         return ;
     }
     //il faut checker que le mot de passe fourni correspond a celui du serveur, petit soucis, comment acceder au mdp du serveur?

@@ -27,10 +27,10 @@ std::vector<std::string> parse(std::string input)
 	std::string	buffer;
 	while (std::getline(ss, line))
 	{
-		std::string command;
-		command = get_command(line);
-		buffer = line.substr(command.length(), line.length());
-		std::stringstream	rest(buffer);
+		// std::string command;
+		// command = get_command(line);
+		// buffer = line.substr(command.length(), line.length());
+		std::stringstream	rest(line);
 		while (rest >> tmp)
 			args.push_back(tmp);
 	}

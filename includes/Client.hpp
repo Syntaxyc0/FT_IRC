@@ -1,6 +1,7 @@
 #ifndef	CLIENT_HPP
 # define CLIENT_HPP
 
+# include "Server.hpp"
 # include <sys/socket.h>
 # include <string>
 # include <iostream>
@@ -41,7 +42,7 @@ class	Client
 
 		// Functions
 
-		
+		void	send_reply(std::string message);
 };
 
 #endif

@@ -1,22 +1,26 @@
 #include "Client.hpp"
 #include "Replies.hpp"
+#include "Commands.hpp"
 
 // /USER <username> 0 * <realname>
 
 void	user(Client *client, std::vector<std::string> args)
 {
-	if (args.size() < 4)
+	if (args.size() < 5)
 	{
-		std::cerr<<ERR_NEEDMOREPARAMS(client->get_hostname(), "USER");
+		client->send_reply(ERR_NEEDMOREPARAMS(client->get_hostname(), "USER"));
 		return ;
 	} 
 	if (client->get_registered())
 	{
-		std::cerr<<ERR_ALREADYREGISTERED(client->get_hostname());
+		client->send_reply(ERR_ALREADYREGISTERED(client->get_hostname()));
 		return ;
 	}
-	client->set_username(args[0]);
-	client->set_realname(args[3]);
+	std::string	username(args[1]);
+	std::string	realname(args[4]);
+	client->set_username(username);
+	client->set_realname(realname);
+	client->send_reply("welcome");
 	//verifier si l'enregistrement est complet
 	//il faut avoir utilise PASS, NICK et USER pour pouvoir etre connecte et passer _is_registered a 1 
 }

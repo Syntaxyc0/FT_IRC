@@ -12,23 +12,25 @@
 
 #include "Server.hpp"
 
-Server::Server():port(""), password("")
+Server::Server():_port(""), _password("")
 {
-    errorin(std::atoi(port) <= 0, "Invalid port.");
+    errorin(std::atoi(_port) <= 0, "Invalid port.");
 }
 
 int Server::shut_down()
 {
-    if (exit)
+    if (_exit)
         return (1);
     return (0);
 }
 
 int Server::new_connection()
 {
+	char tmp_hostname[NI_MAXHOST];
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
     sockets[socket_number].fd = accept(sockets[0].fd, (sockaddr *) &client_addr, &client_addr_len);
+	getnameinfo((sockaddr *) &client_addr, sizeof(client_addr), tmp_hostname, NI_MAXHOST, NULL, 0, 0);
     if (sockets[socket_number].fd == -1)
     {
         std::cerr << "Failed to accept incoming connection.\n";
@@ -36,7 +38,8 @@ int Server::new_connection()
         return (-1);
     }
     std::cout << "New connection successfull!\n";
-    sockets[socket_number++].events = POLL_IN;
+	adduser(sockets[socket_number].fd, tmp_hostname);
+    sockets[socket_number++].events = POLLIN;
     return (0);
 }
 
@@ -50,21 +53,35 @@ void Server::monitoring()
     }
     for (int j = 0; j < socket_number; j++)
     {
-        if (sockets[j].revents == POLL_ERR)
+        if (sockets[j].revents == POLLERR)
             std::cerr << "/!\\ Warning: An error occurred on a file descriptor.\n";
+		if (sockets[j].revents == POLLHUP)	//deconnexion
+		{
+			std::cout<<RED<<"Client has disconnected"<<END<<std::endl;
+			exit(1);
+		}
         if (sockets[j].revents != POLLIN)
             continue;
         sockets[j].revents = 0;
-        if (sockets[j].fd == sockets[0].fd)
+        if (sockets[j].fd == sockets[0].fd) // nouvelle connexion
             new_connection();
         else //handle message function needed, below is just a snippet
         {
             char buffer[1024];
             int bytes_received = recv(sockets[j].fd , buffer, sizeof buffer, 0);
             buffer[bytes_received] = '\0';
-            std::cout << buffer;
+			std::string	to_parse(buffer);
+			std::vector<std::string>	received = parse(buffer);
+			if (!received.empty())
+			{
+				if (!strcmp("userhost", received[0].c_str()))
+				{
+					user(_clientList[sockets[j].fd], received);
+				}
+			}
+            std::cout <<GREEN<<"received "<< to_parse<<END<<std::endl;
             if (!strncmp(buffer, "SHUTDOWN", 8))// temporary closing solution for server
-                exit = 1;
+                _exit = 1;
         }
 
     }
@@ -84,7 +101,7 @@ void Server::init_server()
     hints.ai_flags = AI_PASSIVE;
 
     struct addrinfo *res;
-    errorin(getaddrinfo(0, port, &hints, &res) != 0, "Failed to get address info.");
+    errorin(getaddrinfo(0, _port, &hints, &res) != 0, "Failed to get address info.");
     if(bind(sockets[0].fd, res->ai_addr, res->ai_addrlen) == -1)
     {
         freeaddrinfo(res);
@@ -92,22 +109,27 @@ void Server::init_server()
     }
     freeaddrinfo(res);
     errorin(listen(sockets[0].fd, SOMAXCONN) == -1, "Failed to listen on socket.");
-    sockets[0].events = POLL_IN;
+    sockets[0].events = POLLIN;
     socket_number = 1;
-    std::cout << "Listening on port " << port << "..." << std::endl;
+    std::cout << "Listening on port " << _port << "..." << std::endl;
 }
 
-Server::Server(const char *port, const char *password): port(port), password(password)
+Server::Server(const char *port, const char *password): _port(port), _password(password)
 {
-    errorin(std::atoi(port) <= 0, "Invalid port.\n");
+    errorin(std::atoi(_port) <= 0, "Invalid port.\n");
     memset(&sockets, 0, SOMAXCONN + 1);
-    exit = 0;
+    _exit = 0;
     flags = 0;
     init_server();
 }
 
 Server::~Server()
 {
+	if (!_clientList.empty())
+	{
+		for (std::map<int, Client*>::iterator it = _clientList.begin(); it != _clientList.end(); it++)
+			delete(it->second);
+	}
     fcntl(sockets[0].fd, F_SETFL, O_RDONLY);
     std::cout << socket_number << "\n";
     for (int i = socket_number - 1; i > 0; i--)
@@ -124,4 +146,12 @@ Server::~Server()
     if (close(sockets[0].fd))
         std::cerr << "/!\\ Error while closing file descriptor: " << strerror(errno) << std::endl;
     std::cout << "Server shuted down successfully" << std::endl; 
+}
+
+void	Server::adduser(int fd, std::string hostname)
+{
+	Client *newuser = new	Client(fd, hostname);
+	_clientList.insert(std::make_pair(fd, newuser));
+	newuser->send_reply(RPL_WELCOME(newuser->get_nickname(), newuser->get_username(), hostname));
+	std::cout<<GREEN<<"New user added"<<" fd : "<<fd<<" ip "<<hostname<<END<<std::endl;
 }

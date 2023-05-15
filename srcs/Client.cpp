@@ -31,6 +31,11 @@ void	Client::set_nickname(std::string nickname)
 	_nickname = nickname;
 }
 
+void	Client::set_realname(std::string realname)
+{
+	_realname = realname;
+}
+
 void	Client::set_register(bool state)
 {
 	_is_registered = state;
@@ -66,4 +71,11 @@ std::string Client::get_nickname()
 bool	Client::get_registered()
 {
 	return _is_registered;
+}
+
+void	Client::send_reply(std::string message)
+{
+	std::string 	reply = message + "\r\n";
+	if (send(_fd, reply.c_str(), reply.size(), 0) == -1)
+		throw	std::runtime_error("Error send_reply");
 }
