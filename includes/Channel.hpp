@@ -2,6 +2,7 @@
 # define CHANNEL_HPP
 
 # include "Client.hpp"
+# include <vector>
 
 class Channel
 {
@@ -9,9 +10,9 @@ class Channel
 
 		std::string	_name;
 		std::string	_topic;
-		Client		*_channelClients;	// Tout les client du channel sont dans *_channelClient;
-		Client		*_operators;		// Les modo dont dans *_channelClient && *_operators;
-		Client		_primordial;		// Le primordial est dans les 3
+		std::vector<Client> _channelClients;	// Tout les client du channel sont dans *_channelClient;
+		std::vector<Client>		_operators;		// Les modo dont dans *_channelClient && *_operators;
+		Client		&_primordial;		// Le primordial est dans les 3
 
 // MODE
 		bool		_invite_only;			//set to 0 when init
@@ -35,13 +36,40 @@ class Channel
 		bool		get_user_limit();
 		bool		get_restriction_TOPIC_cmd();
 
+// FUNCTION
+
+		std::string	operator_privilege(Client &me, Client &target);
+		int			is_primordial(Client &me);
+		int			is_operator(Client &me);
+
+
 	class ERR_NB_LIMIT : public std::exception{
 		public:
 		virtual const char* what() const throw(){
-			return ("\033[1;31mError: limit of user can't be less than 1.\033[0m");
+			return ("\033[1;31mError: user limit can't be less than 1.\033[0m");
 		}
 	};
 
+	class Primordial : public std::exception{
+		public:
+		virtual const char* what() const throw(){
+			return ("\033[1;31mError: You can't remove primodial privilege.\033[0m");
+		}
+	};
+
+	class NoPrivilege : public std::exception{
+		public:
+		virtual const char* what() const throw(){
+			return ("\033[1;31mError: You don't have privileges to execute this command.\033[0m");
+		}
+	};
+
+	class AlreadyPrivilege : public std::exception{
+		public:
+		virtual const char* what() const throw(){
+			return ("\033[1;31mError: Traget already has privilege.\033[0m");
+		}
+	};
 };
 
 #endif

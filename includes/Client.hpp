@@ -6,7 +6,7 @@
 # include <iostream>
 # include <sstream>
 # include <vector>
-
+# include "Channel.hpp"
 
 class	Client
 {

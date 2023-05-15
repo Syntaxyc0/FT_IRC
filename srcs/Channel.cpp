@@ -67,3 +67,39 @@ bool	Channel::get_user_limit()
 {
 	return (_user_limit);
 }
+
+//****************************************************//
+//                     Function                       //
+//****************************************************//
+
+std::string	Channel::operator_privilege(Client &me, Client &target)
+{
+	if (!is_primordial(me) || !is_operator(me))
+		throw NoPrivilege();
+
+	if (is_primordial(target))
+		throw Primordial();
+
+	if (!is_operator(target))
+	{
+		_operators.push_back(target);
+		std::string message = target.get_nickname();
+		message.append(" ");
+	}
+	
+}
+
+int	Channel::is_primordial(Client &me)
+{
+	if (_primordial.get_nickname()== me.get_nickname())
+		return (1);
+	return (0);
+}
+
+int	Channel::is_operator(Client &me)
+{
+	for (int i = 0; i < (int)_operators.size(); i++)
+		if (_operators.at(i).get_nickname() == me.get_nickname())
+			return (1);
+	return (0);
+}

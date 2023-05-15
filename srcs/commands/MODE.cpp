@@ -64,7 +64,7 @@ std::string mode_limit_user(Channel &current, int limit_nb)
 }
 
 // -o give/take channel operator privilege
-// 
+// "MODE -o [target]"
 
 // std::string	mode_give_operator_privilege(Channel &current, std::string target)
 // {
