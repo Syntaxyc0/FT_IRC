@@ -1,5 +1,8 @@
 #include "Server.hpp"
 
+int exit_state = 0;
+
+
 Server::Server():_port(""), _password("")
 {
     errorin(std::atoi(_port) <= 0, "Invalid port.");
@@ -7,10 +10,11 @@ Server::Server():_port(""), _password("")
 
 int Server::shut_down()
 {
-    if (_exit)
+    if (exit_state)
         return (1);
     return (0);
 }
+
 
 void Server::monitoring()
 {
@@ -118,7 +122,7 @@ void Server::init_server()
 Server::Server(const char *port, const char *password): _port(port), _password(password)
 {
     errorin(std::atoi(_port) <= 0, "Invalid port.\n");
-    _exit = 0;
+    // _exit = 0;	
     init_server();
 }
 
@@ -134,15 +138,15 @@ Server::~Server()
     {
         if (it->fd)
         {
-            char buffer[1024];
-            while (recv(it->fd, buffer, sizeof(buffer), 0) > 0) {}
+            // char buffer[1024];
+            // while (recv(it->fd, buffer, sizeof(buffer), 0) > 0) {}
             if (close(it->fd))
                 std::cerr << "/!\\ Error while closing file descriptor: " << strerror(errno) << std::endl;
             it->fd = 0;
         }
     }
-    if (close(_listening_socket))
-        std::cerr << "/!\\ Error while closing file descriptor: " << strerror(errno) << std::endl;
+    // if (close(_listening_socket))
+    //     std::cerr << "/!\\ Error while closing file descriptor: " << strerror(errno) << std::endl;
     std::cout << "Server shutted down successfully" << std::endl; 
 }
 
@@ -168,4 +172,10 @@ void	Server::disconnect(int fd)
 			return ;
 		}	
 	}
+}
+
+void	Server::send_to_all(std::string message)
+{
+	for (std::vector<pollfd>::iterator it = _sockets.begin(); it != _sockets.end(); it++)
+		_clientList[it->fd]->send_reply(message);
 }

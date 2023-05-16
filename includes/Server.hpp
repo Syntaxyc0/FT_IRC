@@ -23,6 +23,10 @@
 #include "Color.h"
 #include "Commands.hpp"
 #include <map>
+#include <signal.h>
+
+extern int				 exit_state;
+
 
 class	Client;
 void errorin(int err, const std::string msg);
@@ -40,7 +44,6 @@ class Server
         struct pollfd	sockets[SOMAXCONN + 1]; //listening socket is sockets[0]
         int	socket_number;
         int	events_number;
-		int				_exit;
         void			init_server();
         int				new_connection();
 		void			disconnect(int fd);
@@ -55,9 +58,11 @@ class Server
         int shut_down();
 
 		Client	*find_user_by_nickname(std::string nickname);
+		void	send_to_all(std::string message);
 		void	adduser(int *fd, std::string hostname);
 		void    Pass(Client *client, std::vector<std::string> args);
 		void	nick(Client *client, std::vector<std::string> args);
+		void	sig_handler(int);
 };
 
 // class	Server

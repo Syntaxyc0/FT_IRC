@@ -20,12 +20,18 @@ void errorin(int err, const std::string msg)
         exit(EXIT_FAILURE);
     }
 }
+
+void	sig_handler(int)
+{
+	exit_state = 1;
+}
+
 //Code snippet
 int main(int argc, char *argv[])
 {
     errorin(argc != 3, "Invalid arguments.");
-    
     Server ircserv(argv[1], argv[2]);
+	signal(SIGINT, &sig_handler);
     while (!ircserv.shut_down())
         ircserv.monitoring();
 }

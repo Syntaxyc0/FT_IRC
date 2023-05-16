@@ -12,6 +12,7 @@
 
 #include "Server.hpp"
 
+
 Server::Server():_port(""), _password("")
 {
     errorin(std::atoi(_port) <= 0, "Invalid port.");
