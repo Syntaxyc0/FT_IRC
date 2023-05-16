@@ -4,6 +4,7 @@
 // # include "Channel.hpp"
 #include "Client.hpp"
 #include "Replies.hpp"
+#include <sstream>
 #include <iostream>
 #include <cstring>
 #include <sys/types.h> 
@@ -29,13 +30,11 @@ void errorin(int err, const std::string msg);
 class Server
 {
     private:
-		// std::list<Client*>			_userlist;
         const char					*_port;
         const char					*_password;
 		std::map<int, Client *>		_clientList;
 		std::vector<pollfd>			_sockets;
-
-
+		int 						_listening_socket;
 
         int				flags;
         struct pollfd	sockets[SOMAXCONN + 1]; //listening socket is sockets[0]
@@ -44,6 +43,7 @@ class Server
 		int				_exit;
         void			init_server();
         int				new_connection();
+		void			disconnect(int fd);
 	
     public:
 
@@ -54,7 +54,10 @@ class Server
         void monitoring();
         int shut_down();
 
-		void	adduser(int fd, std::string hostname);
+		Client	*find_user_by_nickname(std::string nickname);
+		void	adduser(int *fd, std::string hostname);
+		void    Pass(Client *client, std::vector<std::string> args);
+		void	nick(Client *client, std::vector<std::string> args);
 };
 
 // class	Server

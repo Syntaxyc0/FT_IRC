@@ -78,6 +78,18 @@ void Server::monitoring()
 				{
 					user(_clientList[sockets[j].fd], received);
 				}
+				else if (!strcmp("PASS", received[0].c_str()))
+				{
+					Pass(_clientList[sockets[j].fd], received);
+				}
+				else if (!strcmp("NICK", received[0].c_str()))
+				{
+					std::stringstream ss;
+					ss << _clientList[sockets[j].fd]->get_registered();
+					std::string tmp = ss.str();
+					_clientList[sockets[j].fd]->send_reply(tmp);
+					nick(_clientList[sockets[j].fd], received);
+				}
 			}
             std::cout <<GREEN<<"received "<< to_parse<<END<<std::endl;
             if (!strncmp(buffer, "SHUTDOWN", 8))// temporary closing solution for server
@@ -152,6 +164,6 @@ void	Server::adduser(int fd, std::string hostname)
 {
 	Client *newuser = new	Client(fd, hostname);
 	_clientList.insert(std::make_pair(fd, newuser));
-	newuser->send_reply(RPL_WELCOME(newuser->get_nickname(), newuser->get_username(), hostname));
 	std::cout<<GREEN<<"New user added"<<" fd : "<<fd<<" ip "<<hostname<<END<<std::endl;
+	newuser->send_reply(RPL_WELCOME(newuser->get_nickname(), newuser->get_username(), hostname));
 }

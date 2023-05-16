@@ -18,7 +18,7 @@ class	Client
 			std::string	_realname;
 			std::string	_nickname;
 
-			bool		_is_registered;
+			int		_is_registered;
 	public:
 
 			Client(int fd, std::string hostname);
@@ -26,7 +26,7 @@ class	Client
 
 		// Setters
 			void	set_fd(int fd);
-			void	set_register(bool state);
+			void	set_register(int state);
 			void	set_hostname(std::string name);
 			void	set_username(std::string name);
 			void	set_realname(std::string name);
@@ -34,7 +34,7 @@ class	Client
 
 		// Getters
 			int				get_fd();
-			bool			get_registered();
+			int			get_registered();
 			std::string		get_hostname();
 			std::string		get_username();
 			std::string		get_realname();

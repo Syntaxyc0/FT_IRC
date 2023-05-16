@@ -1,30 +1,32 @@
 #include "Replies.hpp"
-#include "Client.hpp"
+#include "Server.hpp"
 
 // 		/PASS <password>
 
 // PASS ne requiert pas du client d'etre authentifie
 // 
 
-void    Pass(Client *client, std::vector<std::strings> args)
+void    Server::Pass(Client *client, std::vector<std::string> args)
 {
     if (args.empty())
     {
-        client->send_reply(ERR_NEEDMOREPARAMS(Client->get_hostname(), "PASS"));
+        client->send_reply(ERR_NEEDMOREPARAMS(client->get_hostname(), "PASS"));
         return ;
     }
-    else if (client->get_registered())
+    else if (check_auth(client))
     {
-        client->send_reply(ERR_ALREADYREGISTERED(Client->get_nickname()));
+        client->send_reply(ERR_ALREADYREGISTERED(client->get_nickname()));
         return ;
     }
-    //il faut checker que le mot de passe fourni correspond a celui du serveur, petit soucis, comment acceder au mdp du serveur?
-    // else if (??)
-    // {
-    //     std::cerr<<ERR_PASSWDMISMATCH(client->get_hostname())<<std::endl;
-    //     return ;
-    // }
-    
-    //checker si on a nick user et pass d'effectuer, si oui changer le is_registered a 1
-
+	client->set_register(client->get_registered() + 1);
+    if (args[0].compare(_password) != 0)
+    {
+    	client->send_reply(ERR_PASSWDMISMATCH(client->get_hostname()));
+        return ;
+    }
+    if (check_auth(client))
+	{
+		client->send_reply(RPL_WELCOME(client->get_nickname(), client->get_username(), client->get_hostname()));
+		return ;
+	}
 }

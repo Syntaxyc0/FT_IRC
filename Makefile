@@ -9,8 +9,10 @@ SRCSPATH 	= srcs
 SRCS =  main.cpp   \
 		Client.cpp \
 		Parser.cpp \
-		Server.cpp \
+		test.cpp \
 		USER.cpp   \
+		PASS.cpp   \
+		NICK.cpp   \
 
 SERV_PATH = server
 
