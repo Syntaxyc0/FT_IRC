@@ -145,8 +145,6 @@ Server::~Server()
             it->fd = 0;
         }
     }
-    // if (close(_listening_socket))
-    //     std::cerr << "/!\\ Error while closing file descriptor: " << strerror(errno) << std::endl;
     std::cout << "Server shutted down successfully" << std::endl; 
 }
 
