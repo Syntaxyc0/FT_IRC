@@ -40,7 +40,7 @@ void Server::monitoring()
 				new_connection();
 				break ;
 			}
-			else //handle message function needed, below is just a snippet
+			else //nouveau message
 			{
 				char buffer[1024];
 				int bytes_received = recv(it->fd , buffer, sizeof(buffer), 0);

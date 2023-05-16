@@ -65,19 +65,4 @@ class Server
 		void	sig_handler(int);
 };
 
-// class	Server
-// {
-// 	private:
-// 			std::string					_password;
-// 			std::string					_hostname;
-// 			int							_port;
-// 			std::map<int, Client *>		_clientList;
-// 			Channel						*_channels;
-
-// 	public:
-
-// 			Server(int port, std::string password);
-// 			~Server();
-// };
-
 #endif
