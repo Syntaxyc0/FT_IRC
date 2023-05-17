@@ -36,6 +36,10 @@ void	Client::set_register(bool state)
 	_is_registered = state;
 }
 
+void	Client::set_realname(std::string name)
+{
+	_realname = name;
+}
 	// Getters
 
 int	Client::get_fd()

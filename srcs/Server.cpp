@@ -6,7 +6,7 @@
 /*   By: elise <elise@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 13:45:06 by elise             #+#    #+#             */
-/*   Updated: 2023/05/05 14:15:29 by elise            ###   ########.fr       */
+/*   Updated: 2023/05/09 16:30:44 by elise            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,17 @@ Server::Server():port(""), password("")
     errorin(std::atoi(port) <= 0, "Invalid port.");
 }
 
-int Server::shut_down()
+bool Server::shut_down()
 {
     if (exit)
-        return (1);
-    return (0);
+        return (true);
+    return (false);
+}
+
+void Server::errorin(bool err, const char *msg)
+{
+    if (err == true)
+        throw SocketException(msg);
 }
 
 int Server::new_connection()
@@ -40,31 +46,59 @@ int Server::new_connection()
     return (0);
 }
 
+void Server::disconnection(int client_socket)
+{
+    bool found = false;
+    std::cout << "A client has disconnected.\n";//print addr?
+    for (int i = 0; i < socket_number; i++)
+    {
+        if (sockets[i].fd == client_socket)
+        {
+            socket_number--;
+            errorin(close(sockets[i].fd) == -1, strerror(errno));
+            found = true;
+        }
+        if (found)
+        {
+            sockets[i] = sockets[i + 1];
+            memset(&sockets[i + 1], 0, sizeof sockets[i + 1]);
+        }
+    }
+}
+
 void Server::monitoring()
 {
+    char buffer[1024];
+    int bytes_received = 0;
     events_number = poll(sockets, socket_number, 1000);
+    
     if (events_number == -1)
     {
         std::cerr << " Failed poll() execution.\n";
+        exit = true;
         return;
     }
     for (int j = 0; j < socket_number; j++)
     {
-        if (sockets[j].revents == POLL_ERR)
+        if (sockets[j].revents & POLL_ERR)
             std::cerr << "/!\\ Warning: An error occurred on a file descriptor.\n";
+        if (sockets[j].revents & POLLHUP)
+            disconnection(sockets[j].fd);
         if (sockets[j].revents != POLLIN)
+        { 
+            sockets[j].revents = 0;
             continue;
+        }
         sockets[j].revents = 0;
         if (sockets[j].fd == sockets[0].fd)
             new_connection();
         else //handle message function needed, below is just a snippet
         {
-            char buffer[1024];
-            int bytes_received = recv(sockets[j].fd , buffer, sizeof buffer, 0);
+            bytes_received = recv(sockets[j].fd , buffer, sizeof buffer, 0);
             buffer[bytes_received] = '\0';
             std::cout << buffer;
             if (!strncmp(buffer, "SHUTDOWN", 8))// temporary closing solution for server
-                exit = 1;
+                exit = true;
         }
 
     }
@@ -84,14 +118,14 @@ void Server::init_server()
     hints.ai_flags = AI_PASSIVE;
 
     struct addrinfo *res;
-    errorin(getaddrinfo(0, port, &hints, &res) != 0, "Failed to get address info.");
+    errorin(getaddrinfo(0, port, &hints, &res) != 0, "Failed to get address info.\n");
     if(bind(sockets[0].fd, res->ai_addr, res->ai_addrlen) == -1)
     {
         freeaddrinfo(res);
-        errorin(1, "Failed to bind listen socket.");
+        errorin(1, "Failed to bind listen socket.\n");
     }
     freeaddrinfo(res);
-    errorin(listen(sockets[0].fd, SOMAXCONN) == -1, "Failed to listen on socket.");
+    errorin(listen(sockets[0].fd, SOMAXCONN) == -1, "Failed to listen on socket.\n");
     sockets[0].events = POLL_IN;
     socket_number = 1;
     std::cout << "Listening on port " << port << "..." << std::endl;
@@ -101,7 +135,7 @@ Server::Server(const char *port, const char *password): port(port), password(pas
 {
     errorin(std::atoi(port) <= 0, "Invalid port.\n");
     memset(&sockets, 0, SOMAXCONN + 1);
-    exit = 0;
+    exit = false;
     flags = 0;
     init_server();
 }
@@ -109,19 +143,14 @@ Server::Server(const char *port, const char *password): port(port), password(pas
 Server::~Server()
 {
     fcntl(sockets[0].fd, F_SETFL, O_RDONLY);
-    std::cout << socket_number << "\n";
-    for (int i = socket_number - 1; i > 0; i--)
+    // std::cout << socket_number << "\n";
+    for (int i = socket_number - 1; i >= 0; i--)
     {
         if (sockets[i].fd)
         {
-            char buffer[1024];
-            while (recv(sockets[i].fd, buffer, sizeof(buffer), 0) > 0) {}
-            if (close(sockets[i].fd))
-                std::cerr << "/!\\ Error while closing file descriptor: " << strerror(errno) << std::endl;
+            errorin(close(sockets[i].fd) == -1, strerror(errno));
             sockets[i].fd = 0;
         }
     }
-    if (close(sockets[0].fd))
-        std::cerr << "/!\\ Error while closing file descriptor: " << strerror(errno) << std::endl;
-    std::cout << "Server shuted down successfully" << std::endl; 
+    std::cout << "Server shutted down successfully" << std::endl; 
 }
