@@ -3,18 +3,22 @@
 //****************************************************//
 
 
+// !!!! la fonction membre user.send n'existe pas, à changer lorsque
+// qu'une fonction d'envoie de message au client sera implementé !!!!
+
 #include "Commands.hpp"
 
 // -i set/remove invite-only channel :
 //  "/MODE -i" active le invite only, s'il est désactivé et inversement. 
 // La fonction retourne un message indiquant l'état du mode. Par defaut [désactivé]
 
-std::string	mode_invite_only(Channel &current)
+void	mode_invite_only(Channel &current, Client &user)
 {
 	current.set_invite_only();
 	if (current.get_invite_only())
-		return ("Invite-only mode is ON");
-	return ("Invite-only mode is OFF");
+		user.send("Invite-only mode is ON");
+	else
+		user.send ("Invite-only mode is OFF");
 }
 
 // -k set/remove channel key (pw)
@@ -22,12 +26,13 @@ std::string	mode_invite_only(Channel &current)
 // Si un mot de passe est précisé alors qu'il y en avait déja un, il est alors modifié par le nouveau.
 // La fonction retourne un message indiquant l'état du mode. Par defaut [désactivé]
 
-std::string mode_channel_key(Channel &current, std::string password)
+void	mode_channel_key(Channel &current, Client &user, std::string password)
 {
 	current.set_channel_key(password);
 	if (current.get_channel_key())
-		return ("Channel key is ON");
-	return ("Channel key is OFF");
+		user.send ("Channel key is ON");
+	else
+		user.send ("Channel key is OFF");
 }
 
 
@@ -35,24 +40,26 @@ std::string mode_channel_key(Channel &current, std::string password)
 // "/MODE -t" active la restriction à tous les clients du Channel de changer le TOPIC. S'il était activé, le désactive.
 // La fonction retourne un message indiquant l'état du mode. Par defaut [désactivé]
 
-std::string mode_restricion_topic_cmd(Channel &current)
+void	mode_restricion_topic_cmd(Channel &current, Client &user)
 {
 	current.set_restriction_TOPIC_cmd();
 	if (current.get_restriction_TOPIC_cmd())
-		return ("Restriciton to TOPIC command is ON");
-	return ("Restriciton to TOPIC command is OFF");
+		user.send ("Restriciton to TOPIC command is ON");
+	else
+		user.send ("Restriciton to TOPIC command is OFF");
 }
 
 // -l set/remove the user limit to Channel:
 // "/MODE -l (nb)" active le nombre de Client admis dans le Channel si (nb) est précisé. Sinon, désactive la limite.
 // La fonction retourne un message indiquant l'état du mode. Par defaut [désactivé]
 
-std::string mode_limit_user(Channel &current, int limit_nb)
+void	mode_limit_user(Channel &current, Client &user, int limit_nb)
 {
 	if (!limit_nb)
 	{
 		current.set_user_limit(0);
-		return ("User limit is OFF");
+		user.send ("User limit is OFF");
+		return;
 	}
 	std::string message = "User limit is ";
 	std::stringstream ss;
@@ -60,13 +67,15 @@ std::string mode_limit_user(Channel &current, int limit_nb)
 
 	message.append(ss.str());
 	current.set_user_limit(limit_nb);
-	return (message);
+	user.send (message);
 }
 
 // -o give/take channel operator privilege
-// "MODE -o [target]"
+// "MODE -o [target]" Si le client est au moins operator, il peut donner les pivilèges à n'importe qui.
+// Seul le primordial peut retirer les privilèges.
 
-// std::string	mode_give_operator_privilege(Channel &current, std::string target)
-// {
-// 	for (int i = 0; i <)
-// }
+void	mode_operator_privilege(Channel &current, Client &user, Client &target)
+{
+	
+
+} 

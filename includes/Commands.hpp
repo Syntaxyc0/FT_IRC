@@ -2,6 +2,7 @@
 # define COMMANDS_HPP
 
 #include "Channel.hpp"
+#include "Replies.hpp"
 #include <sstream>
 
 std::vector<std::string> parse(std::string input);
@@ -9,9 +10,10 @@ void	user(Client *client, std::vector<std::string> args);
 
 // MODE COMMAND
 
-std::string	mode_invite_only(Channel &current);
-std::string mode_channel_key(Channel &current, std::string password);
-std::string mode_restricion_topic_cmd(Channel &current);
-std::string mode_limit_user(Channel &current, int limit_nb);
+void	mode_invite_only(Channel &current);
+void	mode_channel_key(Channel &current, std::string password);
+void	mode_restricion_topic_cmd(Channel &current);
+void	mode_limit_user(Channel &current, int limit_nb);
+void	mode_operator_privilege(Channel &current, Client &user, Client &target);
 
 #endif

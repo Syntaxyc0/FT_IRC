@@ -1,5 +1,8 @@
 #include "Channel.hpp"
 
+// !!!! la fonction membre user.send n'existe pas, à changer lorsque
+// qu'une fonction d'envoie de message au client sera implementé !!!!
+
 //****************************************************//
 //                      Setter                        //
 //****************************************************//
@@ -72,34 +75,66 @@ bool	Channel::get_user_limit()
 //                     Function                       //
 //****************************************************//
 
-std::string	Channel::operator_privilege(Client &me, Client &target)
+void	Channel::operator_privilege(Client &me, std::string target)
 {
-	if (!is_primordial(me) || !is_operator(me))
-		throw NoPrivilege();
+
+	if (!is_primordial(me.get_nickname()) || !is_operator(me.get_nickname()))
+	{
+		me.send(ERR_CHANOPRIVSNEEDED(me.get_nickname(), this->_name));
+		return;
+	}
 
 	if (is_primordial(target))
-		throw Primordial();
+	{
+		me.send(ERR_NOPRIMORDIAL(me.get_nickname(), this->_name));
+		return;
+	}
 
 	if (!is_operator(target))
 	{
-		_operators.push_back(target);
-		std::string message = target.get_nickname();
-		message.append(" ");
+		_operators.push_back(find_client(target));
+		std::string message = target;
+		message.append(" is now channel operator");
+		me.send(message);
 	}
-	
+
+	if (is_primordial(me.get_nickname()) && is_operator(target) && me.get_nickname() != target)
+	{
+		std::string message2 = target;
+		_operators.erase(_operators.begin() + find_operator_index(target));
+		message2.append("is not anymore operator")
+	}
 }
 
-int	Channel::is_primordial(Client &me)
+int	Channel::is_primordial(std::string target)
 {
-	if (_primordial.get_nickname()== me.get_nickname())
+	if (_primordial.get_nickname() == target)
 		return (1);
 	return (0);
 }
 
-int	Channel::is_operator(Client &me)
+int	Channel::is_operator(std::string target)
 {
 	for (int i = 0; i < (int)_operators.size(); i++)
-		if (_operators.at(i).get_nickname() == me.get_nickname())
+		if (_operators.at(i).get_nickname() == target)
 			return (1);
 	return (0);
+}
+
+Client	Channel::find_client(std::string target)
+{
+	for (int i = 0; i < (int)_channelClients.size(); i++)
+	{
+		if (_channelClients.at(i).get_nickname() == target)
+			return (_channelClients.at(i));
+	}
+}
+
+int	Channel::find_operator_index(std::string target)
+{
+	for (int i = 0; i < (int)_operators.size(); i++)
+	{
+		if (_operators.at(i).get_nickname() == target)
+			return (i);
+	}
 }
