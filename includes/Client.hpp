@@ -43,7 +43,7 @@ class	Client
 
 		// Functions
 
-		
+
 };
 
 #endif

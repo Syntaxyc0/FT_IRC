@@ -14,6 +14,6 @@ void	mode_invite_only(Channel &current);
 void	mode_channel_key(Channel &current, std::string password);
 void	mode_restricion_topic_cmd(Channel &current);
 void	mode_limit_user(Channel &current, int limit_nb);
-void	mode_operator_privilege(Channel &current, Client &user, Client &target);
+void	mode_operator_privilege(Channel &current, Client &user, std::string target);
 
 #endif

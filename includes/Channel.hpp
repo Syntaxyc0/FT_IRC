@@ -28,7 +28,7 @@ class Channel
 // SETTER
 		void				set_invite_only();
 		void				set_channel_key(std::string password);
-		void				set_user_limit(int limit);
+		void				set_user_limit(int limit, Client &user);
 		void				set_restriction_TOPIC_cmd();
 
 // GETTER
@@ -42,36 +42,9 @@ class Channel
 		void				operator_privilege(Client &me, std::string target);
 		int					is_primordial(std::string target);
 		int					is_operator(std::string target);
+		int					is_channelClient(std::string target);
 		Client				find_client(std::string target);
 		int					find_operator_index(std::string target);
-
-	class ERR_NB_LIMIT : public std::exception{
-		public:
-		virtual const char* what() const throw(){
-			return ("\033[1;31mError: user limit can't be less than 1.\033[0m");
-		}
-	};
-
-	class Primordial : public std::exception{
-		public:
-		virtual const char* what() const throw(){
-			return ("\033[1;31mError: You can't remove primodial privilege.\033[0m");
-		}
-	};
-
-	class NoPrivilege : public std::exception{
-		public:
-		virtual const char* what() const throw(){
-			return ("\033[1;31mError: You don't have privileges to execute this command.\033[0m");
-		}
-	};
-
-	class AlreadyPrivilege : public std::exception{
-		public:
-		virtual const char* what() const throw(){
-			return ("\033[1;31mError: Traget already has privilege.\033[0m");
-		}
-	};
 };
 
 #endif

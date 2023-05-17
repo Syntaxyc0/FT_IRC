@@ -42,6 +42,6 @@
 
 // MESSAGE NON-OFFICIEL
 
-# define ERR_NOPRIMORDIAL(client, channel)					client + " " channel + ": You're not primordial channel operator"
+# define ERR_NOPRIMORDIAL(client, channel)					client + " " channel + ": You're not the primordial channel operator"
 
 #endif

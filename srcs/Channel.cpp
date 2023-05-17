@@ -34,10 +34,13 @@ void	Channel::set_restriction_TOPIC_cmd()
 		_restriction_TOPIC_cmd = 1;
 }
 
-void	Channel::set_user_limit(int limit)
+void	Channel::set_user_limit(int limit, Client &user)
 {
 	if (limit < 0 && !_user_limit)
-		throw ERR_NB_LIMIT();
+	{
+		user.send("Error: User limit can't be less than 1");
+		return;
+	}
 	if (limit)
 	{
 		_user_limit = 1;
@@ -77,7 +80,6 @@ bool	Channel::get_user_limit()
 
 void	Channel::operator_privilege(Client &me, std::string target)
 {
-
 	if (!is_primordial(me.get_nickname()) || !is_operator(me.get_nickname()))
 	{
 		me.send(ERR_CHANOPRIVSNEEDED(me.get_nickname(), this->_name));
@@ -90,26 +92,34 @@ void	Channel::operator_privilege(Client &me, std::string target)
 		return;
 	}
 
+	if (!is_channelClient(target))
+	{
+		me.send("Client not found in this channel");
+		return;
+	}
+
 	if (!is_operator(target))
 	{
 		_operators.push_back(find_client(target));
 		std::string message = target;
 		message.append(" is now channel operator");
-		me.send(message);
+		this->send_all(message);
 	}
 
 	if (is_primordial(me.get_nickname()) && is_operator(target) && me.get_nickname() != target)
 	{
 		std::string message2 = target;
 		_operators.erase(_operators.begin() + find_operator_index(target));
-		message2.append("is not anymore operator")
+		message2.append(" is not anymore operator");
+		this->send_all(message2);
 	}
 }
 
-int	Channel::is_primordial(std::string target)
+int Channel::is_channelClient(std::string target)
 {
-	if (_primordial.get_nickname() == target)
-		return (1);
+	for (int i = 0; i < (int)_channelClients.size(); i++)
+		if (_channelClients.at(i).get_nickname() == target)
+			return (1);
 	return (0);
 }
 
@@ -118,6 +128,13 @@ int	Channel::is_operator(std::string target)
 	for (int i = 0; i < (int)_operators.size(); i++)
 		if (_operators.at(i).get_nickname() == target)
 			return (1);
+	return (0);
+}
+
+int	Channel::is_primordial(std::string target)
+{
+	if (_primordial.get_nickname() == target)
+		return (1);
 	return (0);
 }
 
