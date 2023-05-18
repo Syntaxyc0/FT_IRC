@@ -29,7 +29,7 @@ OBJS		=   $(addprefix $(OBJ_PATH)/,$(SRCS:.cpp=.o))	 \
 
 DEPS		= $(OBJS:.o=.d)
 
-vpath %.h $(HEADERS)
+vpath %.hpp $(HEADERS)
 vpath %.cpp $(SRCSPATH) 					\
 			$(SRCSPATH)/$(SERV_PATH)		\
 			$(SRCSPATH)/$(CLIENT_PATH)		\

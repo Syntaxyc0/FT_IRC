@@ -28,7 +28,6 @@ void	Server::nick(Client *client, std::vector<std::string> args)
 	{
 		client->set_register(3);
 		client->send_reply(RPL_WELCOME(client->get_nickname(), client->get_username(), client->get_hostname()));
-		client->send_reply("auth ok !");
 	}
 	else
 		client->set_register(1);

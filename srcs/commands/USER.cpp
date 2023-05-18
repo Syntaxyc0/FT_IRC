@@ -24,7 +24,7 @@ void	user(Client *client, std::vector<std::string> args)
 		return ;
 	}
 	client->set_username(args[1]);
-	client->set_realname(args[4]);
+	client->set_realname(args[4].erase(0,1));
 	if (client->get_registered() == 1)
 	{
 		client->set_register(3);

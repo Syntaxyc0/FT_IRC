@@ -25,7 +25,7 @@ void Server::monitoring()
 	}
 	for (std::vector<pollfd>::iterator it = _sockets.begin(); it != _sockets.end(); it++)
 	{
-		std::cout<<GREEN<<"size "<< _sockets.size()<<" fd "<< it->fd<<" revents "<<it->revents<<END<<std::endl;
+		// std::cout<<GREEN<<"size "<< _sockets.size()<<" fd "<< it->fd<<" revents "<<it->revents<<END<<std::endl;
 		if (it->revents == POLLERR)
 			std::cerr << "/!\\ Warning: An error occurred on a file descriptor.\n";
 		else if (it->revents == POLLHUP) //deco de _clienList[it->fd]
@@ -45,34 +45,41 @@ void Server::monitoring()
 				char buffer[1024];
 				int bytes_received = recv(it->fd , buffer, sizeof(buffer), 0);
 				buffer[bytes_received] = '\0';
-				std::string	to_parse(buffer);
-				std::vector<std::string>	received = parse(buffer);
-				if (!received.empty())
+				std::string	tmp_buffer(buffer);
+				std::stringstream	ss(tmp_buffer);
+				std::string line;
+				while (std::getline(ss, line))
 				{
-					if (!strcmp("userhost", received[0].c_str()))
+					std::vector<std::string>	received = parse(line);
+					if (!received.empty())
 					{
-						user(_clientList[it->fd], received);
-					}
-					// else if (!strcmp("PASS", received[0].c_str()))
-					// {
-					// 	Pass(_clientList[it->fd], received);
-					// }
-					else if (!strcmp("QUIT", received[0].c_str()))
-					{
-						disconnect(it->fd);
-						break ;
-					}
-					else if (!strcmp("NICK", received[0].c_str()))
-					{
-						std::stringstream ss;
-						ss << _clientList[it->fd]->get_registered();
-						std::string tmp = ss.str();
-						_clientList[it->fd]->send_reply(tmp);
-						nick(_clientList[it->fd], received);
+						if (!strcmp("USER", received[0].c_str()))
+						{
+							user(_clientList[it->fd], received);
+						}
+						// else if (!strcmp("PASS", received[0].c_str()))
+						// {
+						// 	Pass(_clientList[it->fd], received);
+						// }
+						else if (!strcmp("QUIT", received[0].c_str()))
+						{
+							disconnect(it->fd);
+							break ;
+						}
+						else if (!strcmp("NICK", received[0].c_str()))
+						{
+							nick(_clientList[it->fd], received);
+						}
 					}
 				}
-				std::cout <<GREEN<<"received "<< to_parse<<"from "<< _clientList[it->fd]->get_nickname()<<END<<std::endl;
-			}
+				std::cout<<BLUE<<"NICK : "<<_clientList[it->fd]->get_nickname()<<END<<std::endl;
+				std::cout<<CYAN<<"USERNAME : "<<_clientList[it->fd]->get_username() <<END<<std::endl;
+				std::cout<<YELLOW<<"REALNAME : "<<_clientList[it->fd]->get_realname() <<END<<std::endl;
+				std::string clean_recept(buffer);
+				clean_recept.erase(clean_recept.size() - 1);
+				std::cout <<GREEN<<"full received buffer :\n"<< clean_recept<<"from "<< _clientList[it->fd]->get_nickname()<<END<<std::endl;
+				std::cout<<std::endl;
+			}	
 		}
 		sleep(1);
 	}
@@ -122,7 +129,6 @@ void Server::init_server()
 Server::Server(const char *port, const char *password): _port(port), _password(password)
 {
     errorin(std::atoi(_port) <= 0, "Invalid port.\n");
-    // _exit = 0;	
     init_server();
 }
 
