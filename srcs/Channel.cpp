@@ -87,13 +87,13 @@ void	Channel::operator_privilege(Client &me, std::string target)
 {
 	if (!is_primordial(me.get_nickname()) || !is_operator(me.get_nickname()))
 	{
-		me.send(ERR_CHANOPRIVSNEEDED(me.get_nickname(), this->_name));
+		me.send( ERR_CHANOPRIVSNEEDED( me.get_nickname(), _name ) );
 		return;
 	}
 
 	if (is_primordial(target))
 	{
-		me.send(ERR_NOPRIMORDIAL(me.get_nickname(), this->_name));
+		me.send( ERR_NOPRIMORDIAL( me.get_nickname(), _name ) );
 		return;
 	}
 
@@ -105,18 +105,18 @@ void	Channel::operator_privilege(Client &me, std::string target)
 
 	if (!is_operator(target))
 	{
-		_operators.erase(_operators.at(find_client_index));
+		_operators.erase( _operators.begin() + find_client_index( target ) );
 		std::string message = target;
-		message.append(" is now channel operator");
-		this->send_all(message);
+		message.append( " is now channel operator" );
+		this->send_all( message );
 	}
 
 	if (is_primordial(me.get_nickname()) && is_operator(target) && me.get_nickname() != target)
 	{
 		std::string message2 = target;
-		_operators.erase(_operators.begin() + find_operator_index(target));
-		message2.append(" is not anymore operator");
-		this->send_all(message2);
+		_operators.erase( _operators.begin() + find_operator_index( target )) ;
+		message2.append( " is not anymore operator" );
+		this->send_all( message2 );
 	}
 }
 
@@ -159,4 +159,16 @@ int	Channel::find_operator_index(std::string target)
 		if (_operators.at(i) == target)
 			return (i);
 	}
+}
+
+void	Channel::send_all( std::string message )
+{
+	for (int i = 0; i < (int)_channelClients.size(); i++)
+		_server.find_client( _channelClients.at(i) ).send( message );
+}
+
+void	Channel::kick_client( std::string user )
+{
+	_channelClients.erase(_channelClients.begin() + find_client_index( user ) );
+
 }

@@ -25,6 +25,7 @@
 # define ERR_ERRONEUSNICKNAME(client, nick)					"432 " + client + " " + nick + " :Erroneus nickname"
 # define ERR_NICKNAMEINUSE(client, nick)					"433 " + client + " " + nick + " :Nickname is already in use"
 # define ERR_NICKCOLLISION (client, nick, user, host)		"436 " + client + " " + nick + " :Nickname collision KILL from " + user + "@" + host
+# define ERR_NEEDMOREPARAMS (client, channel)				"441 " + client + " " + channel + " :They aren't on that channel" 
 # define ERR_NOTONCHANNEL(client, channel)					"442 " + client + " " + channel + " :You're not on that channel"
 # define ERR_USERONCHANNEL(client, nick, channel)			"443 " + client + " " + nick + " " + channel + " :is already on channel"
 # define ERR_NOTREGISTERED(client)							"451 " + client + " :You have not registered"
