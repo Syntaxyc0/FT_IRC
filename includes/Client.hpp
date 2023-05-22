@@ -12,13 +12,13 @@ class	Client
 {
 	private:
 			int _fd;
-			std::string	_hostname;
-			std::string	_username;
-			std::string	_realname;
-			std::string	_nickname;
+			std::string		_hostname;
+			std::string		_username;
+			std::string		_realname;
+			std::string		_nickname;
 
-			bool		_is_registered;
-			Channel		_current_channel;
+			bool			_is_registered;
+			std::string		_current_channel;
 
 	public:
 
@@ -26,12 +26,12 @@ class	Client
 			~Client();
 
 		// Setters
-			void	set_fd(int fd);
-			void	set_register(bool state);
-			void	set_hostname(std::string name);
-			void	set_username(std::string name);
-			void	set_realname(std::string name);
-			void	set_nickname(std::string name);
+			void			set_fd(int fd);
+			void			set_register(bool state);
+			void			set_hostname(std::string name);
+			void			set_username(std::string name);
+			void			set_realname(std::string name);
+			void			set_nickname(std::string name);
 
 		// Getters
 			int				get_fd();

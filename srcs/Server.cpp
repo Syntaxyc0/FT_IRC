@@ -36,7 +36,7 @@ int Server::new_connection()
         return (-1);
     }
     std::cout << "New connection successfull!\n";
-    sockets[socket_number++].events = POLL_IN;
+    sockets[socket_number++].events = POLLIN;
     return (0);
 }
 
@@ -50,7 +50,7 @@ void Server::monitoring()
     }
     for (int j = 0; j < socket_number; j++)
     {
-        if (sockets[j].revents == POLL_ERR)
+        if (sockets[j].revents == POLLERR)
             std::cerr << "/!\\ Warning: An error occurred on a file descriptor.\n";
         if (sockets[j].revents != POLLIN)
             continue;
@@ -92,7 +92,7 @@ void Server::init_server()
     }
     freeaddrinfo(res);
     errorin(listen(sockets[0].fd, SOMAXCONN) == -1, "Failed to listen on socket.");
-    sockets[0].events = POLL_IN;
+    sockets[0].events = POLLIN;
     socket_number = 1;
     std::cout << "Listening on port " << port << "..." << std::endl;
 }
@@ -124,4 +124,22 @@ Server::~Server()
     if (close(sockets[0].fd))
         std::cerr << "/!\\ Error while closing file descriptor: " << strerror(errno) << std::endl;
     std::cout << "Server shuted down successfully" << std::endl; 
+}
+
+//****************************************************//
+//              Channel/Client Function               //
+//****************************************************//
+
+Client  Server::find_client(std::string nickname)
+{
+    for ( int i = 0; i < (int)Clients.size(); i++ )
+        if ( nickname == Clients.at(i).get_nickname() )
+            return ( Clients.at(i) );
+}
+
+Channel Server::find_channel(std::string channel_name)
+{
+    for ( int i = 0; i < (int)Channels.size(); i++ )
+        if ( channel_name == Channels.at(i).get_name() )
+            return ( Channels.at(i) );
 }

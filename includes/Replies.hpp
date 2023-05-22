@@ -43,5 +43,6 @@
 // MESSAGE NON-OFFICIEL
 
 # define ERR_NOPRIMORDIAL(client, channel)					client + " " channel + ": You're not the primordial channel operator"
+# define ERR_CANTKICKOPE(client, channel)					client + " " channel + ": operator can't be kicked"
 
 #endif

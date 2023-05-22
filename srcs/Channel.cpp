@@ -54,6 +54,11 @@ void	Channel::set_user_limit(int limit, Client &user)
 //                      Getter                        //
 //****************************************************//
 
+std::string	Channel::get_name()
+{
+	return (_name);
+}
+
 bool	Channel::get_invite_only()
 {
 	return (_invite_only);
@@ -100,7 +105,7 @@ void	Channel::operator_privilege(Client &me, std::string target)
 
 	if (!is_operator(target))
 	{
-		_operators.push_back(find_client(target));
+		_operators.erase(_operators.at(find_client_index));
 		std::string message = target;
 		message.append(" is now channel operator");
 		this->send_all(message);
@@ -118,7 +123,7 @@ void	Channel::operator_privilege(Client &me, std::string target)
 int Channel::is_channelClient(std::string target)
 {
 	for (int i = 0; i < (int)_channelClients.size(); i++)
-		if (_channelClients.at(i).get_nickname() == target)
+		if (_channelClients.at(i) == target)
 			return (1);
 	return (0);
 }
@@ -126,24 +131,24 @@ int Channel::is_channelClient(std::string target)
 int	Channel::is_operator(std::string target)
 {
 	for (int i = 0; i < (int)_operators.size(); i++)
-		if (_operators.at(i).get_nickname() == target)
+		if (_operators.at(i) == target)
 			return (1);
 	return (0);
 }
 
 int	Channel::is_primordial(std::string target)
 {
-	if (_primordial.get_nickname() == target)
+	if (_primordial == target)
 		return (1);
 	return (0);
 }
 
-Client	Channel::find_client(std::string target)
+int	Channel::find_client_index(std::string target)
 {
 	for (int i = 0; i < (int)_channelClients.size(); i++)
 	{
-		if (_channelClients.at(i).get_nickname() == target)
-			return (_channelClients.at(i));
+		if (_channelClients.at(i) == target)
+			return (i);
 	}
 }
 
@@ -151,7 +156,7 @@ int	Channel::find_operator_index(std::string target)
 {
 	for (int i = 0; i < (int)_operators.size(); i++)
 	{
-		if (_operators.at(i).get_nickname() == target)
+		if (_operators.at(i) == target)
 			return (i);
 	}
 }

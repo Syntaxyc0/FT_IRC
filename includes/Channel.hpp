@@ -9,11 +9,11 @@ class Channel
 {
 	private:
 
-		std::string			_name;
-		std::string			_topic;
-		std::vector<Client> _channelClients;	// Tout les client du channel sont dans _channelClient;
-		std::vector<Client>	_operators;		// Les modo dont dans _channelClient && _operators;
-		Client				_primordial;		// Le primordial est dans les 3
+		std::string					_name;
+		std::string					_topic;
+		std::vector<std::string>	_channelClients;	// Tout les client du channel sont dans _channelClient;
+		std::vector<std::string>	_operators;		// Les modo dont dans _channelClient && _operators;
+		std::string					_primordial;		// Le primordial est dans les 3
 
 // MODE
 		bool				_invite_only;			//set to 0 when init
@@ -32,6 +32,9 @@ class Channel
 		void				set_restriction_TOPIC_cmd();
 
 // GETTER
+
+		std::string			get_name();
+
 		bool				get_invite_only();
 		bool				get_channel_key();
 		bool				get_user_limit();
@@ -43,7 +46,7 @@ class Channel
 		int					is_primordial(std::string target);
 		int					is_operator(std::string target);
 		int					is_channelClient(std::string target);
-		Client				find_client(std::string target);
+		int					find_client_index(std::string target);
 		int					find_operator_index(std::string target);
 };
 
