@@ -50,7 +50,7 @@ void Server::monitoring()
     }
     for (int j = 0; j < socket_number; j++)
     {
-        if (sockets[j].revents == POLLERR)
+        if (sockets[j].revents & POLLERR)
             std::cerr << "/!\\ Warning: An error occurred on a file descriptor.\n";
         if (sockets[j].revents != POLLIN)
             continue;

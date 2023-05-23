@@ -28,4 +28,5 @@ int main(int argc, char *argv[])
     Server ircserv(argv[1], argv[2]);
     while (!ircserv.shut_down())
         ircserv.monitoring();
+    
 }
