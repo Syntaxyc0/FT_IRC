@@ -6,6 +6,9 @@
 # include "Server.hpp"
 # include <vector>
 
+class Server;
+class Client;
+
 class Channel
 {
 	private:
@@ -13,9 +16,9 @@ class Channel
 		std::string					_name;
 		std::string					_topic;
 		std::vector<std::string>	_channelClients;	// Tout les client du channel sont dans _channelClient;
-		std::vector<std::string>	_operators;		// Les modo dont dans _channelClient && _operators;
+		std::vector<std::string>	_operators;			// Les modo dont dans _channelClient && _operators;
 		std::string					_primordial;		// Le primordial est dans les 3
-		Server						&_server;
+		Server						*_server;
 
 // MODE
 		bool				_invite_only;			//set to 0 when init

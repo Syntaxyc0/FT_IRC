@@ -130,16 +130,18 @@ Server::~Server()
 //              Channel/Client Function               //
 //****************************************************//
 
-Client  Server::find_client(std::string nickname)
+Client  *Server::find_client(std::string nickname)
 {
     for ( int i = 0; i < (int)Clients.size(); i++ )
         if ( nickname == Clients.at(i).get_nickname() )
-            return ( Clients.at(i) );
+            return ( &Clients.at(i) );
+    return (0);
 }
 
-Channel Server::find_channel(std::string channel_name)
+Channel *Server::find_channel(std::string channel_name)
 {
     for ( int i = 0; i < (int)Channels.size(); i++ )
         if ( channel_name == Channels.at(i).get_name() )
-            return ( Channels.at(i) );
+            return ( &Channels.at(i) );
+    return (0);
 }

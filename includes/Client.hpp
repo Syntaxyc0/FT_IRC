@@ -2,16 +2,21 @@
 # define CLIENT_HPP
 
 # include <sys/socket.h>
+# include <sys/types.h>
 # include <string>
 # include <iostream>
 # include <sstream>
 # include <vector>
 # include "Channel.hpp"
+# include "Server.hpp"
+
+class Server;
+class Channel;
 
 class	Client
 {
 	private:
-			int _fd;
+			int 			_fd;
 			std::string		_hostname;
 			std::string		_username;
 			std::string		_realname;
@@ -43,7 +48,7 @@ class	Client
 
 		// Functions
 
-
+			void			send_to_client(std::string message);
 };
 
 #endif

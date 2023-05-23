@@ -38,7 +38,7 @@ void	Channel::set_user_limit(int limit, Client &user)
 {
 	if (limit < 0 && !_user_limit)
 	{
-		user.send("Error: User limit can't be less than 1");
+		user.send_to_client("Error: User limit can't be less than 1");
 		return;
 	}
 	if (limit)
@@ -87,19 +87,19 @@ void	Channel::operator_privilege(Client &me, std::string target)
 {
 	if (!is_primordial(me.get_nickname()) || !is_operator(me.get_nickname()))
 	{
-		me.send( ERR_CHANOPRIVSNEEDED( me.get_nickname(), _name ) );
+		me.send_to_client( ERR_CHANOPRIVSNEEDED( me.get_nickname(), _name ) );
 		return;
 	}
 
 	if (is_primordial(target))
 	{
-		me.send( ERR_NOPRIMORDIAL( me.get_nickname(), _name ) );
+		me.send_to_client( ERR_NOPRIMORDIAL( me.get_nickname(), _name ) );
 		return;
 	}
 
 	if (!is_channelClient(target))
 	{
-		me.send("Client not found in this channel");
+		me.send_to_client("Client not found in this channel");
 		return;
 	}
 
@@ -150,6 +150,7 @@ int	Channel::find_client_index(std::string target)
 		if (_channelClients.at(i) == target)
 			return (i);
 	}
+	return (-1);
 }
 
 int	Channel::find_operator_index(std::string target)
@@ -159,12 +160,13 @@ int	Channel::find_operator_index(std::string target)
 		if (_operators.at(i) == target)
 			return (i);
 	}
+	return (-1);
 }
 
 void	Channel::send_all( std::string message )
 {
 	for (int i = 0; i < (int)_channelClients.size(); i++)
-		_server.find_client( _channelClients.at(i) ).send( message );
+		_server->find_client( _channelClients.at(i) )->send_to_client( message );
 }
 
 void	Channel::kick_client( std::string user )

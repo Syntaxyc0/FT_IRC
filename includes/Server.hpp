@@ -1,19 +1,25 @@
 #ifndef	SERVER_HPP
 # define SERVER_HPP
 
-// # include "Client.hpp"
+# include "Client.hpp"
 # include "Channel.hpp"
-#include <iostream>
-#include <cstring>
-#include <sys/types.h> 
-#include <sys/socket.h> 
-#include <netdb.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <poll.h>
-#include <fcntl.h>
-#include <vector>
+# include <iostream>
+# include <cstring>
+# include <sys/types.h> 
+# include <sys/socket.h> 
+# include <netdb.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <unistd.h>
+# include <poll.h>
+# include <fcntl.h>
+# include <vector>
+# include <cstdlib>
+# include <cerrno>
+
+
+class Client;
+class Channel;
 
 void errorin(int err, const std::string msg);
 
@@ -41,8 +47,8 @@ class Server
 
         void        monitoring();
         int         shut_down();
-        Client      find_client(std::string nickname);
-        Channel     find_channel(std::string channel_name);
+        Client      *find_client(std::string nickname);
+        Channel     *find_channel(std::string channel_name);
 
         
 };

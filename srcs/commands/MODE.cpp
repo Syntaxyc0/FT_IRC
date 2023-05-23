@@ -58,7 +58,7 @@ void	mode_limit_user(Channel &current, Client &user, int limit_nb)
 	if (!limit_nb)
 	{
 		current.set_user_limit(0, user);
-		user.send ("User limit is OFF");
+		user.send("User limit is OFF");
 		return;
 	}
 	std::string message = "User limit is ";
@@ -66,7 +66,7 @@ void	mode_limit_user(Channel &current, Client &user, int limit_nb)
 	ss << limit_nb;
 
 	message.append(ss.str());
-	current.set_user_limit(limit_nb);
+	current.set_user_limit(limit_nb, user);
 	user.send(message);
 }
 
