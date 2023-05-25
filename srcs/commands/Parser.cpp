@@ -21,19 +21,10 @@ std::string	get_command(std::string line)
 std::vector<std::string> parse(std::string input)
 {
 	std::vector<std::string> args;
-	std::stringstream	ss(input);
-	std::string line;
 	std::string tmp;
-	std::string	buffer;
-	while (std::getline(ss, line))
-	{
-		std::string command;
-		command = get_command(line);
-		buffer = line.substr(command.length(), line.length());
-		std::stringstream	rest(buffer);
-		while (rest >> tmp)
-			args.push_back(tmp);
-	}
+	std::stringstream	rest(input);
+	while (rest >> tmp )
+		args.push_back(tmp);
 	return args;
 }
 

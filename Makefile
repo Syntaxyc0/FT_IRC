@@ -11,6 +11,8 @@ SRCS =  main.cpp   \
 		Parser.cpp \
 		Server.cpp \
 		USER.cpp   \
+		PASS.cpp   \
+		NICK.cpp   \
 
 SERV_PATH = server
 
@@ -21,13 +23,13 @@ CHANNEL_PATH = channel
 COMMANDS_PATH = commands
 
 CXX = c++
-CXXFLAGS = -MMD -Wall -Wextra -Werror -std=c++98 -g3
+CXXFLAGS = -MMD -Wall -Wextra -Werror -std=c++98 -g3 -fsanitize=address
 RM = rm -rf
 OBJS		=   $(addprefix $(OBJ_PATH)/,$(SRCS:.cpp=.o))	 \
 
 DEPS		= $(OBJS:.o=.d)
 
-vpath %.h $(HEADERS)
+vpath %.hpp $(HEADERS)
 vpath %.cpp $(SRCSPATH) 					\
 			$(SRCSPATH)/$(SERV_PATH)		\
 			$(SRCSPATH)/$(CLIENT_PATH)		\
