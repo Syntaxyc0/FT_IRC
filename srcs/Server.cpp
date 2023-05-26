@@ -29,24 +29,20 @@ void Server::monitoring()
 	for (std::vector<pollfd>::iterator it = _sockets.begin(); it != _sockets.end(); it++)
 	{
 		// std::cout<<GREEN<<"size "<< _sockets.size()<<" fd "<< it->fd<<" revents "<<it->revents<<END<<std::endl;
-		if (it->revents == 0)
-			continue;
 		short revents = it->revents;
 		it->revents = 0;
-		if (revents & POLLERR)
-			std::cerr << "/!\\ Warning: An error occurred on a file descriptor.\n";
-		if (revents & POLLHUP) //deco de _clienList[it->fd]
+		if (revents & POLLHUP || revents & POLLERR) //deco de _clienList[it->fd]
 		{
-			disconnect(it->fd);
-			it = _sockets.begin();
+			if (revents & POLLERR)
+				std::cerr << RED << "/!\\ Warning: An error occurred on a file descriptor." << END << std::endl;
+			it = disconnect(it->fd);
 			continue;
 		}
 		else if (revents & POLLIN) //nouvelle requete
 		{
 			if (it->fd == _sockets.begin()->fd) //nouvelle connexion
 			{
-				new_connection();
-				it = _sockets.begin();
+				it = new_connection();
 				continue;
 			}
 			else //nouveau message
@@ -72,8 +68,8 @@ void Server::monitoring()
 						// }
 						else if (!strcmp("QUIT", received[0].c_str()))
 						{
-							disconnect(it->fd);
-							break ;
+							it = disconnect(it->fd);
+							break;
 						}
 						else if (!strcmp("NICK", received[0].c_str()))
 						{
@@ -81,6 +77,8 @@ void Server::monitoring()
 						}
 					}
 				}
+				if (it == _sockets.begin())
+					continue;
 				std::cout<<BLUE<<"NICK : "<<_clientList[it->fd]->get_nickname()<<END<<std::endl;
 				std::cout<<CYAN<<"USERNAME : "<<_clientList[it->fd]->get_username() <<END<<std::endl;
 				std::cout<<YELLOW<<"REALNAME : "<<_clientList[it->fd]->get_realname() <<END<<std::endl;
@@ -95,7 +93,7 @@ void Server::monitoring()
 }
 
 
-int Server::new_connection()
+std::vector<pollfd>::iterator Server::new_connection()
 {
 	char tmp_hostname[NI_MAXHOST];
     struct sockaddr_in client_addr;
@@ -106,8 +104,8 @@ int Server::new_connection()
 	_sockets.push_back(new_poll);
 	getnameinfo((sockaddr *) &client_addr, sizeof(client_addr), tmp_hostname, NI_MAXHOST, NULL, 0, 0); //tout ca pour choper son hostname.. Ils sont fou ces romains!
 	adduser(fd, tmp_hostname);
-    std::cout << "New connection successfull!\n";
-    return (0);
+    std::cout << MAGENTA << "New connection successfull!" << END << std::endl;
+	return _sockets.begin();
 }
 
 void Server::init_server()
@@ -127,7 +125,6 @@ void Server::init_server()
     errorin(listen(_listening_socket, SOMAXCONN) == -1, "Failed to listen on socket.");
 	pollfd	first_socket = {_listening_socket, POLLIN, 0};
 	_sockets.push_back(first_socket);
-    std::cout << "Listening on port " << _port << "..." << std::endl;
 }
 
 Server::Server(const char *port, const char *password): _port(port), _password(password)
@@ -149,11 +146,12 @@ Server::~Server()
         if (it->fd)
         {
             if (close(it->fd))
-                std::cerr << "/!\\ Error while closing file descriptor: " << strerror(errno) << std::endl;
+                std::cerr << RED << "/!\\ Error while closing file descriptor: " << strerror(errno) << END << std::endl;
             it->fd = 0;
         }
     }
-    std::cout << "Server shutted down successfully" << std::endl; 
+	exit_state = 1;
+    std::cout << "\n\t-- Server shutted down successfully --" << std::endl; 
 }
 
 void	Server::adduser(int fd, std::string hostname)
@@ -164,21 +162,22 @@ void	Server::adduser(int fd, std::string hostname)
 	newuser->send_reply(RPL_WELCOME(newuser->get_nickname(), newuser->get_username(), hostname));
 }
 
-void	Server::disconnect(int fd)
+std::vector<pollfd>::iterator Server::disconnect(int fd)
 {
 
 	//TODO: lui faire quitter son channel actif s'il en a un
-	_clientList.erase(fd);
 	for (std::vector<pollfd>::iterator it =_sockets.begin(); it != _sockets.end(); it++)
 	{
 		if (it->fd == fd)
 		{
+			std::cout << MAGENTA << _clientList[it->fd]->get_username() << " has disconnected" << END << std::endl;
 			_sockets.erase(it);
+			_clientList.erase(fd);
 			close(fd);
-			std::cout << BLUE << "A client has disconnected\n" << END;
-			return ;
+			return _sockets.begin();
 		}	
 	}
+	return _sockets.begin();
 }
 
 void	Server::send_to_all(std::string message)

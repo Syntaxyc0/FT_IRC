@@ -44,8 +44,8 @@ class Server
         int	socket_number;
         int	events_number;
         void			init_server();
-        int				new_connection();
-		void			disconnect(int fd);
+        std::vector<pollfd>::iterator   new_connection();
+        std::vector<pollfd>::iterator   disconnect(int fd);
 	
     public:
         class SocketException : public std::exception
