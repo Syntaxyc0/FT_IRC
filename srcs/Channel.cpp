@@ -1,8 +1,5 @@
 #include "Channel.hpp"
 
-// !!!! la fonction membre user.send n'existe pas, à changer lorsque
-// qu'une fonction d'envoie de message au client sera implementé !!!!
-
 //****************************************************//
 //                      Setter                        //
 //****************************************************//
@@ -77,6 +74,11 @@ bool Channel::get_restriction_TOPIC_cmd()
 bool	Channel::get_user_limit()
 {
 	return (_user_limit);
+}
+
+Server *Channel::get_server()
+{
+	return (_server);
 }
 
 //****************************************************//
