@@ -13,21 +13,21 @@ void	kick_command(Channel &current, Client &me, std::string target)
 {
 	if (!target.size())
 	{
-		me.send( ERR_NEEDMOREPARAMS( me.get_nickname(), "KICK" ) );
+		me.send_to_client( ERR_NEEDMOREPARAMS( me.get_nickname(), "KICK" ) );
 		return;
 	}
 	if ( !current.is_channelClient( target ) )
 	{
-		me.send( ERR_NOTONCHANNEL( target, current.get_name() ) );
+		me.send_to_client( ERR_NOTONCHANNEL( target, current.get_name() ) );
 	}
 	if ( !current.is_operator( me.get_nickname() ) )
 	{
-		me.send( ERR_CHANOPRIVSNEEDED( me.get_nickname(), current.get_name() ) );
+		me.send_to_client( ERR_CHANOPRIVSNEEDED( me.get_nickname(), current.get_name() ) );
 		return;
 	}
 	if ( current.is_operator( target ) )
 	{
-		me.send( ERR_CANTKICKOPE( target, current.get_name() ) );
+		me.send_to_client( ERR_CANTKICKOPE( target, current.get_name() ) );
 		return;
 	}
 
@@ -35,5 +35,5 @@ void	kick_command(Channel &current, Client &me, std::string target)
 
 	std::string message = target;
 	target.append(" was kicked");
-	me.send(message);
+	me.send_to_client(message);
 }
