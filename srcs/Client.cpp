@@ -41,6 +41,11 @@ void	Client::set_register(bool state)
 	_is_registered = state;
 }
 
+void	Client::set_current_channel(std::string channel)
+{
+	_current_channel = channel;
+}
+
 //****************************************************//
 //                      Getter                        //
 //****************************************************//

@@ -12,9 +12,26 @@
 void	invite_command(Channel &current, Client &me, std::string target)
 {
 	if ( !current.get_server()->find_client( target ) )
-		me.send_to_client(ERR_NOSUCHCHANNEL(me.get_nickname(), current.get_name()));
-	
+	{
+		me.send_to_client( ERR_NOSUCHCHANNEL( me.get_nickname(), current.get_name() ) );
+		return;
+	}
 	if ( !me.get_current_channel().size() )
-		me.send_to_client(ERR_NOTONCHANNEL(me.get_nickname(), current.get_name()));
-	
+	{
+		me.send_to_client( ERR_NOTONCHANNEL( me.get_nickname(), current.get_name() ) );
+		return;
+	}
+	if ( !current.is_operator( me.get_nickname() ) )
+	{
+		me.send_to_client( ERR_CHANOPRIVSNEEDED( me.get_nickname(), current.get_name() ) );
+		return;
+	}
+	if ( current.is_channelClient( target ) )
+	{
+		me.send_to_client( ERR_USERONCHANNEL( me.get_nickname(), target,  current.get_name() ) );
+		return;
+	}
+
+	current.add_client( target );
+	current.get_server()->find_client( target ).
 }

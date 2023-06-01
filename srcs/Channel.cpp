@@ -171,6 +171,11 @@ void	Channel::send_all( std::string message )
 		_server->find_client( _channelClients.at(i) )->send_to_client( message );
 }
 
+void	Channel::add_client( std::string user )
+{
+	_channelClients.push_back( user );
+}
+
 void	Channel::kick_client( std::string user )
 {
 	_channelClients.erase(_channelClients.begin() + find_client_index( user ) );

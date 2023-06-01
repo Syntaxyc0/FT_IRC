@@ -58,6 +58,7 @@ class Channel
 		int					find_operator_index( std::string target );
 
 		void				send_all( std::string message );
+		void				add_client( std::string user );
 		void				kick_client( std::string user );
 };
 
