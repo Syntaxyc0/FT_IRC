@@ -17,5 +17,4 @@ void	invite_command(Channel &current, Client &me, std::string target)
 	if ( !me.get_current_channel().size() )
 		me.send_to_client(ERR_NOTONCHANNEL(me.get_nickname(), current.get_name()));
 	
-	if ( !current. )
 }

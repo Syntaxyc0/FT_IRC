@@ -31,6 +31,11 @@ void	Client::set_nickname(std::string nickname)
 	_nickname = nickname;
 }
 
+void	Client::set_realname(std::string realname)
+{
+	_realname = realname;
+}
+
 void	Client::set_register(bool state)
 {
 	_is_registered = state;
@@ -70,7 +75,7 @@ bool	Client::get_registered()
 	return _is_registered;
 }
 
-std::string	Client::get_current_channel();
+std::string	Client::get_current_channel()
 {
 	return _current_channel;
 }
