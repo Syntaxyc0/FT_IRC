@@ -43,6 +43,8 @@ void	Client::set_register(bool state)
 
 void	Client::set_current_channel(std::string channel)
 {
+	if ( !channel.size() )
+		_current_channel.erase();
 	_current_channel = channel;
 }
 

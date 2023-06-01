@@ -76,9 +76,19 @@ bool	Channel::get_user_limit()
 	return (_user_limit);
 }
 
+int	get_user_limit_nb()
+{
+	return (_user_limit_nb);
+}
+
 Server *Channel::get_server()
 {
 	return (_server);
+}
+
+std::vector<std::string> Channel::get_channelClients()
+{
+	return (_channelClients);
 }
 
 //****************************************************//
