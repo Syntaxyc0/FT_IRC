@@ -39,6 +39,7 @@ class Channel
 // GETTER
 
 		std::string			get_name();
+		Server				*get_server();
 
 		bool				get_invite_only();
 		bool				get_channel_key();

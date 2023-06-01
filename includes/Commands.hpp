@@ -8,6 +8,9 @@
 std::vector<std::string> parse(std::string input);
 void	user(Client *client, std::vector<std::string> args);
 
+void	kick_command(Channel &current, Client &me, std::string target);
+void	invite_command(Channel &current, Client &me, std::string target);
+
 // MODE COMMAND
 
 void	mode_invite_only(Channel &current);

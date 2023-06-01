@@ -85,7 +85,7 @@ bool	Channel::get_user_limit()
 
 void	Channel::operator_privilege(Client &me, std::string target)
 {
-	if (!is_primordial(me.get_nickname()) || !is_operator(me.get_nickname()))
+	if ( !is_primordial(me.get_nickname()) || !is_operator(me.get_nickname()) )
 	{
 		me.send_to_client( ERR_CHANOPRIVSNEEDED( me.get_nickname(), _name ) );
 		return;
@@ -111,7 +111,7 @@ void	Channel::operator_privilege(Client &me, std::string target)
 		this->send_all( message );
 	}
 
-	if (is_primordial(me.get_nickname()) && is_operator(target) && me.get_nickname() != target)
+	if (is_primordial( me.get_nickname()) && is_operator(target) && me.get_nickname() != target )
 	{
 		std::string message2 = target;
 		_operators.erase( _operators.begin() + find_operator_index( target )) ;
@@ -120,7 +120,7 @@ void	Channel::operator_privilege(Client &me, std::string target)
 	}
 }
 
-int Channel::is_channelClient(std::string target)
+int Channel::is_channelClient( std::string target )
 {
 	for (int i = 0; i < (int)_channelClients.size(); i++)
 		if (_channelClients.at(i) == target)
@@ -128,7 +128,7 @@ int Channel::is_channelClient(std::string target)
 	return (0);
 }
 
-int	Channel::is_operator(std::string target)
+int	Channel::is_operator( std::string target )
 {
 	for (int i = 0; i < (int)_operators.size(); i++)
 		if (_operators.at(i) == target)
@@ -136,14 +136,14 @@ int	Channel::is_operator(std::string target)
 	return (0);
 }
 
-int	Channel::is_primordial(std::string target)
+int	Channel::is_primordial( std::string target )
 {
 	if (_primordial == target)
 		return (1);
 	return (0);
 }
 
-int	Channel::find_client_index(std::string target)
+int	Channel::find_client_index( std::string target )
 {
 	for (int i = 0; i < (int)_channelClients.size(); i++)
 	{
@@ -153,7 +153,7 @@ int	Channel::find_client_index(std::string target)
 	return (-1);
 }
 
-int	Channel::find_operator_index(std::string target)
+int	Channel::find_operator_index( std::string target )
 {
 	for (int i = 0; i < (int)_operators.size(); i++)
 	{
@@ -172,5 +172,4 @@ void	Channel::send_all( std::string message )
 void	Channel::kick_client( std::string user )
 {
 	_channelClients.erase(_channelClients.begin() + find_client_index( user ) );
-
 }
