@@ -8,6 +8,7 @@ SRCSPATH 	= srcs
 
 SRCS =  main.cpp   \
 		Client.cpp \
+		Channel.cpp \
 		Parser.cpp \
 		Server.cpp \
 		USER.cpp   \

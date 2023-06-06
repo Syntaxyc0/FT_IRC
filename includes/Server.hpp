@@ -1,7 +1,6 @@
 #ifndef	SERVER_HPP
 # define SERVER_HPP
 
-// # include "Channel.hpp"
 #include "Client.hpp"
 #include "Replies.hpp"
 #include <sstream>
@@ -27,8 +26,8 @@
 
 extern int				 exit_state;
 
-
 class	Client;
+class   Channel;
 
 class Server
 {
@@ -41,11 +40,13 @@ class Server
 
         int				flags;
         struct pollfd	sockets[SOMAXCONN + 1]; //listening socket is sockets[0]
-        int	socket_number;
-        int	events_number;
+        int             socket_number;
+        int             events_number;
         void			init_server();
         std::vector<pollfd>::iterator   new_connection();
         std::vector<pollfd>::iterator   disconnect(int fd);
+        std::vector<Channel>    Channels;
+        std::vector<Client>     Clients;
 	
     public:
         class SocketException : public std::exception
@@ -65,14 +66,15 @@ class Server
         Server(const char *port, const char *password);
         void monitoring();
         int shut_down();
-
-		Client	*find_user_by_nickname(std::string nickname);
+        Client	*find_user_by_nickname(std::string nickname);
 		void	send_to_all(std::string message);
 		void	adduser(int fd, std::string hostname);
 		void    Pass(Client *client, std::vector<std::string> args);
 		void	nick(Client *client, std::vector<std::string> args);
 		void	sig_handler(int);
         void    errorin(bool err, const char *msg);
+        Client      *find_client(std::string nickname);
+        Channel     *find_channel(std::string channel_name);
 };
 
 #endif

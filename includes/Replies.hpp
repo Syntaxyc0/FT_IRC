@@ -27,6 +27,7 @@
 # define ERR_ERRONEUSNICKNAME(client, nick)					"432 " + client + " " + nick + " :Erroneus nickname"
 # define ERR_NICKNAMEINUSE(client, nick)					"433 " + client + " " + nick + " :Nickname is already in use"
 # define ERR_NICKCOLLISION (client, nick, user, host)		"436 " + client + " " + nick + " :Nickname collision KILL from " + user + "@" + host
+# define ERR_USERNOTINCHANNEL (client, channel)				"441 " + client + " " + channel + " :They aren't on that channel" 
 # define ERR_NOTONCHANNEL(client, channel)					"442 " + client + " " + channel + " :You're not on that channel"
 # define ERR_USERONCHANNEL(client, nick, channel)			"443 " + client + " " + nick + " " + channel + " :is already on channel"
 # define ERR_NOTREGISTERED(client)							"451 " + client + " :You have not registered"
@@ -38,8 +39,13 @@
 # define ERR_BANNEDFROMCHAN(client, channel)				"474 " + client + " " + channel + " :Cannot join channel (+b)"
 # define ERR_BADCHANNELKEY(client, channel)					"475 " + client + " " + channel + " :Cannot join channel (+k)"
 # define ERR_BADCHANMASK(channel)							"476 " + channel + " :Bad channel Mask"
-# define ERR_CHANOPRIVSNEEDED(client, channel)				"482 " + client + " " channel + " :You're not channel operator"
+# define ERR_CHANOPRIVSNEEDED(client, channel)				"482 " + client + " " + channel + " :You're not channel operator"
 
 # define ERR_UMODEUNKNOWNFLAG(client)						"501 " + client + " :Unknown MODE flag"
+
+// MESSAGE NON-OFFICIEL
+
+# define ERR_NOPRIMORDIAL(client, channel)					client + " " + channel + ": You're not the primordial channel operator"
+# define ERR_CANTKICKOPE(client, channel)					client + " " + channel + ": operator can't be kicked"
 
 #endif
