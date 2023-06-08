@@ -36,7 +36,7 @@ void	Client::set_realname(std::string realname)
 	_realname = realname;
 }
 
-void	Client::set_register(bool state)
+void	Client::set_register(int state)
 {
 	_is_registered = state;
 }
@@ -77,7 +77,7 @@ std::string Client::get_nickname()
 	return _nickname;
 }
 
-bool	Client::get_registered()
+int	Client::get_registered()
 {
 	return _is_registered;
 }
@@ -91,10 +91,19 @@ std::string	Client::get_current_channel()
 //                     Function                       //
 //****************************************************//
 
-void	Client::send_to_client(std::string message)
+void	Client::send_reply(std::string message)
 {
-	int	bytes_sent;
-	int len = (int)message.size();
-
-	bytes_sent = send(_fd, message.c_str(), len, 0);
+	std::string		username;
+	std::string		hostname;
+	if (_username.empty())
+		username = "!" + _username;
+	else
+		username = "";
+	if (_hostname.empty())
+		hostname = "@" + _hostname;
+	else
+		hostname = ""; 
+	std::string 	reply = ":" + _nickname + username + hostname + " " + message + "\r\n";
+	if (send(_fd, reply.c_str(), reply.size(), 0) == -1)
+		throw	std::runtime_error(strerror(errno));
 }

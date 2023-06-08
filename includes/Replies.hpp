@@ -2,6 +2,8 @@
 
 # define REPLIES_HPP
 
+# define RPL_WELCOME(nick, user, host)						"001 " + nick   + "!" + user + "@" + host
+
 # define RPL_UMODEIS(client, modes)							"221 " + client + " " + modes
 
 # define RPL_AWAY(client, nick, message)					"301 " + client + " " + nick + " :" + message

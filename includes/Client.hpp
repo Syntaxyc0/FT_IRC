@@ -1,6 +1,7 @@
 #ifndef	CLIENT_HPP
 # define CLIENT_HPP
 
+# include "Server.hpp"
 # include <sys/socket.h>
 # include <sys/types.h>
 # include <string>
@@ -33,7 +34,7 @@ class	Client
 		// Setters
 		
 			void			set_fd(int fd);
-			void			set_register(bool state);
+			void			set_register(int state);
 			void			set_hostname(std::string name);
 			void			set_username(std::string name);
 			void			set_realname(std::string name);
@@ -43,7 +44,7 @@ class	Client
 		// Getters
 
 			int				get_fd();
-			bool			get_registered();
+			int			get_registered();
 			std::string		get_hostname();
 			std::string		get_username();
 			std::string		get_realname();
@@ -52,7 +53,7 @@ class	Client
 
 		// Functions
 
-			void			send_to_client(std::string message);
+		void	send_reply(std::string message);
 };
 
 #endif

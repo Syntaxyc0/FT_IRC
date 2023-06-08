@@ -1,129 +1,189 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Server.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: elise <elise@student.42.fr>                +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/05 13:45:06 by elise             #+#    #+#             */
-/*   Updated: 2023/05/05 14:15:29 by elise            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "Server.hpp"
 
-Server::Server():port(""), password("")
+int exit_state = 0;
+
+void Server::errorin(bool err, const char *msg)
 {
-    errorin(std::atoi(port) <= 0, "Invalid port.");
+    if (err == true)
+        throw SocketException(msg);
+}
+
+
+Server::Server():_port(""), _password("")
+{
+    errorin(std::atoi(_port) <= 0, "Invalid port.");
 }
 
 int Server::shut_down()
 {
-    if (exit)
+    if (exit_state)
         return (1);
     return (0);
 }
 
-int Server::new_connection()
-{
-    struct sockaddr_in client_addr;
-    socklen_t client_addr_len = sizeof(client_addr);
-    sockets[socket_number].fd = accept(sockets[0].fd, (sockaddr *) &client_addr, &client_addr_len);
-    if (sockets[socket_number].fd == -1)
-    {
-        std::cerr << "Failed to accept incoming connection.\n";
-        sockets[socket_number].fd = 0;
-        return (-1);
-    }
-    std::cout << "New connection successfull!\n";
-    sockets[socket_number++].events = POLLIN;
-    return (0);
-}
+
 
 void Server::monitoring()
 {
-    events_number = poll(sockets, socket_number, 1000);
-    if (events_number == -1)
-    {
-        std::cerr << " Failed poll() execution.\n";
-        return;
-    }
-    for (int j = 0; j < socket_number; j++)
-    {
-        if (sockets[j].revents & POLLERR)
-            std::cerr << "/!\\ Warning: An error occurred on a file descriptor.\n";
-        if (sockets[j].revents != POLLIN)
-            continue;
-        sockets[j].revents = 0;
-        if (sockets[j].fd == sockets[0].fd)
-            new_connection();
-        else //handle message function needed, below is just a snippet
-        {
-            char buffer[1024];
-            int bytes_received = recv(sockets[j].fd , buffer, sizeof buffer, 0);
-            buffer[bytes_received] = '\0';
-            std::cout << buffer;
-            if (!strncmp(buffer, "SHUTDOWN", 8))// temporary closing solution for server
-                exit = 1;
-        }
+	errorin(poll(&(*_sockets.begin()), _sockets.size(), 1000) == -1, " Failed poll() execution.\n");
+	for (std::vector<pollfd>::iterator it = _sockets.begin(); it != _sockets.end(); it++)
+	{
+		// std::cout<<GREEN<<"size "<< _sockets.size()<<" fd "<< it->fd<<" revents "<<it->revents<<END<<std::endl;
+		short revents = it->revents;
+		it->revents = 0;
+		if (revents & POLLHUP || revents & POLLERR) //deco de _clienList[it->fd]
+		{
+			if (revents & POLLERR)
+				std::cerr << RED << "/!\\ Warning: An error occurred on a file descriptor." << END << std::endl;
+			it = disconnect(it->fd);
+			continue;
+		}
+		else if (revents & POLLIN) //nouvelle requete
+		{
+			if (it->fd == _sockets.begin()->fd) //nouvelle connexion
+			{
+				it = new_connection();
+				continue;
+			}
+			else //nouveau message
+			{
+				char buffer[1024];
+				int bytes_received = recv(it->fd , buffer, sizeof(buffer), 0);
+				buffer[bytes_received] = '\0';
+				std::string	tmp_buffer(buffer);
+				std::stringstream	ss(tmp_buffer);
+				std::string line;
+				while (std::getline(ss, line))
+				{
+					std::vector<std::string>	received = parse(line);
+					if (!received.empty())
+					{
+						if (!strcmp("USER", received[0].c_str()))
+						{
+							user(_clientList[it->fd], received);
+						}
+						// else if (!strcmp("PASS", received[0].c_str()))
+						// {
+						// 	Pass(_clientList[it->fd], received);
+						// }
+						else if (!strcmp("QUIT", received[0].c_str()))
+						{
+							it = disconnect(it->fd);
+							break;
+						}
+						else if (!strcmp("NICK", received[0].c_str()))
+						{
+							nick(_clientList[it->fd], received);
+						}
+					}
+				}
+				if (it == _sockets.begin())
+					continue;
+				std::cout<<BLUE<<"NICK : "<<_clientList[it->fd]->get_nickname()<<END<<std::endl;
+				std::cout<<CYAN<<"USERNAME : "<<_clientList[it->fd]->get_username() <<END<<std::endl;
+				std::cout<<YELLOW<<"REALNAME : "<<_clientList[it->fd]->get_realname() <<END<<std::endl;
+				std::string clean_recept(buffer);
+				clean_recept.erase(clean_recept.size() - 1);
+				std::cout <<GREEN<<"full received buffer :\n"<< clean_recept<<"from "<< _clientList[it->fd]->get_nickname()<<END<<std::endl;
+				std::cout<<std::endl;
+			}	
+		}
+		sleep(1);
+	}
+}
 
-    }
+
+std::vector<pollfd>::iterator Server::new_connection()
+{
+	char tmp_hostname[NI_MAXHOST];
+    struct sockaddr_in client_addr;
+    socklen_t client_addr_len = sizeof(client_addr);
+	int fd = accept(_listening_socket, (sockaddr *)&client_addr, &client_addr_len);
+    errorin(fd == -1, "Failed to accept incoming connection.\n");
+	pollfd	new_poll = {fd, POLLIN, 0};
+	_sockets.push_back(new_poll);
+	getnameinfo((sockaddr *) &client_addr, sizeof(client_addr), tmp_hostname, NI_MAXHOST, NULL, 0, 0); //tout ca pour choper son hostname.. Ils sont fou ces romains!
+	adduser(fd, tmp_hostname);
+    std::cout << MAGENTA << "New connection successfull!" << END << std::endl;
+	return _sockets.begin();
 }
 
 void Server::init_server()
 {
-    sockets[0].fd = socket(AF_INET, SOCK_STREAM, 0);//listen socket
-    errorin(sockets[0].fd == -1, strerror(errno));
-    flags = fcntl(sockets[0].fd, F_GETFL);
-    fcntl(sockets[0].fd, F_SETFL, flags | O_NONBLOCK);//non blocking flags set
-    
-    struct addrinfo hints; //defining expected type of address
-    std::memset(&hints, 0, sizeof(addrinfo));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = AI_PASSIVE;
-
-    struct addrinfo *res;
-    errorin(getaddrinfo(0, port, &hints, &res) != 0, "Failed to get address info.");
-    if(bind(sockets[0].fd, res->ai_addr, res->ai_addrlen) == -1)
-    {
-        freeaddrinfo(res);
-        errorin(1, "Failed to bind listen socket.");
-    }
-    freeaddrinfo(res);
-    errorin(listen(sockets[0].fd, SOMAXCONN) == -1, "Failed to listen on socket.");
-    sockets[0].events = POLLIN;
-    socket_number = 1;
-    std::cout << "Listening on port " << port << "..." << std::endl;
+    _listening_socket = socket(AF_INET, SOCK_STREAM, 0);//listen socket
+    errorin(_listening_socket == -1, strerror(errno));
+    int flags = fcntl(_listening_socket, F_GETFL);
+	int optval = 1;
+	setsockopt(_listening_socket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)); // permet de reutiliser cette socket, besoin que de deux on a qu'un thread
+    fcntl(_listening_socket, F_SETFL, flags | O_NONBLOCK);//non blocking flags set
+	struct	sockaddr_in	serv = {};
+    std::memset(&serv, 0, sizeof(serv));
+	serv.sin_family = AF_INET;
+	serv.sin_port = htons(atoi(_port));
+	serv.sin_addr.s_addr = INADDR_ANY; // permet de se bind a n'importe quelle IP
+    errorin(bind(_listening_socket, (struct sockaddr *)&serv, sizeof(serv))  == -1, "Failed to bind listen socket.");
+    errorin(listen(_listening_socket, SOMAXCONN) == -1, "Failed to listen on socket.");
+	pollfd	first_socket = {_listening_socket, POLLIN, 0};
+	_sockets.push_back(first_socket);
 }
 
-Server::Server(const char *port, const char *password): port(port), password(password)
+Server::Server(const char *port, const char *password): _port(port), _password(password)
 {
-    errorin(std::atoi(port) <= 0, "Invalid port.\n");
-    memset(&sockets, 0, SOMAXCONN + 1);
-    exit = 0;
-    flags = 0;
+    errorin(std::atoi(_port) <= 0, "Invalid port.\n");
     init_server();
 }
 
 Server::~Server()
 {
-    fcntl(sockets[0].fd, F_SETFL, O_RDONLY);
-    std::cout << socket_number << "\n";
-    for (int i = socket_number - 1; i > 0; i--)
+	if (!_clientList.empty())
+	{
+		for (std::map<int, Client*>::iterator it = _clientList.begin(); it != _clientList.end(); it++)
+			delete(it->second);
+	}
+    fcntl(_listening_socket, F_SETFL, O_RDONLY);
+    for (std::vector<pollfd>::iterator it = _sockets.begin(); it != _sockets.end(); it++)
     {
-        if (sockets[i].fd)
+        if (it->fd)
         {
-            char buffer[1024];
-            while (recv(sockets[i].fd, buffer, sizeof(buffer), 0) > 0) {}
-            if (close(sockets[i].fd))
-                std::cerr << "/!\\ Error while closing file descriptor: " << strerror(errno) << std::endl;
-            sockets[i].fd = 0;
+            if (close(it->fd))
+                std::cerr << RED << "/!\\ Error while closing file descriptor: " << strerror(errno) << END << std::endl;
+            it->fd = 0;
         }
     }
-    if (close(sockets[0].fd))
-        std::cerr << "/!\\ Error while closing file descriptor: " << strerror(errno) << std::endl;
-    std::cout << "Server shuted down successfully" << std::endl; 
+	exit_state = 1;
+    std::cout << "\n\t-- Server shutted down successfully --" << std::endl; 
+}
+
+void	Server::adduser(int fd, std::string hostname)
+{
+	Client *newuser = new	Client(fd, hostname);
+	_clientList.insert(std::make_pair(fd, newuser));
+	std::cout<<GREEN<<"New user added"<<" fd : "<<fd<<" hostname "<<hostname<<END<<std::endl;	//DEBUG
+	newuser->send_reply(RPL_WELCOME(newuser->get_nickname(), newuser->get_username(), hostname));
+}
+
+std::vector<pollfd>::iterator Server::disconnect(int fd)
+{
+
+	//TODO: lui faire quitter son channel actif s'il en a un
+	for (std::vector<pollfd>::iterator it =_sockets.begin(); it != _sockets.end(); it++)
+	{
+		if (it->fd == fd)
+		{
+			std::cout << MAGENTA << _clientList[it->fd]->get_username() << " has disconnected" << END << std::endl;
+			_sockets.erase(it);
+			_clientList.erase(fd);
+			close(fd);
+			return _sockets.begin();
+		}	
+	}
+	return _sockets.begin();
+}
+
+void	Server::send_to_all(std::string message)
+{
+	for (std::vector<pollfd>::iterator it = _sockets.begin(); it != _sockets.end(); it++)
+		_clientList[it->fd]->send_reply(message);
 }
 
 //****************************************************//
