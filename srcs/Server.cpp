@@ -50,6 +50,7 @@ void Server::monitoring()
 				char buffer[1024];
 				int bytes_received = recv(it->fd , buffer, sizeof(buffer), 0);
 				buffer[bytes_received] = '\0';
+				std::cout << "Le buffer: " << buffer << std::endl;
 				std::string	tmp_buffer(buffer);
 				std::stringstream	ss(tmp_buffer);
 				std::string line;

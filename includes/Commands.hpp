@@ -27,4 +27,11 @@ void	mode_restricion_topic_cmd(Channel &current);
 void	mode_limit_user(Channel &current, int limit_nb);
 void	mode_operator_privilege(Channel &current, Client &user, std::string target);
 
+class NoMsg  : public std::exception{
+	public:
+	virtual const char* what() const throw(){
+		return ("");
+	}
+};
+
 #endif

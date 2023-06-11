@@ -76,7 +76,7 @@ bool	Channel::get_user_limit()
 	return (_user_limit);
 }
 
-int	get_user_limit_nb()
+int	Channel::get_user_limit_nb()
 {
 	return (_user_limit_nb);
 }
