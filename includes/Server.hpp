@@ -39,7 +39,7 @@ class Server
 		int 						_listening_socket;
 
         int				flags;
-        struct pollfd	sockets[SOMAXCONN + 1]; //listening socket is sockets[0]
+        struct pollfd	sockets[SOMAXCONN]; //listening socket is sockets[0]
         int             socket_number;
         int             events_number;
         void			init_server();
@@ -67,11 +67,11 @@ class Server
         void monitoring();
         int shut_down();
         Client	*find_user_by_nickname(std::string nickname);
-		void	send_to_all(std::string message);
 		void	adduser(int fd, std::string hostname);
 		void    Pass(Client *client, std::vector<std::string> args);
 		void	nick(Client *client, std::vector<std::string> args);
 		void	sig_handler(int);
+        std::vector<pollfd>::iterator handle_data(std::vector<pollfd>::iterator it);
         void    errorin(bool err, const char *msg);
         Client      *find_client(std::string nickname);
         Channel     *find_channel(std::string channel_name);

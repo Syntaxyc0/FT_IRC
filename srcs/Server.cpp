@@ -21,7 +21,41 @@ int Server::shut_down()
     return (0);
 }
 
-
+std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator it)
+{
+	char buffer[1024];
+	int bytes_received = recv(it->fd , buffer, sizeof(buffer), 0);
+	buffer[bytes_received] = '\0';
+	std::string			tmp_buffer(buffer);
+	std::stringstream	ss(tmp_buffer);
+	std::string line;
+	while (std::getline(ss, line))
+	{
+		std::vector<std::string>	received = parse(line);
+		if (!received.empty())
+		{
+			if (!strcmp("USER", received[0].c_str()))
+				user(_clientList[it->fd], received);
+			// else if (!strcmp("PASS", received[0].c_str()))
+			// {
+			// 	Pass(_clientList[it->fd], received);
+			// }
+			else if (!strcmp("QUIT", received[0].c_str()))
+				return (disconnect(it->fd));
+			else if (!strcmp("NICK", received[0].c_str()))
+				nick(_clientList[it->fd], received);
+		}
+	}
+	std::cout<<BLUE<<"NICK : "<<_clientList[it->fd]->get_nickname()<<END<<std::endl;
+	std::cout<<CYAN<<"USERNAME : "<<_clientList[it->fd]->get_username() <<END<<std::endl;
+	std::cout<<YELLOW<<"REALNAME : "<<_clientList[it->fd]->get_realname() <<END<<std::endl;
+	std::string clean_recept(buffer);
+	clean_recept.erase(clean_recept.size() - 1);
+	std::cout <<GREEN<<"full received buffer :\n"<< buffer <<"from "<< _clientList[it->fd]->get_nickname()<<END<<std::endl;
+	// std::cout <<GREEN<<"full received buffer :\n"<< clean_recept<<"from "<< _clientList[it->fd]->get_nickname()<<END<<std::endl;
+	std::cout<<std::endl;
+	return (it);
+}
 
 void Server::monitoring()
 {
@@ -36,57 +70,13 @@ void Server::monitoring()
 			if (revents & POLLERR)
 				std::cerr << RED << "/!\\ Warning: An error occurred on a file descriptor." << END << std::endl;
 			it = disconnect(it->fd);
-			continue;
 		}
 		else if (revents & POLLIN) //nouvelle requete
 		{
 			if (it->fd == _sockets.begin()->fd) //nouvelle connexion
-			{
 				it = new_connection();
-				continue;
-			}
-			else //nouveau message
-			{
-				char buffer[1024];
-				int bytes_received = recv(it->fd , buffer, sizeof(buffer), 0);
-				buffer[bytes_received] = '\0';
-				std::string	tmp_buffer(buffer);
-				std::stringstream	ss(tmp_buffer);
-				std::string line;
-				while (std::getline(ss, line))
-				{
-					std::vector<std::string>	received = parse(line);
-					if (!received.empty())
-					{
-						if (!strcmp("USER", received[0].c_str()))
-						{
-							user(_clientList[it->fd], received);
-						}
-						// else if (!strcmp("PASS", received[0].c_str()))
-						// {
-						// 	Pass(_clientList[it->fd], received);
-						// }
-						else if (!strcmp("QUIT", received[0].c_str()))
-						{
-							it = disconnect(it->fd);
-							break;
-						}
-						else if (!strcmp("NICK", received[0].c_str()))
-						{
-							nick(_clientList[it->fd], received);
-						}
-					}
-				}
-				if (it == _sockets.begin())
-					continue;
-				std::cout<<BLUE<<"NICK : "<<_clientList[it->fd]->get_nickname()<<END<<std::endl;
-				std::cout<<CYAN<<"USERNAME : "<<_clientList[it->fd]->get_username() <<END<<std::endl;
-				std::cout<<YELLOW<<"REALNAME : "<<_clientList[it->fd]->get_realname() <<END<<std::endl;
-				std::string clean_recept(buffer);
-				clean_recept.erase(clean_recept.size() - 1);
-				std::cout <<GREEN<<"full received buffer :\n"<< clean_recept<<"from "<< _clientList[it->fd]->get_nickname()<<END<<std::endl;
-				std::cout<<std::endl;
-			}	
+			else
+				it = handle_data(it);
 		}
 		sleep(1);
 	}
@@ -178,12 +168,6 @@ std::vector<pollfd>::iterator Server::disconnect(int fd)
 		}	
 	}
 	return _sockets.begin();
-}
-
-void	Server::send_to_all(std::string message)
-{
-	for (std::vector<pollfd>::iterator it = _sockets.begin(); it != _sockets.end(); it++)
-		_clientList[it->fd]->send_reply(message);
 }
 
 //****************************************************//
