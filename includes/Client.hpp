@@ -32,20 +32,24 @@ class	Client
 			~Client();
 
 		// Setters
+		
 			void			set_fd(int fd);
 			void			set_register(int state);
 			void			set_hostname(std::string name);
 			void			set_username(std::string name);
 			void			set_realname(std::string name);
 			void			set_nickname(std::string name);
+			void			set_current_channel(std::string channel);
 
 		// Getters
+
 			int				get_fd();
 			int			get_registered();
 			std::string		get_hostname();
 			std::string		get_username();
 			std::string		get_realname();
 			std::string		get_nickname();
+			std::string		get_current_channel();
 
 		// Functions
 

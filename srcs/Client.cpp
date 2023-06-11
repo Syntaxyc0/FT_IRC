@@ -5,11 +5,11 @@ Client::Client(int fd, std::string hostname): _fd(fd), _hostname(hostname)
 	_is_registered = 0;
 }
 
-Client::~Client()
-{
-}
+Client::~Client() {}
 
-	// Setters
+//****************************************************//
+//                      Setter                        //
+//****************************************************//
 
 void	Client::set_fd(int fd)
 {
@@ -41,7 +41,16 @@ void	Client::set_register(int state)
 	_is_registered = state;
 }
 
-	// Getters
+void	Client::set_current_channel(std::string channel)
+{
+	if ( !channel.size() )
+		_current_channel.erase();
+	_current_channel = channel;
+}
+
+//****************************************************//
+//                      Getter                        //
+//****************************************************//
 
 int	Client::get_fd()
 {
@@ -72,6 +81,15 @@ int	Client::get_registered()
 {
 	return _is_registered;
 }
+
+std::string	Client::get_current_channel()
+{
+	return _current_channel;
+}
+
+//****************************************************//
+//                     Function                       //
+//****************************************************//
 
 void	Client::send_reply(std::string message)
 {

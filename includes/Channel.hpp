@@ -21,29 +21,32 @@ class Channel
 		Server						*_server;
 
 // MODE
-		bool				_invite_only;			//set to 0 when init
-		bool				_channel_key; 			//set to 0 when init
-		std::string			_password;
-		bool				_restriction_TOPIC_cmd;	//set to 0 when init
-		bool				_user_limit; 			//set to 0 when init
-		int					_user_limit_nb;
+		bool						_invite_only;			//set to 0 when init
+		bool						_channel_key; 			//set to 0 when init
+		std::string					_password;
+		bool						_restriction_TOPIC_cmd;	//set to 0 when init
+		bool						_user_limit; 			//set to 0 when init
+		int							_user_limit_nb;
 
 	public:
 
 // SETTER
-		void				set_invite_only();
-		void				set_channel_key( std::string password );
-		void				set_user_limit( int limit, Client &user );
-		void				set_restriction_TOPIC_cmd();
+		void						set_invite_only();
+		void						set_channel_key( std::string password );
+		void						set_user_limit( int limit, Client &user );
+		void						set_restriction_TOPIC_cmd();
 
 // GETTER
 
-		std::string			get_name();
+		std::string					get_name();
+		Server						*get_server();
+		std::vector<std::string>	get_channelClients();
 
-		bool				get_invite_only();
-		bool				get_channel_key();
-		bool				get_user_limit();
-		bool				get_restriction_TOPIC_cmd();
+		bool						get_invite_only();
+		bool						get_channel_key();
+		bool						get_user_limit();
+		int							get_user_limit_nb();
+		bool						get_restriction_TOPIC_cmd();
 
 // FUNCTION
 
@@ -57,6 +60,7 @@ class Channel
 		int					find_operator_index( std::string target );
 
 		void				send_all( std::string message );
+		void				add_client( std::string user );
 		void				kick_client( std::string user );
 };
 
