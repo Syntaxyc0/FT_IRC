@@ -1,6 +1,23 @@
 #include "Channel.hpp"
 
 //****************************************************//
+//              Constructor/Destructor                //
+//****************************************************//
+
+Channel::Channel(std::string name, std::string primordial, Server &server):
+_name(name), _primordial(primordial)
+{
+	_operators.push_back(primordial);
+	_channelClients.push_back(primordial);
+	_server = &server;
+	_invite_only = 0;
+	_channel_key = 0;
+	_restriction_TOPIC_cmd = 0;
+	_user_limit = 0;
+	server.get_Channels().push_back(*this);
+}
+
+//****************************************************//
 //                      Setter                        //
 //****************************************************//
 

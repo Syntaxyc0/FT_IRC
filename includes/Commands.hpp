@@ -4,13 +4,14 @@
 # include <vector>
 # include "Client.hpp"
 # include "Server.hpp"
-
-class	Client;
-class   Channel;
-
 #include "Channel.hpp"
 #include "Replies.hpp"
 #include <sstream>
+
+class	Client;
+class   Channel;
+class	Server;
+
 
 std::vector<std::string> parse(std::string input);
 void	user(Client *client, std::vector<std::string> args);
@@ -18,9 +19,12 @@ bool	check_auth(Client *client);
 
 void	kick_command(Channel &current, Client &me, std::string target);
 void	invite_command(Channel &current, Client &me, std::string target);
+void	join_command(Client *client, std::vector<std::string> received);
+void	create_channel(Client *client, std::string name, Server &server);
 
 // MODE COMMAND
 
+void	mode_manager(Client *client, std::vector<std::string> received);
 void	mode_invite_only(Channel &current);
 void	mode_channel_key(Channel &current, std::string password);
 void	mode_restricion_topic_cmd(Channel &current);

@@ -26,9 +26,11 @@ std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator 
 	char buffer[1024];
 	int bytes_received = recv(it->fd , buffer, sizeof(buffer), 0);
 	buffer[bytes_received] = '\0';
+
 	std::string			tmp_buffer(buffer);
 	std::stringstream	ss(tmp_buffer);
 	std::string line;
+
 	while (std::getline(ss, line))
 	{
 		std::vector<std::string>	received = parse(line);
@@ -36,14 +38,14 @@ std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator 
 		{
 			if (!strcmp("USER", received[0].c_str()))
 				user(_clientList[it->fd], received);
-			// else if (!strcmp("PASS", received[0].c_str()))
-			// {
-			// 	Pass(_clientList[it->fd], received);
-			// }
+			else if (!strcmp("PASS", received[0].c_str()))
+				Pass(_clientList[it->fd], received);
 			else if (!strcmp("QUIT", received[0].c_str()))
 				return (disconnect(it->fd));
 			else if (!strcmp("NICK", received[0].c_str()))
 				nick(_clientList[it->fd], received);
+			else if (!strcmp("MODE", received[0].c_str()))
+				mode_manager(_clientList[it->fd], received);
 		}
 	}
 	std::cout<<BLUE<<"NICK : "<<_clientList[it->fd]->get_nickname()<<END<<std::endl;
@@ -51,7 +53,7 @@ std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator 
 	std::cout<<YELLOW<<"REALNAME : "<<_clientList[it->fd]->get_realname() <<END<<std::endl;
 	std::string clean_recept(buffer);
 	clean_recept.erase(clean_recept.size() - 1);
-	std::cout <<GREEN<<"full received buffer :\n"<< buffer <<"from "<< _clientList[it->fd]->get_nickname()<<END<<std::endl;
+	std::cout << "full received buffer :\n" << GREEN <<  buffer <<"from "<< _clientList[it->fd]->get_nickname()<<END<<std::endl;
 	// std::cout <<GREEN<<"full received buffer :\n"<< clean_recept<<"from "<< _clientList[it->fd]->get_nickname()<<END<<std::endl;
 	std::cout<<std::endl;
 	return (it);
@@ -126,10 +128,8 @@ Server::Server(const char *port, const char *password): _port(port), _password(p
 Server::~Server()
 {
 	if (!_clientList.empty())
-	{
 		for (std::map<int, Client*>::iterator it = _clientList.begin(); it != _clientList.end(); it++)
 			delete(it->second);
-	}
     fcntl(_listening_socket, F_SETFL, O_RDONLY);
     for (std::vector<pollfd>::iterator it = _sockets.begin(); it != _sockets.end(); it++)
     {
@@ -146,7 +146,7 @@ Server::~Server()
 
 void	Server::adduser(int fd, std::string hostname)
 {
-	Client *newuser = new	Client(fd, hostname);
+	Client *newuser = new Client(fd, hostname);
 	_clientList.insert(std::make_pair(fd, newuser));
 	std::cout<<GREEN<<"New user added"<<" fd : "<<fd<<" hostname "<<hostname<<END<<std::endl;	//DEBUG
 	newuser->send_reply(RPL_WELCOME(newuser->get_nickname(), newuser->get_username(), hostname));
@@ -162,10 +162,11 @@ std::vector<pollfd>::iterator Server::disconnect(int fd)
 		{
 			std::cout << MAGENTA << _clientList[it->fd]->get_username() << " has disconnected" << END << std::endl;
 			_sockets.erase(it);
+			delete(_clientList.at(fd));
 			_clientList.erase(fd);
 			close(fd);
 			return _sockets.begin();
-		}	
+		}
 	}
 	return _sockets.begin();
 }
@@ -176,16 +177,25 @@ std::vector<pollfd>::iterator Server::disconnect(int fd)
 
 Client  *Server::find_client(std::string nickname)
 {
-    for ( int i = 0; i < (int)Clients.size(); i++ )
-        if ( nickname == Clients.at(i).get_nickname() )
-            return ( &Clients.at(i) );
+    for ( int i = 0; i < (int)_Clients.size(); i++ )
+        if ( nickname == _Clients.at(i).get_nickname() )
+            return ( &_Clients.at(i) );
     return (0);
 }
 
 Channel *Server::find_channel(std::string channel_name)
 {
-    for ( int i = 0; i < (int)Channels.size(); i++ )
-        if ( channel_name == Channels.at(i).get_name() )
-            return ( &Channels.at(i) );
+    for ( int i = 0; i < (int)_Channels.size(); i++ )
+        if ( channel_name == _Channels.at(i).get_name() )
+            return ( &_Channels.at(i) );
     return (0);
+}
+
+//****************************************************//
+//                      Getter                        //
+//****************************************************//
+
+std::vector<Channel>	Server::get_Channels()
+{
+	return (_Channels);
 }

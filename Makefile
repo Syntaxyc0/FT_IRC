@@ -6,14 +6,15 @@ HEADERS		= includes
 
 SRCSPATH 	= srcs
 
-SRCS =  main.cpp   \
-		Client.cpp \
-		Channel.cpp \
-		Parser.cpp \
-		Server.cpp \
-		USER.cpp   \
-		PASS.cpp   \
-		NICK.cpp   \
+SRCS =  main.cpp	\
+		Client.cpp	\
+		Channel.cpp	\
+		Parser.cpp	\
+		Server.cpp	\
+		USER.cpp	\
+		PASS.cpp	\
+		NICK.cpp	\
+		JOIN.cpp	\
 
 SERV_PATH = server
 

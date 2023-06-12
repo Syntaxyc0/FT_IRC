@@ -30,6 +30,10 @@ class Channel
 
 	public:
 
+// CONSTRUCTOR
+		Channel(std::string name, std::string primordial, Server &server);
+		~Channel();
+
 // SETTER
 		void						set_invite_only();
 		void						set_channel_key( std::string password );

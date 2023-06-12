@@ -49,4 +49,5 @@
 # define ERR_CANTKICKOPE(client, channel)					client + " " + channel + ": operator can't be kicked"
 # define ERR_LIMITREACHED(channel)							channel + ": user limit reached"
 
+
 #endif
