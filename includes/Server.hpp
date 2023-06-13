@@ -73,6 +73,8 @@ class Server
 
 		std::vector<Channel>	get_Channels();
 
+	// EXCEPTION
+	
 		class SocketException : public std::exception
 		{
 			private:

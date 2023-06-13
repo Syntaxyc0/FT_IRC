@@ -20,7 +20,7 @@ bool	check_auth(Client *client);
 void	kick_command(Channel &current, Client &me, std::string target);
 void	invite_command(Channel &current, Client &me, std::string target);
 void	join_command(Client *client, std::vector<std::string> received);
-void	create_channel(Client *client, std::string name, Server &server);
+Channel	*create_channel(Client *client, std::string name, Server &server);
 
 // MODE COMMAND
 
