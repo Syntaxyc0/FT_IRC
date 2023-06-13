@@ -14,7 +14,6 @@ _name(name), _primordial(primordial)
 	_channel_key = 0;
 	_restriction_TOPIC_cmd = 0;
 	_user_limit = 0;
-	server.get_Channels().push_back(*this);
 }
 
 //****************************************************//

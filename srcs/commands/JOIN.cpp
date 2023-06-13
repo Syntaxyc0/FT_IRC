@@ -16,11 +16,11 @@
 void	join( Client *client, std::vector<std::string> received, Server &server)
 {
 	if ( !server.find_channel( received[1] ) )
-		server.Channels.push_back( create_channel( client, received[1], server ) );
+		server.get_Channels().push_back( *create_channel( client, received[1], server ) );
 	std::cout << server.find_channel( received[1] )->get_name() << std::endl;
 }
 
 Channel	*create_channel(Client *client, std::string name, Server &server)
 {
-	return (new Channel(name, client, server));
+	return (new Channel(name, client->get_nickname(), server));
 }
