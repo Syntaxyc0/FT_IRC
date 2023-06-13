@@ -6,6 +6,8 @@
 
 void	mode_manager(Client *client, std::vector<std::string> received)
 {
+	(void)client;
+	(void)received;
 }
 
 

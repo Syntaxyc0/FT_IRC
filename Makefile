@@ -15,6 +15,7 @@ SRCS =  main.cpp	\
 		PASS.cpp	\
 		NICK.cpp	\
 		JOIN.cpp	\
+		MODE.cpp	\
 
 SERV_PATH = server
 
