@@ -109,6 +109,11 @@ std::vector<std::string> Channel::get_channelClients()
 	return (_channelClients);
 }
 
+std::string	Channel::get_password()
+{
+	return (_password);
+}
+
 //****************************************************//
 //                     Function                       //
 //****************************************************//

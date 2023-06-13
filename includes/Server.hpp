@@ -48,7 +48,6 @@ class Server
         std::vector<pollfd>::iterator	disconnect(int fd);
 		
         std::vector<Channel>			_Channels;
-        std::vector<Client>				_Clients;
 	
     public:
 
@@ -68,6 +67,10 @@ class Server
         void							errorin(bool err, const char *msg);
         Client							*find_client(std::string nickname);
         Channel							*find_channel(std::string channel_name);
+
+	// SETTER
+
+		void					add_Channels(Channel channel);
 
 	// GETTER
 

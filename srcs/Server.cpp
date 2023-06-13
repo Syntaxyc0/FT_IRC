@@ -44,8 +44,8 @@ std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator 
 				return (disconnect(it->fd));
 			else if (!strcmp("NICK", received[0].c_str()))
 				nick(_clientList[it->fd], received);
-			else if (!strcmp("MODE", received[0].c_str()))
-				mode_manager(_clientList[it->fd], received);
+			else if (!strcmp("JOIN", received[0].c_str()))
+				join_command(_clientList[it->fd], received, *this);
 		}
 	}
 	std::cout<<BLUE<<"NICK : "<<_clientList[it->fd]->get_nickname()<<END<<std::endl;
@@ -177,18 +177,18 @@ std::vector<pollfd>::iterator Server::disconnect(int fd)
 
 Client  *Server::find_client(std::string nickname)
 {
-    for ( int i = 0; i < (int)_Clients.size(); i++ )
-        if ( nickname == _Clients.at(i).get_nickname() )
-            return ( &_Clients.at(i) );
-    return (0);
+	for ( std::map<int, Client*>::iterator it = _clientList.begin(); it != _clientList.end(); it++ )
+		if ( nickname == it->second->get_nickname() )
+			return ( it->second );
+	return (0);
 }
 
 Channel *Server::find_channel(std::string channel_name)
 {
-    for ( int i = 0; i < (int)_Channels.size(); i++ )
-        if ( channel_name == _Channels.at(i).get_name() )
-            return ( &_Channels.at(i) );
-    return (0);
+	for ( int i = 0; i < (int)_Channels.size(); i++ )
+		if ( channel_name == _Channels.at(i).get_name() )
+			return ( &_Channels.at(i) );
+	return (0);
 }
 
 //****************************************************//
@@ -198,4 +198,13 @@ Channel *Server::find_channel(std::string channel_name)
 std::vector<Channel>	Server::get_Channels()
 {
 	return (_Channels);
+}
+
+//****************************************************//
+//                      Setter                        //
+//****************************************************//
+
+void	Server::add_Channels(Channel new_channel)
+{
+	_Channels.push_back(new_channel);
 }

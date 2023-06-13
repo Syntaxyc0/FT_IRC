@@ -48,6 +48,7 @@ class Channel
 
 		bool						get_invite_only();
 		bool						get_channel_key();
+		std::string					get_password();
 		bool						get_user_limit();
 		int							get_user_limit_nb();
 		bool						get_restriction_TOPIC_cmd();

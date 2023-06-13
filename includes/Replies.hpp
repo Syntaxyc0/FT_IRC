@@ -34,7 +34,7 @@
 # define ERR_NEEDMOREPARAMS(client, command)				"461 " + client + " " + command + " :Not enough parameters"
 # define ERR_ALREADYREGISTERED(client)						"462 " + client + " :You may not reregister"
 # define ERR_PASSWDMISMATCH(client)							"464 " + client + " :Password incorrect"
-# define ERR_CHANNELISFULL(client, channel)					"471 " + client + " " + channel + " :Cannot join channel (+l)"
+# define ERR_CHANNELISFULL(client, channel)					"471 " + client + " " + channel + " :Cannot join channel, user limit reached"
 # define ERR_INVITEONLYCHAN(client, channel)				"472 " + client + " " + channel + " :Cannot join channel (+i)"
 # define ERR_BANNEDFROMCHAN(client, channel)				"474 " + client + " " + channel + " :Cannot join channel (+b)"
 # define ERR_BADCHANNELKEY(client, channel)					"475 " + client + " " + channel + " :Cannot join channel (+k)"
