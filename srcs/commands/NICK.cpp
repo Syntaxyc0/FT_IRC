@@ -1,15 +1,6 @@
 // 		/NICK <nickname>
 #include "Commands.hpp"
 
-Client	*Server::find_user_by_nickname(std::string nickname)
-{
-	for (std::map<int, Client*>::iterator it=_clientList.begin(); it != _clientList.end();it++)
-	{
-		if (nickname == it->second->get_nickname())
-			return (it->second);
-	}
-	return (NULL);
-}
 
 void	Server::Nick(Client *client, std::vector<std::string> args)
 {

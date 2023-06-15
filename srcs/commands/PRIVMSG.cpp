@@ -22,7 +22,7 @@ void	Server::Privmsg(Client *client, std::vector<std::string> args)
 	{
 		std::cout<<*it<<std::endl;
 	}
-	if (args.size() == 2)
+	if (args.size() <= 2)
 	{
 		client->send_reply(ERR_NEEDMOREPARAMS(client->get_nickname(), "PRIVMSG"));
 		return ;
@@ -45,18 +45,18 @@ void	Server::Privmsg(Client *client, std::vector<std::string> args)
 	}
 	else //msg a un user
 	{
-		std::cout <<"client "<< args[1]<<std::endl;
-		if (!find_client(args[1]))
+		if (!find_user_by_nickname(args[1]))
 		{
+			std::cout<<"oups "<<args[1]<<std::endl;
 			client->send_reply(ERR_NOSUCHNICK(client->get_nickname(), args[1]));
 			return ;
 		}
-		std::string message("");
-		for (unsigned int i = 2; i < args.size();i++)
+		std::string message(args[2]);
+		for (unsigned int i = 3; i < args.size();i++)
 		{
 			message += " ";
 			message += args[i];
 		}
-		find_client(args[1])->send_reply(message);
+		find_user_by_nickname(args[1])->send_privmessage_from(client->get_nickname(), message);
 	}
 }

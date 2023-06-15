@@ -50,7 +50,9 @@ std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator 
 	// std::cout<<BLUE<<"NICK : "<<_clientList[it->fd]->get_nickname()<<END<<std::endl;
 	// std::cout<<CYAN<<"USERNAME : "<<_clientList[it->fd]->get_username() <<END<<std::endl;
 	// std::cout<<YELLOW<<"REALNAME : "<<_clientList[it->fd]->get_realname() <<END<<std::endl;
-	// std::string clean_recept(buffer);
+	// std::string clean_recept;
+	// clean_recept = "";
+	// clean_recept += buffer;
 	// clean_recept.erase(clean_recept.size() - 1);
 	// std::cout <<GREEN<<"full received buffer :\n"<< buffer <<"from "<< _clientList[it->fd]->get_nickname()<<END<<std::endl;
 	// std::cout <<GREEN<<"full received buffer :\n"<< clean_recept<<"from "<< _clientList[it->fd]->get_nickname()<<END<<std::endl;
@@ -89,7 +91,6 @@ void Server::monitoring()
 				}
 			}
 		}
-		sleep(1);
 	}
 }
 
@@ -170,7 +171,7 @@ std::vector<pollfd>::iterator Server::disconnect(int fd)
 	{
 		if (it->fd == fd)
 		{
-			std::cout << MAGENTA << _clientList[it->fd]->get_username() << " has disconnected" << END << std::endl;
+			std::cout << MAGENTA << _clientList[it->fd]->get_nickname() << " has disconnected" << END << std::endl;
 			_sockets.erase(it);
 			delete(_clientList[fd]);
 			_clientList.erase(fd);
@@ -187,9 +188,13 @@ std::vector<pollfd>::iterator Server::disconnect(int fd)
 
 Client  *Server::find_client(std::string nickname)
 {
+	
     for ( int i = 0; i < (int)Clients.size(); i++ )
+	{
+		std::cout<<RED<<Clients.at(i).get_nickname()<<END<<std::endl;
         if ( nickname == Clients.at(i).get_nickname() )
             return ( &Clients.at(i) );
+	}
     return (0);
 }
 
@@ -199,4 +204,14 @@ Channel *Server::find_channel(std::string channel_name)
         if ( channel_name == Channels.at(i).get_name() )
             return ( &Channels.at(i) );
     return (0);
+}
+
+Client	*Server::find_user_by_nickname(std::string nickname)
+{
+	for (std::map<int, Client*>::iterator it=_clientList.begin(); it != _clientList.end();it++)
+	{
+		if (nickname == it->second->get_nickname())
+			return (it->second);
+	}
+	return (NULL);
 }

@@ -66,7 +66,6 @@ class Server
         Server(const char *port, const char *password);
         void monitoring();
         int shut_down();
-        Client	*find_user_by_nickname(std::string nickname);
 		void	adduser(int fd, std::string hostname);
 		void    Pass(Client *client, std::vector<std::string> args);
 		void	Nick(Client *client, std::vector<std::string> args);
@@ -77,6 +76,7 @@ class Server
         void    errorin(bool err, const char *msg);
         Client      *find_client(std::string nickname);
         Channel     *find_channel(std::string channel_name);
+		Client		*find_user_by_nickname(std::string nickname);
 };
 
 #endif

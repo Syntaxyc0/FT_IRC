@@ -13,7 +13,7 @@ void    Server::Pass(Client *client, std::vector<std::string> args)
         client->send_reply(ERR_NEEDMOREPARAMS(client->get_hostname(), "PASS"));
         return ;
     }
-    else if (check_auth(client))
+    if (check_auth(client))
     {
         client->send_reply(ERR_ALREADYREGISTERED(client->get_nickname()));
         return ;
@@ -24,16 +24,5 @@ void    Server::Pass(Client *client, std::vector<std::string> args)
         return ;
     }
 	else
-	{
 		client->set_register(1);
-		// if (client->get_registered() == 2)
-		// {
-		// 	client->set_register(3);
-		// 	client->send_reply(RPL_WELCOME(client->get_nickname(), client->get_username(), client->get_hostname()));
-		// 	client->send_reply("auth ok");
-		// 	return ;
-		// }
-		// else
-		// 	client->set_register(1);
-	}
 }
