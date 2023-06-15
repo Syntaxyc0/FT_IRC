@@ -23,7 +23,7 @@ class	Client
 			std::string		_realname;
 			std::string		_nickname;
 
-			bool			_is_registered;
+			int			_is_registered;
 			std::string		_current_channel;
 
 	public:
@@ -44,7 +44,7 @@ class	Client
 		// Getters
 
 			int				get_fd();
-			int			get_registered();
+			int				get_registered();
 			std::string		get_hostname();
 			std::string		get_username();
 			std::string		get_realname();
@@ -54,6 +54,9 @@ class	Client
 		// Functions
 
 		void	send_reply(std::string message);
+		void	send_message(std::string message);
+		void	send_privmessage_from(std::string source, std::string message);
+
 };
 
 #endif

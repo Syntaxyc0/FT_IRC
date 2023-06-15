@@ -14,6 +14,7 @@ SRCS =  main.cpp	\
 		USER.cpp	\
 		PASS.cpp	\
 		NICK.cpp	\
+		PRIVMSG.cpp	\
 		JOIN.cpp	\
 		MODE.cpp	\
 

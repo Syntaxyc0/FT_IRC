@@ -4,9 +4,19 @@
 # include <vector>
 # include "Client.hpp"
 # include "Server.hpp"
-#include "Channel.hpp"
-#include "Replies.hpp"
-#include <sstream>
+# include "Channel.hpp"
+# include "Replies.hpp"
+# include <sstream>
+
+class	Client;
+class   Channel;
+
+// enum state
+// {
+// 	PASS_CHECKED = 1;
+	
+// };
+
 
 class	Client;
 class   Channel;

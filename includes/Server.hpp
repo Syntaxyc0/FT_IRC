@@ -51,41 +51,32 @@ class Server
         std::vector<Client>				_Clients;
 	
     public:
-
+        class SocketException : public std::exception
+        {
+            private:
+                const char  *msg;
+            public:
+                SocketException(const char *msg) : msg(msg) {}
+                virtual const char* what() const throw()
+                {
+                    return msg;
+                }
+        };
         Server();
         ~Server();
         Server &operator=(Server const &a);
         Server(const char *port, const char *password);
-
-        void							monitoring();
-        int								shut_down();
-        Client							*find_user_by_nickname(std::string nickname);
-		void							adduser(int fd, std::string hostname);
-		void							Pass(Client *client, std::vector<std::string> args);
-		void							nick(Client *client, std::vector<std::string> args);
-		void							sig_handler(int);
-        std::vector<pollfd>::iterator	handle_data(std::vector<pollfd>::iterator it);
-        void							errorin(bool err, const char *msg);
-        Client							*find_client(std::string nickname);
-        Channel							*find_channel(std::string channel_name);
-
-	// GETTER
-
-		std::vector<Channel>	get_Channels();
-
-	// EXCEPTION
-	
-		class SocketException : public std::exception
-		{
-			private:
-				const char  *msg;
-			public:
-				SocketException(const char *msg) : msg(msg) {}
-				virtual const char* what() const throw()
-				{
-					return msg;
-				}
-		};
+        void monitoring();
+        int shut_down();
+        Client	*find_user_by_nickname(std::string nickname);
+		void	adduser(int fd, std::string hostname);
+		void    Pass(Client *client, std::vector<std::string> args);
+		void	nick(Client *client, std::vector<std::string> args);
+		void	sig_handler(int);
+        std::vector<pollfd>::iterator handle_data(std::vector<pollfd>::iterator it);
+        void    errorin(bool err, const char *msg);
+        Client      *find_client(std::string nickname);
+        Channel     *find_channel(std::string channel_name);
 };
 
 #endif

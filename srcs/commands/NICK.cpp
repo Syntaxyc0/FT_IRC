@@ -1,17 +1,8 @@
 // 		/NICK <nickname>
 #include "Commands.hpp"
 
-Client	*Server::find_user_by_nickname(std::string nickname)
-{
-	for (std::map<int, Client*>::iterator it=_clientList.begin(); it != _clientList.end();it++)
-	{
-		if (nickname == it->second->get_nickname())
-			return (it->second);
-	}
-	return (NULL);
-}
 
-void	Server::nick(Client *client, std::vector<std::string> args)
+void	Server::Nick(Client *client, std::vector<std::string> args)
 {
 	if (args.size() == 1)
 	{
@@ -24,13 +15,13 @@ void	Server::nick(Client *client, std::vector<std::string> args)
 		return ;
 	}
 	client->set_nickname(args[1]);
-	if (client->get_registered() == 2)
-	{
-		client->set_register(3);
-		client->send_reply(RPL_WELCOME(client->get_nickname(), client->get_username(), client->get_hostname()));
+	if (client->get_registered() != 3 && client->get_registered() != 4)
+	{	
+		if (client->get_registered() == 1)
+			client->set_register(2);
+		else
+			client->set_register(0);
 	}
-	else
-		client->set_register(1);
 }
 // erreurs possibles
 
