@@ -7,6 +7,7 @@
 # include "Channel.hpp"
 # include "Replies.hpp"
 # include <sstream>
+# include <cstdlib>
 
 class	Client;
 class   Channel;
@@ -41,7 +42,8 @@ void	mode_manager(Client *client, std::vector<std::string> received, Server &ser
 void	mode_invite_only(Channel *current, Client *user);
 void	mode_channel_key(Channel *current, Client *user, std::string password);
 void	mode_restricion_topic_cmd(Channel *current, Client *user);
-void	mode_limit_user(Channel *current, Client *user, int limit_nb);
+void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> received);
+int		user_limit_int_number(std::string l);
 void	mode_operator_privilege(Channel *current, Client *user, std::string target);
 
 class NoMsg  : public std::exception{
