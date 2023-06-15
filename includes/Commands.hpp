@@ -4,9 +4,22 @@
 # include <vector>
 # include "Client.hpp"
 # include "Server.hpp"
-#include "Channel.hpp"
-#include "Replies.hpp"
-#include <sstream>
+# include "Channel.hpp"
+# include "Replies.hpp"
+# include <sstream>
+
+class	Client;
+class   Channel;
+
+enum state
+{
+	NOT_REGISTERED = 0,
+	PASS_CHECKED = 1,
+	NICK_CHECKED = 2,
+	REGISTERED = 3,
+	DISCONNECTED = 4
+};
+
 
 class	Client;
 class   Channel;
@@ -14,7 +27,7 @@ class	Server;
 
 
 std::vector<std::string> parse(std::string input);
-void	user(Client *client, std::vector<std::string> args);
+void	Quit(Client *client, std::vector<std::string> args);
 bool	check_auth(Client *client);
 
 void	kick_command(Channel &current, Client &me, std::string target);

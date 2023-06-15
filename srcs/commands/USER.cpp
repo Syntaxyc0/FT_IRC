@@ -6,12 +6,12 @@
 
 bool	check_auth(Client *client)
 {
-	if (client->get_registered() != 3)
+	if (client->get_registered() != REGISTERED)
 		return (0);
 	return (1);
 }
 
-void	user(Client *client, std::vector<std::string> args)
+void	Server::User(Client *client, std::vector<std::string> args)
 {
 	if (args.size() < 5)
 	{
@@ -25,12 +25,17 @@ void	user(Client *client, std::vector<std::string> args)
 	}
 	client->set_username(args[1]);
 	client->set_realname(args[4]);
-	if (client->get_registered() == 1)
+
+	if (client->get_registered() == NICK_CHECKED)
 	{
-		client->set_register(3);
+		client->set_register(REGISTERED);
 		client->send_reply(RPL_WELCOME(client->get_nickname(), client->get_username(), client->get_hostname()));
-		client->send_reply("auth ok !");
+		std::cout<<MAGENTA<<client->get_nickname()<<" has registered"<<END<<std::endl;
 	}
 	else
-		client->set_register(2);
+	{
+		client->set_register(NOT_REGISTERED);
+		return ;
+	}
+	broadcast_server(client->get_nickname() + " has joined the server");
 }

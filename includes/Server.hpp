@@ -50,23 +50,26 @@ class Server
         std::vector<Channel>			_Channels;
 	
     public:
-
         Server();
         ~Server();
         Server &operator=(Server const &a);
         Server(const char *port, const char *password);
+        void monitoring();
+        int shut_down();
+        Client	*find_user_by_nickname(std::string nickname);
+		void	adduser(int fd, std::string hostname);
+		void	command_handler(Client *client, std::vector<std::string> args);
+		void    Pass(Client *client, std::vector<std::string> args);
+		void	Nick(Client *client, std::vector<std::string> args);
+		void	Privmsg(Client *client, std::vector<std::string> args);
+		void	User(Client *client, std::vector<std::string> args);
+		void	sig_handler(int);
+        std::vector<pollfd>::iterator handle_data(std::vector<pollfd>::iterator it);
+        void    errorin(bool err, const char *msg);
+        Client      *find_client(std::string nickname);
+        Channel     *find_channel(std::string channel_name);
 
-        void							monitoring();
-        int								shut_down();
-        Client							*find_user_by_nickname(std::string nickname);
-		void							adduser(int fd, std::string hostname);
-		void							Pass(Client *client, std::vector<std::string> args);
-		void							nick(Client *client, std::vector<std::string> args);
-		void							sig_handler(int);
-        std::vector<pollfd>::iterator	handle_data(std::vector<pollfd>::iterator it);
-        void							errorin(bool err, const char *msg);
-        Client							*find_client(std::string nickname);
-        Channel							*find_channel(std::string channel_name);
+		void	broadcast_server(std::string message);
 
 	// SETTER
 
@@ -75,7 +78,7 @@ class Server
 	// GETTER
 
 		std::vector<Channel>	get_Channels();
-
+		
 	// EXCEPTION
 	
 		class SocketException : public std::exception

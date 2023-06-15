@@ -13,20 +13,16 @@ void    Server::Pass(Client *client, std::vector<std::string> args)
         client->send_reply(ERR_NEEDMOREPARAMS(client->get_hostname(), "PASS"));
         return ;
     }
-    else if (check_auth(client))
+    if (check_auth(client))
     {
         client->send_reply(ERR_ALREADYREGISTERED(client->get_nickname()));
         return ;
     }
-	client->set_register(client->get_registered() + 1);
-    if (args[0].compare(_password) != 0)
+    if (args[1].compare(_password) != 0)
     {
     	client->send_reply(ERR_PASSWDMISMATCH(client->get_hostname()));
         return ;
     }
-    if (check_auth(client))
-	{
-		client->send_reply(RPL_WELCOME(client->get_nickname(), client->get_username(), client->get_hostname()));
-		return ;
-	}
+	else
+		client->set_register(PASS_CHECKED);
 }
