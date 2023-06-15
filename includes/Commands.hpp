@@ -4,13 +4,19 @@
 # include <vector>
 # include "Client.hpp"
 # include "Server.hpp"
+#include "Channel.hpp"
+#include "Replies.hpp"
+#include <sstream>
 
 class	Client;
 class   Channel;
 
-#include "Channel.hpp"
-#include "Replies.hpp"
-#include <sstream>
+enum state
+{
+	PASS_CHECKED = 1;
+	
+};
+
 
 std::vector<std::string> parse(std::string input);
 void	user(Client *client, std::vector<std::string> args);

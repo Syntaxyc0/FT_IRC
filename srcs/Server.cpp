@@ -36,24 +36,25 @@ std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator 
 		{
 			if (!strcmp("USER", received[0].c_str()))
 				user(_clientList[it->fd], received);
-			// else if (!strcmp("PASS", received[0].c_str()))
-			// {
-			// 	Pass(_clientList[it->fd], received);
-			// }
+			else if (!strcmp("PASS", received[0].c_str()))
+				Pass(_clientList[it->fd], received);
 			else if (!strcmp("QUIT", received[0].c_str()))
-				return (disconnect(it->fd));
+				_clientList[it->fd]->set_register(4);
 			else if (!strcmp("NICK", received[0].c_str()))
-				nick(_clientList[it->fd], received);
+				Nick(_clientList[it->fd], received);
+			else if (!strcmp("PRIVMSG", received[0].c_str()))
+				Privmsg(_clientList[it->fd], received);
+			
 		}
 	}
-	std::cout<<BLUE<<"NICK : "<<_clientList[it->fd]->get_nickname()<<END<<std::endl;
-	std::cout<<CYAN<<"USERNAME : "<<_clientList[it->fd]->get_username() <<END<<std::endl;
-	std::cout<<YELLOW<<"REALNAME : "<<_clientList[it->fd]->get_realname() <<END<<std::endl;
-	std::string clean_recept(buffer);
-	clean_recept.erase(clean_recept.size() - 1);
-	std::cout <<GREEN<<"full received buffer :\n"<< buffer <<"from "<< _clientList[it->fd]->get_nickname()<<END<<std::endl;
+	// std::cout<<BLUE<<"NICK : "<<_clientList[it->fd]->get_nickname()<<END<<std::endl;
+	// std::cout<<CYAN<<"USERNAME : "<<_clientList[it->fd]->get_username() <<END<<std::endl;
+	// std::cout<<YELLOW<<"REALNAME : "<<_clientList[it->fd]->get_realname() <<END<<std::endl;
+	// std::string clean_recept(buffer);
+	// clean_recept.erase(clean_recept.size() - 1);
+	// std::cout <<GREEN<<"full received buffer :\n"<< buffer <<"from "<< _clientList[it->fd]->get_nickname()<<END<<std::endl;
 	// std::cout <<GREEN<<"full received buffer :\n"<< clean_recept<<"from "<< _clientList[it->fd]->get_nickname()<<END<<std::endl;
-	std::cout<<std::endl;
+	// std::cout<<std::endl;
 	return (it);
 }
 
@@ -76,7 +77,17 @@ void Server::monitoring()
 			if (it->fd == _sockets.begin()->fd) //nouvelle connexion
 				it = new_connection();
 			else
+			{
 				it = handle_data(it);
+				if (_clientList[it->fd]->get_registered() == 0) // faire la distinction entre une deco via quit et via une non authentification
+				{
+					it = disconnect(it->fd);
+				}
+				else if (_clientList[it->fd]->get_registered() == 4)
+				{
+					it = disconnect(it->fd);
+				}
+			}
 		}
 		sleep(1);
 	}
@@ -104,7 +115,7 @@ void Server::init_server()
     errorin(_listening_socket == -1, strerror(errno));
     int flags = fcntl(_listening_socket, F_GETFL);
 	int optval = 1;
-	setsockopt(_listening_socket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)); // permet de reutiliser cette socket, besoin que de deux on a qu'un thread
+	setsockopt(_listening_socket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int));
     fcntl(_listening_socket, F_SETFL, flags | O_NONBLOCK);//non blocking flags set
 	struct	sockaddr_in	serv = {};
     std::memset(&serv, 0, sizeof(serv));
@@ -149,7 +160,6 @@ void	Server::adduser(int fd, std::string hostname)
 	Client *newuser = new	Client(fd, hostname);
 	_clientList.insert(std::make_pair(fd, newuser));
 	std::cout<<GREEN<<"New user added"<<" fd : "<<fd<<" hostname "<<hostname<<END<<std::endl;	//DEBUG
-	newuser->send_reply(RPL_WELCOME(newuser->get_nickname(), newuser->get_username(), hostname));
 }
 
 std::vector<pollfd>::iterator Server::disconnect(int fd)
@@ -162,6 +172,7 @@ std::vector<pollfd>::iterator Server::disconnect(int fd)
 		{
 			std::cout << MAGENTA << _clientList[it->fd]->get_username() << " has disconnected" << END << std::endl;
 			_sockets.erase(it);
+			delete(_clientList[fd]);
 			_clientList.erase(fd);
 			close(fd);
 			return _sockets.begin();

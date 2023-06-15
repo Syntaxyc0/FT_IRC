@@ -23,7 +23,7 @@ class	Client
 			std::string		_realname;
 			std::string		_nickname;
 
-			bool			_is_registered;
+			int			_is_registered;
 			std::string		_current_channel;
 
 	public:

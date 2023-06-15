@@ -25,12 +25,13 @@ void	user(Client *client, std::vector<std::string> args)
 	}
 	client->set_username(args[1]);
 	client->set_realname(args[4]);
-	if (client->get_registered() == 1)
+
+	if (client->get_registered() == 2)
 	{
 		client->set_register(3);
 		client->send_reply(RPL_WELCOME(client->get_nickname(), client->get_username(), client->get_hostname()));
 		client->send_reply("auth ok !");
 	}
 	else
-		client->set_register(2);
+		client->set_register(0);
 }

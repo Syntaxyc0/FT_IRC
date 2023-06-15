@@ -69,7 +69,9 @@ class Server
         Client	*find_user_by_nickname(std::string nickname);
 		void	adduser(int fd, std::string hostname);
 		void    Pass(Client *client, std::vector<std::string> args);
-		void	nick(Client *client, std::vector<std::string> args);
+		void	Nick(Client *client, std::vector<std::string> args);
+		void	Privmsg(Client *client, std::vector<std::string> args);
+
 		void	sig_handler(int);
         std::vector<pollfd>::iterator handle_data(std::vector<pollfd>::iterator it);
         void    errorin(bool err, const char *msg);
