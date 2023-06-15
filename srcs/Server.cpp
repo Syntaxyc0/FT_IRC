@@ -57,12 +57,11 @@ std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator 
 			else if (!strcmp("QUIT", received[0].c_str()))
 				_clientList[it->fd]->set_register(4);
 			else if (!strcmp("NICK", received[0].c_str()))
-				nick(_clientList[it->fd], received);
+				Nick(_clientList[it->fd], received);
 			else if (!strcmp("JOIN", received[0].c_str()))
 				join_command(_clientList[it->fd], received, *this);
-				Nick(_clientList[it->fd], received);
 			else if (!strcmp("MODE", received[0].c_str()))
-				mode_manager(_clientList[it->fd], received);
+				mode_manager(_clientList[it->fd], received, *this);
 			else if (!strcmp("PRIVMSG", received[0].c_str()))
 				Privmsg(_clientList[it->fd], received);
 			// command_handler(_clientList[it->fd], received);
