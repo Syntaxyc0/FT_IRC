@@ -37,7 +37,7 @@ class Channel
 // SETTER
 		void						set_invite_only();
 		void						set_channel_key( std::string password );
-		void						set_user_limit( int limit, Client &user );
+		void						set_user_limit( int limit, Client *user );
 		void						set_restriction_TOPIC_cmd();
 
 // GETTER
@@ -55,7 +55,7 @@ class Channel
 
 // FUNCTION
 
-		void				operator_privilege( Client &me, std::string target );
+		void				operator_privilege( Client *me, std::string target );
 
 		int					is_primordial( std::string target );
 		int					is_operator( std::string target );

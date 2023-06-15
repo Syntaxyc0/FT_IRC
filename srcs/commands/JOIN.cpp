@@ -24,9 +24,9 @@ void	join_command( Client *client, std::vector<std::string> received, Server &se
 		server.add_Channels( ret );
 	}
 	else
-	{
-
-	}
+		server.find_channel( received[1] )->add_client( client->get_nickname() );
+		
+	client->set_current_channel( received[1] );
 }
 
 bool	join_error( Client *client, std::vector<std::string> received, Server &server )
@@ -34,7 +34,7 @@ bool	join_error( Client *client, std::vector<std::string> received, Server &serv
 	if (received.size() < 2)
 		return ( client->send_reply( ERR_NEEDMOREPARAMS( client->get_nickname(), "JOIN" ) ), true );
 
-	else if ( server.find_channel( received[1] ) && server.find_channel( received[1] )->get_channelClients().size() >=  server.find_channel( received[1] )->get_user_limit_nb() )
+	else if ( server.find_channel( received[1] ) && (int)server.find_channel( received[1] )->get_channelClients().size() >=  server.find_channel( received[1] )->get_user_limit_nb() )
 		return ( client->send_reply( ERR_CHANNELISFULL( client->get_nickname(), server.find_channel( received[1] )->get_name() ) ), true );
 
 	else if ( server.find_channel( received[1] ) && server.find_channel( received[1] )->get_channel_key() && received.size() < 3)
@@ -46,5 +46,5 @@ bool	join_error( Client *client, std::vector<std::string> received, Server &serv
 	else if ( server.find_channel( received[1] ) && server.find_channel( received[1] )->get_invite_only() )
 		return ( client->send_reply( ERR_INVITEONLYCHAN( client->get_nickname(), server.find_channel( received[1] )->get_name() ) ), true );
 	
-	return (false);
+	return (0);
 }

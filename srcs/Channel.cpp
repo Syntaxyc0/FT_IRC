@@ -49,11 +49,11 @@ void	Channel::set_restriction_TOPIC_cmd()
 		_restriction_TOPIC_cmd = 1;
 }
 
-void	Channel::set_user_limit(int limit, Client &user)
+void	Channel::set_user_limit(int limit, Client *user)
 {
 	if (limit < 0 && !_user_limit)
 	{
-		user.send_reply("Error: User limit can't be less than 1");
+		user->send_reply("Error: User limit can't be less than 1");
 		return;
 	}
 	if (limit)
@@ -118,23 +118,23 @@ std::string	Channel::get_password()
 //                     Function                       //
 //****************************************************//
 
-void	Channel::operator_privilege(Client &me, std::string target)
+void	Channel::operator_privilege(Client *me, std::string target)
 {
-	if ( !is_primordial(me.get_nickname()) || !is_operator(me.get_nickname()) )
+	if ( !is_primordial(me->get_nickname()) || !is_operator(me->get_nickname()) )
 	{
-		me.send_reply( ERR_CHANOPRIVSNEEDED( me.get_nickname(), _name ) );
+		me->send_reply( ERR_CHANOPRIVSNEEDED( me->get_nickname(), _name ) );
 		return;
 	}
 
 	if (is_primordial(target))
 	{
-		me.send_reply( ERR_NOPRIMORDIAL( me.get_nickname(), _name ) );
+		me->send_reply( ERR_NOPRIMORDIAL( me->get_nickname(), _name ) );
 		return;
 	}
 
 	if (!is_channelClient(target))
 	{
-		me.send_reply("Client not found in this channel");
+		me->send_reply("Client not found in this channel");
 		return;
 	}
 
@@ -146,7 +146,7 @@ void	Channel::operator_privilege(Client &me, std::string target)
 		this->send_all( message );
 	}
 
-	if (is_primordial( me.get_nickname()) && is_operator(target) && me.get_nickname() != target )
+	if (is_primordial( me->get_nickname()) && is_operator(target) && me->get_nickname() != target )
 	{
 		std::string message2 = target;
 		_operators.erase( _operators.begin() + find_operator_index( target )) ;
