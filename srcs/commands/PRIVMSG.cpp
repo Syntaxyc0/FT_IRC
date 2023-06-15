@@ -18,10 +18,6 @@
 
 void	Server::Privmsg(Client *client, std::vector<std::string> args)
 {
-	for (std::vector<std::string>::iterator it = args.begin() ; it != args.end(); it++)
-	{
-		std::cout<<*it<<std::endl;
-	}
 	if (args.size() <= 2)
 	{
 		client->send_reply(ERR_NEEDMOREPARAMS(client->get_nickname(), "PRIVMSG"));
@@ -48,7 +44,8 @@ void	Server::Privmsg(Client *client, std::vector<std::string> args)
 		if (!find_user_by_nickname(args[1]))
 		{
 			std::cout<<"oups "<<args[1]<<std::endl;
-			client->send_reply(ERR_NOSUCHNICK(client->get_nickname(), args[1]));
+			// client->send_reply(ERR_NOSUCHNICK(client->get_nickname(), args[1]));
+			// client->send_message(ERR_NOSUCHNICK(client->get_nickname(), args[1]));
 			return ;
 		}
 		std::string message(args[2]);
