@@ -18,7 +18,7 @@ void	kick_command(Channel &current, Client &me, std::string target)
 	}
 	if ( !current.is_channelClient( target ) )
 	{
-		me.send_to_client( ERR_NOTONCHANNEL( target, current.get_name() ) );
+		me.send_( ERR_NOTONCHANNEL( target, current.get_name() ) );
 	}
 	if ( !current.is_operator( me.get_nickname() ) )
 	{

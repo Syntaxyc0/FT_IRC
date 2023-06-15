@@ -95,6 +95,7 @@ void	Client::send_reply(std::string message)
 {
 	std::string		username;
 	std::string		hostname;
+
 	if (_username.empty())
 		username = "!" + _username;
 	else
@@ -103,6 +104,7 @@ void	Client::send_reply(std::string message)
 		hostname = "@" + _hostname;
 	else
 		hostname = ""; 
+		
 	std::string 	reply = ":" + _nickname + username + hostname + " " + message + "\r\n";
 	if (send(_fd, reply.c_str(), reply.size(), 0) == -1)
 		throw	std::runtime_error(strerror(errno));

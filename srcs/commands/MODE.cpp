@@ -6,7 +6,7 @@
 
 void	mode_manager(Client *client, std::vector<std::string> received, Server &server)
 {
-	if ( received[3] == "-i")
+	if ( received[2] == "-i")
 		mode_invite_only( server.find_channel( received[1] ), client );
 	else if ( received[2] == "-k" )
 		mode_channel_key( server.find_channel( received[1] ), client, received[2] );
@@ -24,11 +24,20 @@ void	mode_manager(Client *client, std::vector<std::string> received, Server &ser
 
 void	mode_invite_only(Channel *current, Client *user)
 {
+	std::string message = "PRIVMSG ";
+	message += current->get_name() + " :";
+
 	current->set_invite_only();
 	if (current->get_invite_only())
-		user->send_reply("Invite-only mode is ON");
+	{
+		message += "Invite-only mode is ON";
+		user->send_message(message);
+	}
 	else
-		user->send_reply("Invite-only mode is OFF");
+	{
+		message += "Invite-only mode is OFF";
+		user->send_message(message);
+	}
 }
 
 // -k set/remove channel key (pw)
@@ -38,11 +47,20 @@ void	mode_invite_only(Channel *current, Client *user)
 
 void	mode_channel_key(Channel *current, Client *user, std::string password)
 {
+	std::string message = "PRIVMSG ";
+	message += current->get_name() + " :";
+
 	current->set_channel_key(password);
 	if (current->get_channel_key())
-		user->send_reply("Channel key is ON");
+	{
+		message += "Channel key is ON";
+		user->send_reply(message);
+	}
 	else
+	{
+		message += "Channel key is OFF";
 		user->send_reply("Channel key is OFF");
+	}
 }
 
 

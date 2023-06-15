@@ -42,7 +42,7 @@ void	Server::Privmsg(Client *client, std::vector<std::string> args)
 	}
 	else //msg a un user
 	{
-		if (!find_user_by_nickname(args[1]))
+		if (!find_client(args[1]))
 		{
 			client->send_message(args[1] + " :No such nick");
 			return ;
@@ -53,6 +53,6 @@ void	Server::Privmsg(Client *client, std::vector<std::string> args)
 			message += " ";
 			message += args[i];
 		}
-		find_user_by_nickname(args[1])->send_privmessage_from(client->get_nickname(), message);
+		find_client(args[1])->send_privmessage_from(client->get_nickname(), message);
 	}
 }

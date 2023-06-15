@@ -39,6 +39,8 @@ std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator 
 	int bytes_received = recv(it->fd , buffer, sizeof(buffer), 0);
 	buffer[bytes_received] = '\0';
 
+	std::cout << buffer << std::endl;
+
 	std::string			tmp_buffer(buffer);
 	std::stringstream	ss(tmp_buffer);
 	std::string line;

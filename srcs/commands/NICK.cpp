@@ -9,7 +9,7 @@ void	Server::Nick(Client *client, std::vector<std::string> args)
 		client->send_reply(ERR_NONICKNAMEGIVEN(client->get_hostname()));
 		return ;
 	}
-	if (find_user_by_nickname(args[1]))
+	if (find_client(args[1]))
 	{
 		// client->send_reply(ERR_NICKNAMEINUSE(client->get_hostname(), args[1]));
 		client->send_message(args[1] + ": Nickname is already in use");
