@@ -40,7 +40,7 @@ bool	join_error( Client *client, std::vector<std::string> received, Server &serv
 
 void	mode_manager(Client *client, std::vector<std::string> received, Server &server);
 void	mode_invite_only(Channel *current, Client *user);
-void	mode_channel_key(Channel *current, Client *user, std::string password);
+void	mode_channel_key(Channel *current, Client *user, std::vector<std::string> received);
 void	mode_restricion_topic_cmd(Channel *current, Client *user);
 void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> received);
 int		user_limit_int_number(std::string l);

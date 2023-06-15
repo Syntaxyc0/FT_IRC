@@ -9,7 +9,7 @@ void	mode_manager(Client *client, std::vector<std::string> received, Server &ser
 	if ( received[2] == "-i")
 		mode_invite_only( server.find_channel( received[1] ), client );
 	else if ( received[2] == "-k" )
-		mode_channel_key( server.find_channel( received[1] ), client, received[2] );
+		mode_channel_key( server.find_channel( received[1] ), client, received );
 	else if ( received[2] == "-t" )
 		mode_restricion_topic_cmd( server.find_channel( received[1] ), client );
 	else if ( !strncmp("-l", received[2].c_str(), 2) )
@@ -29,15 +29,9 @@ void	mode_invite_only(Channel *current, Client *user)
 
 	current->set_invite_only();
 	if (current->get_invite_only())
-	{
-		message += "Invite-only mode is ON";
-		user->send_message(message);
-	}
+		user->send_message( message += "Invite-only mode is ON" );
 	else
-	{
-		message += "Invite-only mode is OFF";
-		user->send_message(message);
-	}
+		user->send_message( message += "Invite-only mode is OFF" );
 }
 
 // -k set/remove channel key (pw)
@@ -45,21 +39,19 @@ void	mode_invite_only(Channel *current, Client *user)
 // Si un mot de passe est précisé alors qu'il y en avait déja un, il est alors modifié par le nouveau.
 // Envoie un message indiquant l'état du mode au client. Par defaut [désactivé]
 
-void	mode_channel_key(Channel *current, Client *user, std::string password)
+void	mode_channel_key( Channel *current, Client *user, std::vector<std::string> received )
 {
 	std::string message = "PRIVMSG ";
 	message += current->get_name() + " :";
 
-	current->set_channel_key(password);
-	if (current->get_channel_key())
-	{
-		message += "Channel key is ON";
-		user->send_message(message);
-	}
+	if ( received.size() == 3 )
+		user->send_message( message += "Channel key is OFF" );
+	else if ( current->get_channel_key() && received.size() == 4 )
+		user->send_message( message += "Channel key has been changed" );
 	else
 	{
-		message += "Channel key is OFF";
-		user->send_message(message);
+		current->set_channel_key(received[3]);
+		user->send_message( message += "Channel key is ON" );
 	}
 }
 
@@ -75,15 +67,9 @@ void	mode_restricion_topic_cmd(Channel *current, Client *user)
 
 	current->set_restriction_TOPIC_cmd();
 	if (current->get_restriction_TOPIC_cmd())
-	{
-		message += "Restriction to TOPIC command is ON";
-		user->send_message(message);
-	}
+		user->send_message( message += "Restriction to TOPIC command is ON" );
 	else
-	{
-		message += "Restriction to TOPIC command is OFF";
-		user->send_message(message);
-	}
+		user->send_message( message += "Restriction to TOPIC command is OFF" );
 }
 
 // -l set/remove the user limit to Channel:
@@ -98,15 +84,13 @@ void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> re
 	if ( user_limit_int_number( received[2] ) )
 	{
 		int limit_nb = atoi( received[2].c_str() );
-		message += "User limit is " + received[2].erase( 0, 2 );
 		current->set_user_limit( limit_nb, user );
-		user->send_message( message );
+		user->send_message( message += "User limit is " + received[2].erase( 0, 2 ) );
 	}
 	else 
 	{
 		current->set_user_limit( 0, user );
-		message += "User limit is OFF";
-		user->send_message( message );
+		user->send_message( message += "User limit is OFF" );
 	}
 }
 
