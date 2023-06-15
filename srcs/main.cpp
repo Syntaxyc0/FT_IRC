@@ -14,7 +14,8 @@
 
 void	sig_handler(int)
 {
-	exit_state = 1;
+	throw	std::runtime_error("Program killed");
+	// exit_state = 1;
 }
 
 int main(int argc, char *argv[])
@@ -33,6 +34,6 @@ int main(int argc, char *argv[])
     }
     catch(std::exception &e)
     {
-        std::cout << RED << "/!\\ "<< e.what() << END;
+        std::cout << RED << "/!\\ "<< e.what() << END<<std::endl;
     }
 }

@@ -21,6 +21,18 @@ int Server::shut_down()
     return (0);
 }
 
+// void	Server::command_handler(Client *client, std::vector<std::string> args) // en travaux, pas envie de faire un switch mais bon..
+// {
+// 	// , "MODE", "KICK", "JOIN", "INVITE", "TOPIC" //a rajouter
+// 	std::string		command_names[6] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG"};
+// 	void	(*_command_functions[6])(Client *, std::vector<std::string>) = {&Server::User, &Server::User, &Server::Pass, &Quit, &Server::Nick, &Server::Privmsg};
+// 	for (int i = 0; i < 11; i++)
+// 	{
+// 		if (args[0] == command_names[i])
+// 			command_functions[i](client, args);
+// 	}
+// }
+
 std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator it)
 {
 	char buffer[1024];
@@ -37,7 +49,9 @@ std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator 
 		if (!received.empty())
 		{
 			if (!strcmp("USER", received[0].c_str()))
-				user(_clientList[it->fd], received);
+				User(_clientList[it->fd], received);
+			else if (!strcmp("userhost", received[0].c_str()))
+				User(_clientList[it->fd], received);
 			else if (!strcmp("PASS", received[0].c_str()))
 				Pass(_clientList[it->fd], received);
 			else if (!strcmp("QUIT", received[0].c_str()))
@@ -48,6 +62,7 @@ std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator 
 				mode_manager(_clientList[it->fd], received);
 			else if (!strcmp("PRIVMSG", received[0].c_str()))
 				Privmsg(_clientList[it->fd], received);
+			// command_handler(_clientList[it->fd], received);
 			
 		}
 	}
@@ -85,12 +100,13 @@ void Server::monitoring()
 			else
 			{
 				it = handle_data(it);
-				if (_clientList[it->fd]->get_registered() == 0) // faire la distinction entre une deco via quit et via une non authentification
+				if (_clientList[it->fd]->get_registered() == NOT_REGISTERED) // faire la distinction entre une deco via quit et via une non authentification
 				{
 					it = disconnect(it->fd);
 				}
-				else if (_clientList[it->fd]->get_registered() == 4)
+				else if (_clientList[it->fd]->get_registered() == DISCONNECTED)
 				{
+					broadcast_server(_clientList[it->fd]->get_nickname() + " left the server");
 					it = disconnect(it->fd);
 				}
 			}
@@ -101,15 +117,15 @@ void Server::monitoring()
 
 std::vector<pollfd>::iterator Server::new_connection()
 {
-	char tmp_hostname[NI_MAXHOST];
+	// char tmp_hostname[NI_MAXHOST];
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
 	int fd = accept(_listening_socket, (sockaddr *)&client_addr, &client_addr_len);
     errorin(fd == -1, "Failed to accept incoming connection.\n");
 	pollfd	new_poll = {fd, POLLIN, 0};
 	_sockets.push_back(new_poll);
-	getnameinfo((sockaddr *) &client_addr, sizeof(client_addr), tmp_hostname, NI_MAXHOST, NULL, 0, 0); //tout ca pour choper son hostname.. Ils sont fou ces romains!
-	adduser(fd, tmp_hostname);
+	// getnameinfo((sockaddr *) &client_addr, sizeof(client_addr), tmp_hostname, NI_MAXHOST, NULL, 0, 0); //tout ca pour choper son hostname.. Ils sont fou ces romains! fonction pas autorisee, pfffff
+	adduser(fd, "localhost");
     std::cout << MAGENTA << "New connection successfull!" << END << std::endl;
 	return _sockets.begin();
 }
@@ -155,7 +171,7 @@ Server::~Server()
         }
     }
 	exit_state = 1;
-    std::cout << "\n\t-- Server shutted down successfully --" << std::endl; 
+    std::cout << "\n\t-- Server shutted down successfully --\n" << std::endl; 
 }
 
 void	Server::adduser(int fd, std::string hostname)
@@ -173,7 +189,10 @@ std::vector<pollfd>::iterator Server::disconnect(int fd)
 	{
 		if (it->fd == fd)
 		{
-			std::cout << MAGENTA << _clientList[it->fd]->get_nickname() << " has disconnected" << END << std::endl;
+			if (_clientList[it->fd]->get_nickname() != "")
+				std::cout << MAGENTA << _clientList[it->fd]->get_nickname() << " has disconnected" << END << std::endl;
+			else
+				std::cout << MAGENTA << "Registration failed, user disconnected" << END << std::endl;
 			_sockets.erase(it);
 			delete(_clientList.at(fd));
 			_clientList.erase(fd);
@@ -182,6 +201,12 @@ std::vector<pollfd>::iterator Server::disconnect(int fd)
 		}
 	}
 	return _sockets.begin();
+}
+
+void	Server::broadcast_server(std::string message)
+{
+	for (std::map<int, Client *>::iterator it = _clientList.begin(); it != _clientList.end(); it ++)
+		it->second->send_message(":" + it->second->get_nickname() + " " + message);
 }
 
 //****************************************************//
@@ -213,6 +238,7 @@ Client	*Server::find_user_by_nickname(std::string nickname)
 	}
 	return (NULL);
 }
+
 
 //****************************************************//
 //                      Getter                        //

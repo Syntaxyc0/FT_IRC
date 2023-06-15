@@ -11,11 +11,14 @@
 class	Client;
 class   Channel;
 
-// enum state
-// {
-// 	PASS_CHECKED = 1;
-	
-// };
+enum state
+{
+	NOT_REGISTERED = 0,
+	PASS_CHECKED = 1,
+	NICK_CHECKED = 2,
+	REGISTERED = 3,
+	DISCONNECTED = 4
+};
 
 
 class	Client;
@@ -24,7 +27,7 @@ class	Server;
 
 
 std::vector<std::string> parse(std::string input);
-void	user(Client *client, std::vector<std::string> args);
+void	Quit(Client *client, std::vector<std::string> args);
 bool	check_auth(Client *client);
 
 void	kick_command(Channel &current, Client &me, std::string target);

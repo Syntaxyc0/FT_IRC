@@ -49,6 +49,7 @@ class Server
 		
         std::vector<Channel>			_Channels;
         std::vector<Client>				_Clients;
+		
 	
     public:
         class SocketException : public std::exception
@@ -70,14 +71,19 @@ class Server
         int shut_down();
         Client	*find_user_by_nickname(std::string nickname);
 		void	adduser(int fd, std::string hostname);
+		void	command_handler(Client *client, std::vector<std::string> args);
 		void    Pass(Client *client, std::vector<std::string> args);
 		void	Nick(Client *client, std::vector<std::string> args);
 		void	Privmsg(Client *client, std::vector<std::string> args);
+		void	User(Client *client, std::vector<std::string> args);
 		void	sig_handler(int);
         std::vector<pollfd>::iterator handle_data(std::vector<pollfd>::iterator it);
         void    errorin(bool err, const char *msg);
         Client      *find_client(std::string nickname);
         Channel     *find_channel(std::string channel_name);
+
+		void	broadcast_server(std::string message);
+
 
 		std::vector<Channel>	get_Channels();
 };

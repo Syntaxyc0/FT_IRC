@@ -27,7 +27,8 @@ void	Server::Privmsg(Client *client, std::vector<std::string> args)
 	{
 		if (!find_channel(args[1].erase(0, 0)))
 		{
-			client->send_reply(ERR_NOSUCHNICK(client->get_nickname(), args[1].erase(0, 0)));
+			// client->send_reply(ERR_NOSUCHNICK(client->get_nickname(), args[1].erase(0, 0)));
+			client->send_message(args[1].erase(0, 0) + " :No such Channel");
 			return ;
 		}
 		std::string message("");
@@ -36,16 +37,14 @@ void	Server::Privmsg(Client *client, std::vector<std::string> args)
 			message += args[i];
 			message += " ";
 		}
-			find_channel(args[1].erase(0, 0))->send_all(message);
-			return ;
+		find_channel(args[1].erase(0, 0))->send_all(message);
+		return ;
 	}
 	else //msg a un user
 	{
 		if (!find_user_by_nickname(args[1]))
 		{
-			std::cout<<"oups "<<args[1]<<std::endl;
-			// client->send_reply(ERR_NOSUCHNICK(client->get_nickname(), args[1]));
-			// client->send_message(ERR_NOSUCHNICK(client->get_nickname(), args[1]));
+			client->send_message(args[1] + " :No such nick");
 			return ;
 		}
 		std::string message(args[2]);

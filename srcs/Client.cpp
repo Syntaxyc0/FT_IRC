@@ -119,7 +119,7 @@ void	Client::send_message(std::string message)
 void	Client::send_privmessage_from(std::string source, std::string message)
 {
 	std::string ret = "";
-	ret += ":" + _nickname + " MSGFROM" + source + message + "\r\n";
+	ret += ":" + _nickname + " PRIVMSG" + source + " " + message + "\r\n";
 	if (send(_fd, ret.c_str(), ret.size(), 0) == -1)
 		throw	std::runtime_error(strerror(errno));
 }

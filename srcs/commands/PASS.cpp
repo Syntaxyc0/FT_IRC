@@ -24,5 +24,5 @@ void    Server::Pass(Client *client, std::vector<std::string> args)
         return ;
     }
 	else
-		client->set_register(1);
+		client->set_register(PASS_CHECKED);
 }

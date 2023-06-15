@@ -14,6 +14,7 @@ SRCS =  main.cpp	\
 		USER.cpp	\
 		PASS.cpp	\
 		NICK.cpp	\
+		QUIT.cpp	\
 		PRIVMSG.cpp	\
 		JOIN.cpp	\
 		MODE.cpp	\
@@ -26,8 +27,10 @@ CHANNEL_PATH = channel
 
 COMMANDS_PATH = commands
 
+FSANITIZE = -fsanitize=address
+
 CXX = c++
-CXXFLAGS = -MMD -Wall -Wextra -Werror -std=c++98 -g3 -fsanitize=address
+CXXFLAGS = -MMD -Wall -Wextra -Werror -std=c++98 -g3 
 RM = rm -rf
 OBJS		=   $(addprefix $(OBJ_PATH)/,$(SRCS:.cpp=.o))	 \
 
