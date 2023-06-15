@@ -95,18 +95,18 @@ void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> re
 	std::string message = "PRIVMSG ";
 	message += current->get_name() + " :";
 
-	if (user_limit_int_number(received[3]))
+	if ( user_limit_int_number( received[2] ) )
 	{
-		int limit_nb = atoi( received[3].c_str() );
-		message += "User limit is " + received[3];
-		current->set_user_limit(limit_nb, user);
-		user->send_message(message);
+		int limit_nb = atoi( received[2].c_str() );
+		message += "User limit is " + received[2].erase( 0, 2 );
+		current->set_user_limit( limit_nb, user );
+		user->send_message( message );
 	}
 	else 
 	{
-		current->set_user_limit(0, user);
+		current->set_user_limit( 0, user );
 		message += "User limit is OFF";
-		user->send_message(message);
+		user->send_message( message );
 	}
 }
 
@@ -114,15 +114,14 @@ int	user_limit_int_number(std::string l)
 {
 	int i;
 
-	if (l.size() == 2)
+	if ( l.size() == 2 )
 		return (0);
 	else
 	{
-		l.erase(0, 2);
-		std::cout << l << std::endl;
+		l.erase( 0, 2 );
 		i = atoi( l.c_str() );
 	}
-	return (i);
+	return ( i );
 }
 
 // -o give/take channel operator privilege
