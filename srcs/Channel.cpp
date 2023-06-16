@@ -214,3 +214,10 @@ void	Channel::send_all( std::string message )
 	for (int i = 0; i < (int)_channelClients.size(); i++)
 		_server->find_client( _channelClients.at(i) )->send_message( message );
 }
+
+void	Channel::send_privmessage_from( std::string source, std::string message)
+{
+	std::cout<<"chan name "<< _name<<std::endl;
+	for (int i = 0; i < (int)_channelClients.size(); i++)
+		_server->find_client( _channelClients.at(i) )->send_privmessage_from( source, message );
+}
