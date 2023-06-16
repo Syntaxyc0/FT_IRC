@@ -32,7 +32,7 @@ void	Quit(Client *client, std::vector<std::string> args);
 bool	check_auth(Client *client);
 
 void	kick_command(Channel &current, Client &me, std::string target);
-void	invite_command(Channel &current, Client &me, std::string target);
+void	invite_command(Client *client, std::vector<std::string> received, Server &server);
 void	join_command(Client *client, std::vector<std::string> received, Server &server);
 bool	join_error( Client *client, std::vector<std::string> received, Server &server );
 

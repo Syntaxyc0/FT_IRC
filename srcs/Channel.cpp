@@ -14,6 +14,7 @@ _name(name), _primordial(primordial)
 	_channel_key = 0;
 	_restriction_TOPIC_cmd = 0;
 	_user_limit = 0;
+	_user_limit_nb = 0;
 }
 
 Channel::~Channel() {}
@@ -49,11 +50,11 @@ void	Channel::set_restriction_TOPIC_cmd()
 		_restriction_TOPIC_cmd = 1;
 }
 
-void	Channel::set_user_limit(int limit, Client *user)
+void	Channel::set_user_limit(int limit, Client *user, std::string channel_name)
 {
 	if (limit < 0 && !_user_limit)
 	{
-		user->send_reply("Error: User limit can't be less than 1");
+		user->send_message("PRIVMSG" + channel_name + "Error: User limit can't be less than 1");
 		return;
 	}
 	if (limit)

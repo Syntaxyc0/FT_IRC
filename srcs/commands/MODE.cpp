@@ -84,12 +84,17 @@ void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> re
 	if ( user_limit_int_number( received[2] ) )
 	{
 		int limit_nb = atoi( received[2].c_str() );
-		current->set_user_limit( limit_nb, user );
-		user->send_message( message += "User limit is " + received[2].erase( 0, 2 ) );
+		if ( limit_nb < (int)current->get_channelClients().size() )
+			user->send_message( message += "Error : the limit cannot be less than the current number of users in that channel");
+		else
+		{
+			current->set_user_limit( limit_nb, user , current->get_name());
+			user->send_message( message += "User limit is " + received[2].erase( 0, 2 ) );
+		}
 	}
 	else 
 	{
-		current->set_user_limit( 0, user );
+		current->set_user_limit( -1, user, current->get_name());
 		user->send_message( message += "User limit is OFF" );
 	}
 }
