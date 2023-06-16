@@ -9,16 +9,16 @@
 // le client invité est déjà sur le channel.
 // Un message s'affichera si la commande s'execute avec succès.
 
-void	invite_command( Client *client, std::vector<std::string> received, Server &server );
+void	invite_command( Client *client, std::vector<std::string> received, Server &server )
 {
-	if ( invite_error( client ) )
+	if ( invite_error( client, received, server) )
 		return;
 
 	// add client to channel's list
-	current.add_client( received[1] );
+	server.find_channel( received[2] )->add_client( received[1] );
 
 	server.find_channel( received[2] )->send_all( ":" + client->get_nickname() + " JOIN " + received[1] );
-	client->send_message( "PRIVMSG " + server.find_channel( received[2] ) + " :" + server.find_client( received[1] ).get_nickname() + " has joined channel" );
+	client->send_message( "PRIVMSG " + server.find_channel( received[2] )->get_name() + " :" + server.find_client( received[1] )->get_nickname() + " has joined channel" );
 }
 
 bool	invite_error( Client *client, std::vector<std::string> received, Server &server )
@@ -41,5 +41,5 @@ bool	invite_error( Client *client, std::vector<std::string> received, Server &se
 	else if ( (int)server.find_channel( received[2] )->get_channelClients().size() >= server.find_channel( received[2] )->get_user_limit_nb() )
 		return ( client->send_reply( ERR_LIMITREACHED( server.find_channel( received[2] )->get_name() ) ), true );
 
-	return ( false )
+	return ( false );
 }
