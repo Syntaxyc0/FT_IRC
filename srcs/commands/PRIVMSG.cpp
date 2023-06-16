@@ -16,7 +16,7 @@
 // ERR_WILDTOPLEVEL (414)?
 // RPL_AWAY (301)?
 
-void	Server::Privmsg(Client *client, std::vector<std::string> args)
+void	Privmsg(Client *client, std::vector<std::string> args, Server &serv)
 {
 	if (args.size() <= 2)
 	{
@@ -25,7 +25,7 @@ void	Server::Privmsg(Client *client, std::vector<std::string> args)
 	}
 	else if (!args[1].compare(0 , 1, "#")) //msg a un channel
 	{
-		if (!find_channel(args[1].erase(0, 0)))
+		if (!serv.find_channel(args[1].erase(0, 0)))
 		{
 			// client->send_reply(ERR_NOSUCHNICK(client->get_nickname(), args[1].erase(0, 0)));
 			client->send_message(args[1].erase(0, 0) + " :No such Channel");
@@ -37,12 +37,12 @@ void	Server::Privmsg(Client *client, std::vector<std::string> args)
 			message += args[i];
 			message += " ";
 		}
-		find_channel(args[1].erase(0, 0))->send_all(message);
+		serv.find_channel(args[1].erase(0, 0))->send_all(message);
 		return ;
 	}
 	else //msg a un user
 	{
-		if (!find_client(args[1]))
+		if (!serv.find_user_by_nickname(args[1]))
 		{
 			client->send_message(args[1] + " :No such nick");
 			return ;
@@ -53,6 +53,6 @@ void	Server::Privmsg(Client *client, std::vector<std::string> args)
 			message += " ";
 			message += args[i];
 		}
-		find_client(args[1])->send_privmessage_from(client->get_nickname(), message);
+		serv.find_user_by_nickname(args[1])->send_privmessage_from(client->get_nickname(), message);
 	}
 }

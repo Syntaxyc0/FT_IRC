@@ -28,7 +28,6 @@ class	Server;
 
 
 std::vector<std::string> parse(std::string input);
-void	Quit(Client *client, std::vector<std::string> args);
 bool	check_auth(Client *client);
 
 void	kick_command(Channel &current, Client &me, std::string target);
@@ -45,6 +44,14 @@ void	mode_restricion_topic_cmd(Channel *current, Client *user);
 void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> received);
 int		user_limit_int_number(std::string l);
 void	mode_operator_privilege(Channel *current, Client *user, std::string target);
+
+
+void	User(Client *client, std::vector<std::string> args, Server &serv);
+void	Nick(Client *client, std::vector<std::string> args, Server &serv);
+void    Pass(Client *client, std::vector<std::string> args, Server &serv);
+void	Privmsg(Client *client, std::vector<std::string> args, Server &serv);
+void	Quit(Client *client, std::vector<std::string> args, Server &serv);
+
 
 class NoMsg  : public std::exception{
 	public:

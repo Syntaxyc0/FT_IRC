@@ -6,7 +6,7 @@
 // PASS ne requiert pas du client d'etre authentifie
 // 
 
-void    Server::Pass(Client *client, std::vector<std::string> args)
+void    Pass(Client *client, std::vector<std::string> args, Server &serv)
 {
     if (args.empty())
     {
@@ -18,7 +18,7 @@ void    Server::Pass(Client *client, std::vector<std::string> args)
         client->send_reply(ERR_ALREADYREGISTERED(client->get_nickname()));
         return ;
     }
-    if (args[1].compare(_password) != 0)
+    if (args[1].compare(serv.get_password()) != 0)
     {
     	client->send_reply(ERR_PASSWDMISMATCH(client->get_hostname()));
         return ;

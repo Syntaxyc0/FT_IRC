@@ -59,10 +59,10 @@ class Server
         Client	*find_user_by_nickname(std::string nickname);
 		void	adduser(int fd, std::string hostname);
 		void	command_handler(Client *client, std::vector<std::string> args);
-		void    Pass(Client *client, std::vector<std::string> args);
-		void	Nick(Client *client, std::vector<std::string> args);
-		void	Privmsg(Client *client, std::vector<std::string> args);
-		void	User(Client *client, std::vector<std::string> args);
+		// void    Pass(Client *client, std::vector<std::string> args);
+		// void	Nick(Client *client, std::vector<std::string> args);
+		// void	Privmsg(Client *client, std::vector<std::string> args, Server &serv);
+		// void	User(Client *client, std::vector<std::string> args);
 		void	sig_handler(int);
         std::vector<pollfd>::iterator handle_data(std::vector<pollfd>::iterator it);
         void    errorin(bool err, const char *msg);
@@ -92,6 +92,7 @@ class Server
 					return msg;
 				}
 		};
+		std::string				get_password();
 };
 
 #endif
