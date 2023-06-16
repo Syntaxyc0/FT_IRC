@@ -96,23 +96,24 @@ void	Client::send_reply(std::string message)
 	std::string		username;
 	std::string		hostname;
 
-	if (_username.empty())
+	if (!_username.empty())
 		username = "!" + _username;
 	else
 		username = "";
-	if (_hostname.empty())
+	if (!_hostname.empty())
 		hostname = "@" + _hostname;
 	else
 		hostname = ""; 
 		
-	std::string 	reply = ":" + _nickname + username + hostname + " " + message + "\r\n";
+	// std::string 	reply = ":" + _nickname + username + hostname + " " + message + "\r\n";
+	// std::cout<<BLUE<<reply<<END<<std::endl;
 	if (send(_fd, reply.c_str(), reply.size(), 0) == -1)
 		throw	std::runtime_error(strerror(errno));
 }
 
 void	Client::send_message(std::string message)
 {
-	std::string ret(message);
+	std::string ret(message);`
 	ret += "\r\n";
 	if (send(_fd, ret.c_str(), ret.size(), 0) == -1)
 		throw	std::runtime_error(strerror(errno));
@@ -121,7 +122,7 @@ void	Client::send_message(std::string message)
 void	Client::send_privmessage_from(std::string source, std::string message)
 {
 	std::string ret = "";
-	ret += ":" + source + " PRIVMSG " + _nickname + " " + message + "\r\n";
+	ret += ":" + _nickname + " PRIVMSG " + source + " " + message + "\r\n";
 	if (send(_fd, ret.c_str(), ret.size(), 0) == -1)
 		throw	std::runtime_error(strerror(errno));
 }
@@ -130,7 +131,22 @@ void	Client::send_privmessage_to_channel(std::string channel, std::string messag
 {
 	std::cout<<"channel name "<< channel<<std::endl;
 	std::string ret = "";
-	ret += ":" + _nickname + " PRIVMSG" + channel + " " + message + "\r\n";
+	ret += ":" + _nickname + " PRIVMSG " + channel + " " + message + "\r\n";
 	if (send(_fd, ret.c_str(), ret.size(), 0) == -1)
 		throw	std::runtime_error(strerror(errno));
+}
+
+std::string	Client::get_fullname()
+{
+	std::string		username;
+	std::string		hostname;
+	if (!_username.empty())
+		username = "!" + _username;
+	else
+		username = "";
+	if (!_hostname.empty())
+		hostname = "@" + _hostname;
+	else
+		hostname = "";
+	return (_nickname + username + hostname);
 }

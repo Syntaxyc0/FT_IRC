@@ -50,6 +50,8 @@ class	Client
 			std::string		get_realname();
 			std::string		get_nickname();
 			std::string		get_current_channel();
+			std::string		get_fullname();
+
 
 		// Functions
 
