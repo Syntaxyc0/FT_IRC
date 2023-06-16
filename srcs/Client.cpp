@@ -41,13 +41,6 @@ void	Client::set_register(int state)
 	_is_registered = state;
 }
 
-void	Client::set_current_channel(std::string channel)
-{
-	if ( !channel.size() )
-		_current_channel.erase();
-	_current_channel = channel;
-}
-
 //****************************************************//
 //                      Getter                        //
 //****************************************************//
@@ -80,11 +73,6 @@ std::string Client::get_nickname()
 int	Client::get_registered()
 {
 	return _is_registered;
-}
-
-std::string	Client::get_current_channel()
-{
-	return _current_channel;
 }
 
 //****************************************************//

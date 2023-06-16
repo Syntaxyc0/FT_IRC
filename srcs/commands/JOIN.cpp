@@ -25,7 +25,9 @@ void	join_command( Client *client, std::vector<std::string> received, Server &se
 	}
 	else
 		server.find_channel( received[1] )->add_client( client->get_nickname() );
-	client->set_current_channel( received[1] );
+	server.find_channel( received[1] )->send_all( ":" + client->get_nickname() + " JOIN " + received[1] );
+	server.find_channel( received[1] )->send_all( client->get_nickname() + " = " + received[1] + " :" + join_message_reply( received, server ) );
+	server.find_channel( received[1] )->send_all( client->get_nickname() + " = " + received[1] + " :End of NAMES list" );
 }
 
 bool	join_error( Client *client, std::vector<std::string> received, Server &server )
@@ -46,4 +48,13 @@ bool	join_error( Client *client, std::vector<std::string> received, Server &serv
 		return ( client->send_reply( ERR_INVITEONLYCHAN( client->get_nickname(), server.find_channel( received[1] )->get_name() ) ), true );
 	
 	return (0);
+}
+
+std::string	join_message_reply( std::vector<std::string> received, Server &server )
+{
+	std::string message;
+
+	for ( int i = 0; i < (int)server.find_channel( received[1] )->get_channelClients().size(); i++ )
+		message += server.find_channel( received[1] )->get_channelClients().at(i) + " ";
+	return ( message );
 }

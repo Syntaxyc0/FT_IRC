@@ -24,7 +24,6 @@ class	Client
 			std::string		_nickname;
 
 			int			_is_registered;
-			std::string		_current_channel;
 
 	public:
 
@@ -39,7 +38,6 @@ class	Client
 			void			set_username(std::string name);
 			void			set_realname(std::string name);
 			void			set_nickname(std::string name);
-			void			set_current_channel(std::string channel);
 
 		// Getters
 
