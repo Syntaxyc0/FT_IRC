@@ -9,7 +9,7 @@
 // le client invité est déjà sur le channel.
 // Un message s'affichera si la commande s'execute avec succès.
 
-void	invite_command(Channel &current, Client &me, std::string target)
+void	invite_command(Client *client, std::vector<std::string> received, Server &server);
 {
 	if (invite_error(current, me, target))
 		return;
