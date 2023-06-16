@@ -199,12 +199,6 @@ int	Channel::find_operator_index( std::string target )
 	return (-1);
 }
 
-void	Channel::send_all( std::string message )
-{
-	for (int i = 0; i < (int)_channelClients.size(); i++)
-		_server->find_client( _channelClients.at(i) )->send_message( message );
-}
-
 void	Channel::add_client( std::string user )
 {
 	_channelClients.push_back( user );

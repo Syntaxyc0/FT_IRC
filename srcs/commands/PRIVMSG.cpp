@@ -37,7 +37,8 @@ void	Privmsg(Client *client, std::vector<std::string> args, Server &serv)
 			message += args[i];
 			message += " ";
 		}
-		serv.find_channel(args[1].erase(0, 0))->send_all(message);
+		serv.find_channel(args[1].erase(0, 0))->send_all_clients_from(client->get_nickname(), message);
+		// client->send_all_clients_from(args[1], message);
 		return ;
 	}
 	else //msg a un user
