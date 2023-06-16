@@ -66,6 +66,8 @@ class Channel
 
 		void				add_client( std::string user );
 		void				kick_client( std::string user );
+		void				send_all( std::string message );
+
 };
 
 #endif
