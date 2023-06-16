@@ -11,7 +11,7 @@ bool	check_auth(Client *client)
 	return (1);
 }
 
-void	Server::User(Client *client, std::vector<std::string> args)
+void	User(Client *client, std::vector<std::string> args, Server &serv)
 {
 	if (args.size() < 5)
 	{
@@ -37,5 +37,5 @@ void	Server::User(Client *client, std::vector<std::string> args)
 		client->set_register(NOT_REGISTERED);
 		return ;
 	}
-	broadcast_server(client->get_nickname() + " has joined the server");
+	serv.broadcast_server(client->get_nickname() + " has joined the server");
 }

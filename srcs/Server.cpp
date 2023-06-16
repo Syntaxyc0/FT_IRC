@@ -21,17 +21,17 @@ int Server::shut_down()
     return (0);
 }
 
-// void	Server::command_handler(Client *client, std::vector<std::string> args) // en travaux, pas envie de faire un switch mais bon..
-// {
-// 	// , "MODE", "KICK", "JOIN", "INVITE", "TOPIC" //a rajouter
-// 	std::string		command_names[6] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG"};
-// 	void	(*_command_functions[6])(Client *, std::vector<std::string>) = {&Server::User, &Server::User, &Server::Pass, &Quit, &Server::Nick, &Server::Privmsg};
-// 	for (int i = 0; i < 11; i++)
-// 	{
-// 		if (args[0] == command_names[i])
-// 			command_functions[i](client, args);
-// 	}
-// }
+void	Server::command_handler(Client *client, std::vector<std::string> args) // en travaux, pas envie de faire un switch mais bon..
+{
+	// , "MODE", "KICK", "JOIN", "INVITE", "TOPIC" //a rajouter
+	std::string		command_names[6] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG"};
+	void	(*command_functions[6])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg};
+	for (int i = 0; i < 11; i++)
+	{
+		if (args[0] == command_names[i])
+			command_functions[i](client, args, *this);
+	}
+}
 
 std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator it)
 {
@@ -48,21 +48,21 @@ std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator 
 		std::vector<std::string>	received = parse(line);
 		if (!received.empty())
 		{
-			if (!strcmp("USER", received[0].c_str()))
-				User(_clientList[it->fd], received);
-			else if (!strcmp("userhost", received[0].c_str()))
-				User(_clientList[it->fd], received);
-			else if (!strcmp("PASS", received[0].c_str()))
-				Pass(_clientList[it->fd], received);
-			else if (!strcmp("QUIT", received[0].c_str()))
-				_clientList[it->fd]->set_register(4);
-			else if (!strcmp("NICK", received[0].c_str()))
-				Nick(_clientList[it->fd], received);
-			else if (!strcmp("MODE", received[0].c_str()))
-				mode_manager(_clientList[it->fd], received);
-			else if (!strcmp("PRIVMSG", received[0].c_str()))
-				Privmsg(_clientList[it->fd], received);
-			// command_handler(_clientList[it->fd], received);
+			// if (!strcmp("USER", received[0].c_str()))
+			// 	User(_clientList[it->fd], received, *this);
+			// else if (!strcmp("userhost", received[0].c_str()))
+			// 	User(_clientList[it->fd], received, *this);
+			// else if (!strcmp("PASS", received[0].c_str()))
+			// 	Pass(_clientList[it->fd], received, *this);
+			// else if (!strcmp("QUIT", received[0].c_str()))
+			// 	_clientList[it->fd]->set_register(4);
+			// else if (!strcmp("NICK", received[0].c_str()))
+			// 	Nick(_clientList[it->fd], received, *this);
+			// else if (!strcmp("MODE", received[0].c_str()))
+			// 	mode_manager(_clientList[it->fd], received);`
+			// else if (!strcmp("PRIVMSG", received[0].c_str()))
+			// 	Privmsg(_clientList[it->fd], received, *this);
+			command_handler(_clientList[it->fd], received);
 			
 		}
 	}
@@ -248,3 +248,10 @@ std::vector<Channel>	Server::get_Channels()
 {
 	return (_Channels);
 }
+
+std::string	Server::get_password()
+{
+	return (_password);
+}
+
+
