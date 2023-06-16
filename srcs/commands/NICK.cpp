@@ -2,14 +2,14 @@
 #include "Commands.hpp"
 
 
-void	Server::Nick(Client *client, std::vector<std::string> args)
+void	Nick(Client *client, std::vector<std::string> args, Server &serv)
 {
 	if (args.size() == 1)
 	{
 		client->send_reply(ERR_NONICKNAMEGIVEN(client->get_hostname()));
 		return ;
 	}
-	if (find_client(args[1]))
+	if (serv.find_client(args[1]))
 	{
 		// client->send_reply(ERR_NICKNAMEINUSE(client->get_hostname(), args[1]));
 		client->send_message(args[1] + ": Nickname is already in use");
@@ -26,7 +26,7 @@ void	Server::Nick(Client *client, std::vector<std::string> args)
 			client->set_register(NOT_REGISTERED);
 		return ;
 	}
-	broadcast_server(client-> get_nickname() + " changed his nickname to " + args[1]);
+	serv.broadcast_server(client-> get_nickname() + " changed his nickname to " + args[1]);
 	client->set_nickname(args[1]);
 }
 // erreurs possibles
