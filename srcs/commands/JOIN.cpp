@@ -25,6 +25,8 @@ void	join_command( Client *client, std::vector<std::string> received, Server &se
 	}
 	else
 		server.find_channel( received[1] )->add_client( client->get_nickname() );
+	// std::string message = ":" + client->get_nickname() + " JOIN " + received[1];
+	// client->send_message(message);
 	client->set_current_channel( received[1] );
 }
 
