@@ -208,3 +208,9 @@ void	Channel::kick_client( std::string user )
 {
 	_channelClients.erase(_channelClients.begin() + find_client_index( user ) );
 }
+
+void	Channel::send_all( std::string message )
+{
+	for (int i = 0; i < (int)_channelClients.size(); i++)
+		_server->find_client( _channelClients.at(i) )->send_message( message );
+}
