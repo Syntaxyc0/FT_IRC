@@ -67,6 +67,7 @@ class Channel
 		void				add_client( std::string user );
 		void				kick_client( std::string user );
 		void				send_all( std::string message );
+		void				send_privmessage_from( std::string source, std::string message);
 
 };
 
