@@ -56,7 +56,6 @@ class Server
         Server(const char *port, const char *password);
         void monitoring();
         int shut_down();
-        Client	*find_user_by_nickname(std::string nickname);
 		void	adduser(int fd, std::string hostname);
 		void	command_handler(Client *client, std::vector<std::string> args);
 		// void    Pass(Client *client, std::vector<std::string> args);

@@ -233,17 +233,6 @@ Channel *Server::find_channel(std::string channel_name)
 	return (0);
 }
 
-Client	*Server::find_user_by_nickname(std::string nickname)
-{
-	for (std::map<int, Client*>::iterator it=_clientList.begin(); it != _clientList.end();it++)
-	{
-		if (nickname == it->second->get_nickname())
-			return (it->second);
-	}
-	return (NULL);
-}
-
-
 //****************************************************//
 //                      Getter                        //
 //****************************************************//
