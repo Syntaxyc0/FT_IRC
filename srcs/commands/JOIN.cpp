@@ -28,11 +28,6 @@ void	join_command( Client *client, std::vector<std::string> received, Server &se
 	server.find_channel( received[1] )->send_all( ":" + client->get_nickname() + " JOIN " + received[1] );
 	server.find_channel( received[1] )->send_all( client->get_nickname() + " = " + received[1] + " :" + join_message_reply( received, server ) );
 	server.find_channel( received[1] )->send_all( client->get_nickname() + " = " + received[1] + " :End of NAMES list" );
-
-
-	std::cout << "JOIN " + received[1] << std::endl;
-	std::cout << client->get_nickname() + " = " + received[1] + " :" + join_message_reply( received, server ) << std::endl;
-	std::cout << client->get_nickname() + " = " + received[1] + " :End of NAMES list" << std::endl;
 }
 
 bool	join_error( Client *client, std::vector<std::string> received, Server &server )
