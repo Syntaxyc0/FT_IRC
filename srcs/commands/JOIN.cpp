@@ -24,10 +24,13 @@ void	join_command( Client *client, std::vector<std::string> received, Server &se
 		server.add_Channels( ret );
 	}
 	else
+	{
+		server.find_channel( received[1] )->send_all( ":" + client->get_nickname() + " JOIN " + received[1] );
 		server.find_channel( received[1] )->add_client( client->get_nickname() );
-	server.find_channel( received[1] )->send_all( ":" + client->get_nickname() + " JOIN " + received[1] );
-	server.find_channel( received[1] )->send_all( client->get_nickname() + " = " + received[1] + " :" + join_message_reply( received, server ) );
-	server.find_channel( received[1] )->send_all( client->get_nickname() + " = " + received[1] + " :End of NAMES list" );
+	}
+		
+	client->send_message( client->get_nickname() + " = " + received[1] + " :" + join_message_reply( received, server ) );
+	client->send_message( client->get_nickname() + " = " + received[1] + " :End of NAMES list" );
 }
 
 bool	join_error( Client *client, std::vector<std::string> received, Server &server )
