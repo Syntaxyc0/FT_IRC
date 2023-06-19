@@ -55,8 +55,7 @@ class	Client
 
 		void	send_reply(std::string message);
 		void	send_message(std::string message);
-		void	send_privmessage_from(std::string source, std::string message);
-		void	send_privmessage_to_channel(std::string channel,  std::string message);
+		void	send_privmessage_from(Client *source, std::string message);
 
 };
 

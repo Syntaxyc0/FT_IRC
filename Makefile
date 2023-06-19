@@ -18,6 +18,8 @@ SRCS =  main.cpp	\
 		PRIVMSG.cpp	\
 		JOIN.cpp	\
 		MODE.cpp	\
+		PING.cpp	\
+		TOPIC.cpp	\
 		
 
 SERV_PATH = server

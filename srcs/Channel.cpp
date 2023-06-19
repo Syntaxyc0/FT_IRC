@@ -9,6 +9,7 @@ _name(name), _primordial(primordial)
 {
 	_operators.push_back(primordial);
 	_channelClients.push_back(primordial);
+	_topic = "";
 	_server = &server;
 	_invite_only = 0;
 	_channel_key = 0;
@@ -66,6 +67,11 @@ void	Channel::set_user_limit(int limit, Client *user, std::string channel_name)
 		_user_limit = 0;
 }
 
+void	Channel::set_topic(std::string newtopic)
+{
+	_topic = newtopic;
+}
+
 //****************************************************//
 //                      Getter                        //
 //****************************************************//
@@ -113,6 +119,11 @@ std::vector<std::string> Channel::get_channelClients()
 std::string	Channel::get_password()
 {
 	return (_password);
+}
+
+std::string	Channel::get_topic()
+{
+	return (_topic);
 }
 
 //****************************************************//
@@ -209,15 +220,17 @@ void	Channel::kick_client( std::string user )
 	_channelClients.erase(_channelClients.begin() + find_client_index( user ) );
 }
 
+void	Channel::send_privmsg_all(std::string source, std::string message )
+{
+	for (int i = 0; i < (int)_channelClients.size(); i++)
+	{
+		if (_server->find_client( _channelClients.at(i) )->get_nickname() != source)
+			_server->find_client( _channelClients.at(i) )->send_message( message );
+	}
+}
+
 void	Channel::send_all( std::string message )
 {
 	for (int i = 0; i < (int)_channelClients.size(); i++)
 		_server->find_client( _channelClients.at(i) )->send_message( message );
-}
-
-void	Channel::send_privmessage_from( std::string source, std::string message)
-{
-	std::cout<<"chan name "<< _name<<std::endl;
-	for (int i = 0; i < (int)_channelClients.size(); i++)
-		_server->find_client( _channelClients.at(i) )->send_privmessage_from( source, message );
 }

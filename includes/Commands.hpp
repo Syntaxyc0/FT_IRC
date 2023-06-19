@@ -53,6 +53,9 @@ void	Nick(Client *client, std::vector<std::string> args, Server &serv);
 void    Pass(Client *client, std::vector<std::string> args, Server &serv);
 void	Privmsg(Client *client, std::vector<std::string> args, Server &serv);
 void	Quit(Client *client, std::vector<std::string> args, Server &serv);
+void	Ping(Client *client, std::vector<std::string> args, Server &server);
+void	Topic(Client *client, std::vector<std::string> args, Server &serv);
+
 
 
 class NoMsg  : public std::exception{

@@ -27,7 +27,6 @@ void	Privmsg(Client *client, std::vector<std::string> args, Server &serv)
 	{
 		if (!serv.find_channel(args[1].erase(0, 0)))
 		{
-			// client->send_reply(ERR_NOSUCHNICK(client->get_nickname(), args[1].erase(0, 0)));
 			client->send_message(args[1].erase(0, 0) + " :No such Channel");
 			return ;
 		}
@@ -37,8 +36,7 @@ void	Privmsg(Client *client, std::vector<std::string> args, Server &serv)
 			message += args[i];
 			message += " ";
 		}
-		serv.find_channel(args[1].erase(0, 0))->send_privmessage_from(client->get_nickname(), message);
-		// client->send_all_clients_from(args[1], message);
+		serv.find_channel(args[1].erase(0, 0))->send_privmsg_all(client->get_nickname(), ":" +client->get_fullname() + " PRIVMSG " + args[1]+ " :" + message);
 		return ;
 	}
 	else //msg a un user
@@ -51,10 +49,10 @@ void	Privmsg(Client *client, std::vector<std::string> args, Server &serv)
 		std::string message(args[2]);
 		for (unsigned int i = 3; i < args.size();i++)
 		{
-			message += " ";
 			message += args[i];
+			if (i != args.size() - 1)
+				message += " ";
 		}
-		serv.find_client(args[1])->send_message(client->get_fullname() + " PRIVMSG " + serv.find_client(args[1])->get_nickname() + " " + message);
-		// client->send_reply("PRIVMSG " + args[1] + " " + message);
+		serv.find_client(args[1])->send_privmessage_from(client, message);
 	}
 }

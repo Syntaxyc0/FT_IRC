@@ -26,8 +26,7 @@ void	Nick(Client *client, std::vector<std::string> args, Server &serv)
 			client->set_register(NOT_REGISTERED);
 		return ;
 	}
-	serv.broadcast_server(client-> get_nickname() + " changed his nickname to " + args[1]);
-	std::string message = ":" + client->get_nickname() + " NICK " + args[1];
+	serv.broadcast_server(":" + client->get_fullname() + " NICK " + args[1]);
 	client->set_nickname(args[1]);
 }
 // erreurs possibles

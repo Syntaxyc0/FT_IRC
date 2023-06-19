@@ -94,7 +94,6 @@ void	Client::send_reply(std::string message)
 		hostname = ""; 
 		
 	std::string 	reply = ":" + _nickname + username + hostname + " " + message + "\r\n";
-	// std::cout<<BLUE<<reply<<END<<std::endl;
 	if (send(_fd, reply.c_str(), reply.size(), 0) == -1)
 		throw	std::runtime_error(strerror(errno));
 }
@@ -107,19 +106,10 @@ void	Client::send_message(std::string message)
 		throw	std::runtime_error(strerror(errno));
 }
 
-void	Client::send_privmessage_from(std::string source, std::string message)
+void	Client::send_privmessage_from(Client *source, std::string message)
 {
 	std::string ret = "";
-	ret += ":" + _nickname + " PRIVMSG " + source + " " + message + "\r\n";
-	if (send(_fd, ret.c_str(), ret.size(), 0) == -1)
-		throw	std::runtime_error(strerror(errno));
-}
-
-void	Client::send_privmessage_to_channel(std::string channel, std::string message)
-{
-	std::cout<<"channel name "<< channel<<std::endl;
-	std::string ret = "";
-	ret += ":" + _nickname + " PRIVMSG " + channel + " " + message + "\r\n";
+	ret += ":" + source->get_fullname() + " PRIVMSG " + _nickname + " :" + message + "\r\n";
 	if (send(_fd, ret.c_str(), ret.size(), 0) == -1)
 		throw	std::runtime_error(strerror(errno));
 }
