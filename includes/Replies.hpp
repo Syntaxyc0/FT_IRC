@@ -20,7 +20,7 @@
 # define ERR_CANNOTSENDTOCHAN(client, channel)				"404 " + client + " " + channel + " :Cannot send to channel"
 # define ERR_TOOMANYCHANNELS(client, channel)				"405 " + client + " " + channel + " :You have joined too many channels"
 # define ERR_TOOMANYTARGETS(client, destination)			"407 " + client + " " + destination + " :Duplicate recipients. No message delivered"
-# define ERR_NOORIGIN(client)								"409 " + client + " :No origin specified"
+# define ERR_NOORIGIN(client)								"409 " + client + " :No origin specified"	
 # define ERR_NORECIPIENT(client)							"411 " + client + " :No recipient given (PRIVMSG)"
 # define ERR_NOTEXTTOSEND(client)							"412 " + client + " :No text to send"
 # define ERR_NONICKNAMEGIVEN(client)						"431 " + client + " :No nickname given"

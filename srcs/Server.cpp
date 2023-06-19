@@ -24,8 +24,8 @@ int Server::shut_down()
 void	Server::command_handler(Client *client, std::vector<std::string> args) // en travaux, pas envie de faire un switch mais bon..
 {
 	// , "MODE", "KICK", "JOIN", "INVITE", "TOPIC" //a rajouter
-	std::string		command_names[6] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG"};
-	void	(*command_functions[6])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg};
+	std::string		command_names[9] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG", "PING", "TOPIC", "JOIN"};
+	void	(*command_functions[9])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &join_command};
 	for (int i = 0; i < 11; i++)
 	{
 		if (args[0] == command_names[i])
@@ -50,23 +50,23 @@ std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator 
 		std::vector<std::string>	received = parse(line);
 		if (!received.empty())
 		{
-			if (!strcmp("USER", received[0].c_str()))
-				User(_clientList[it->fd], received, *this);
-			else if (!strcmp("userhost", received[0].c_str()))
-				User(_clientList[it->fd], received, *this);
-			else if (!strcmp("PASS", received[0].c_str()))
-				Pass(_clientList[it->fd], received, *this);
-			else if (!strcmp("QUIT", received[0].c_str()))
-				Quit(_clientList[it->fd], received, *this);
-			else if (!strcmp("NICK", received[0].c_str()))
-				Nick(_clientList[it->fd], received, *this);
-			else if (!strcmp("JOIN", received[0].c_str()))
-				join_command(_clientList[it->fd], received, *this);
-			else if (!strcmp("MODE", received[0].c_str()))
-				mode_manager(_clientList[it->fd], received, *this);
-			else if (!strcmp("PRIVMSG", received[0].c_str()))
-				Privmsg(_clientList[it->fd], received, *this);
-			// command_handler(_clientList[it->fd], received);
+			// if (!strcmp("USER", received[0].c_str()))
+			// 	User(_clientList[it->fd], received, *this);
+			// else if (!strcmp("userhost", received[0].c_str()))
+			// 	User(_clientList[it->fd], received, *this);
+			// else if (!strcmp("PASS", received[0].c_str()))
+			// 	Pass(_clientList[it->fd], received, *this);
+			// else if (!strcmp("QUIT", received[0].c_str()))
+			// 	Quit(_clientList[it->fd], received, *this);
+			// else if (!strcmp("NICK", received[0].c_str()))
+			// 	Nick(_clientList[it->fd], received, *this);
+			// else if (!strcmp("JOIN", received[0].c_str()))
+			// 	join_command(_clientList[it->fd], received, *this);
+			// else if (!strcmp("MODE", received[0].c_str()))
+			// 	mode_manager(_clientList[it->fd], received, *this);
+			// else if (!strcmp("PRIVMSG", received[0].c_str()))
+			// 	Privmsg(_clientList[it->fd], received, *this);
+			command_handler(_clientList[it->fd], received);
 			
 		}
 	}
@@ -210,8 +210,10 @@ std::vector<pollfd>::iterator Server::disconnect(int fd)
 void	Server::broadcast_server(std::string message)
 {
 	for (std::map<int, Client *>::iterator it = _clientList.begin(); it != _clientList.end(); it ++)
-		it->second->send_message(":" + it->second->get_nickname() + " " + message);
+		it->second->send_message(message);
 }
+
+
 
 //****************************************************//
 //              Channel/Client Function               //
@@ -228,8 +230,10 @@ Client  *Server::find_client(std::string nickname)
 Channel *Server::find_channel(std::string channel_name)
 {
 	for ( int i = 0; i < (int)_Channels.size(); i++ )
+	{
 		if ( channel_name == _Channels.at(i).get_name() )
 			return ( &_Channels.at(i) );
+	}
 	return (0);
 }
 

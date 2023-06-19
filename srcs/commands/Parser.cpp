@@ -1,8 +1,9 @@
 #include <vector>
 #include "Client.hpp"
 #include "Replies.hpp"
+#include <algorithm>
 
-#define WHITESPACES "\t\n\r\v\f "
+#define WHITESPACES " "
 
 
 std::string	get_command(std::string line)
@@ -21,20 +22,27 @@ std::string	get_command(std::string line)
 std::vector<std::string> parse(std::string input)
 {
 	std::vector<std::string> args;
-	std::string tmp;
-	std::stringstream	rest(input);
-	while (rest >> tmp )
-		args.push_back(tmp);
+	size_t index = 0;
+	if (input.empty())
+		return args;
+	std::replace( input.begin(), input.end(), '\r', ' ');
+	std::replace( input.begin(), input.end(), '\t', ' ');
+	std::replace( input.begin(), input.end(), '\v', ' ');
+	std::replace( input.begin(), input.end(), '\f', ' ');
+	while ((index = input.find(WHITESPACES)) != std::string::npos)
+	{
+		args.push_back(input.substr(0, index));
+		input.erase(0, index + 1);
+	}
+	if (!input.empty())
+		args.push_back(input);
 	return args;
+	// input.erase(std::remove(input.begin(), input.end(), '\r'), input.end());
+	// std::string tmp;
+	// std::stringstream	rest(input);
+	// while (rest >> tmp )
+	// 	args.push_back(tmp);
+	// return args;
 }
-
-// //exceptions possibles
-// -la commande n'existe pas
-// -l'utilisateur n'est pas bien authentifie
-// -l'utilisateur n'a pas les droits
-
-// => retour exception propre a chaque commande
-
-// l'authentification complete /PASS /USER /NICK avant ca pas d'autres commandes 
 
 

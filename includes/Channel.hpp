@@ -45,6 +45,7 @@ class Channel
 		std::string					get_name();
 		Server						*get_server();
 		std::vector<std::string>	get_channelClients();
+		std::string					get_topic();
 
 		bool						get_invite_only();
 		bool						get_channel_key();
@@ -52,6 +53,7 @@ class Channel
 		bool						get_user_limit();
 		int							get_user_limit_nb();
 		bool						get_restriction_TOPIC_cmd();
+		void						set_topic(std::string name);
 
 // FUNCTION
 
@@ -67,7 +69,8 @@ class Channel
 		void				add_client( std::string user );
 		void				kick_client( std::string user );
 		void				send_all( std::string message );
-		void				send_privmessage_from( std::string source, std::string message);
+		void				send_privmsg_all( std::string	source, std::string message );
+
 
 };
 
