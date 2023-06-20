@@ -9,24 +9,24 @@ void	mode_manager(Client *client, std::vector<std::string> received, Server &ser
 	if ( mode_error(client, received, server))
 		return ;
 
-	for (int i = 1; i < (int)received.size(); i++)
-	{
-		if ( received[i][1] == 'i' )
-			mode_invite_only( server.find_channel( received[1] ), client, received[i][0]);
-		else if ( received[i][1] == 'k' )
-			i += mode_channel_key( server.find_channel( received[1] ), client, received , i);
-		else if ( received[i][1] == 't' )
-			mode_restricion_topic_cmd( server.find_channel( received[1] ), client, received,  i );
-		else if ( !strncmp("-l", received[i].c_str(), 2) )
-			mode_limit_user( server.find_channel( received[1] ), client, received );
-		else if ( received[i][1] == 'o' )
-			mode_operator_privilege(server.find_channel( received[1] ), client, received[2]);
-	}
+	if ( received[2][1] == 'i' && server.find_channel( received[1] ))
+		mode_invite_only( server.find_channel( received[1] ), client, received[2][0]);
+	else if ( received[2][1] == 'k' )
+		mode_channel_key( server.find_channel( received[1] ), client, received);
+	else if ( received[2][1] == 't' )
+		mode_restricion_topic_cmd( server.find_channel( received[1] ), client, received);
+	else if ( !strncmp("-l", received[2].c_str(), 2) )
+		mode_limit_user( server.find_channel( received[1] ), client, received );
+	else if ( received[2][1] == 'o' )
+		mode_operator_privilege(server.find_channel( received[1] ), client, received[2]);
 }
 
 int	mode_error(Client *client, std::vector<std::string> received, Server &server)
 {
-
+	(void)client;
+	(void)server;
+	(void)received;
+	return (0);
 }
 
 // -i set/remove invite-only channel :
@@ -34,7 +34,7 @@ int	mode_error(Client *client, std::vector<std::string> received, Server &server
 //  "/MODE +i" active invite-only mode.
 // Envoie un message indiquant l'état du mode au client. Par defaut [désactivé]
 
-int	mode_invite_only(Channel *current, Client *user, char sign)
+void	mode_invite_only(Channel *current, Client *user, char sign)
 {
 	if ( sign == '+' )
 	{
@@ -53,25 +53,23 @@ int	mode_invite_only(Channel *current, Client *user, char sign)
 // "/MODE +k [password]" active le channel-key, ou change le mdp si deja activé. 
 // Envoie un message indiquant l'état du mode au client. Par defaut [désactivé]
 
-int	mode_channel_key( Channel *current, Client *user, std::vector<std::string> received, int i)
+void	mode_channel_key( Channel *current, Client *user, std::vector<std::string> received)
 {
-	if ( received[i][0] == '-' )
+	if ( received[2][0] == '-' )
 	{
 		current->set_channel_key(0, "");
 		user->send_message_in_channel( current->get_name(), "Channel key is OFF" );
-		return (0);
 	}
-	else if ( current->get_channel_key() && received[i][0] == '+' )
+	else if ( current->get_channel_key() && received[2][0] == '+' )
 	{
-		current->set_channel_key(1, received[i + 1]);
+		current->set_channel_key(1, received[3]);
 		user->send_message_in_channel( current->get_name(), "Channel key has been changed" );
 	}
-	else if ( !current->get_channel_key() && received[i][0] == '+' )
+	else if ( !current->get_channel_key() && received[2][0] == '+' )
 	{
-		current->set_channel_key(1 , received[i + 1]);
+		current->set_channel_key(1 , received[3]);
 		user->send_message_in_channel( current->get_name(), "Channel key is ON" );
 	}
-	return (1);
 }
 
 
@@ -80,9 +78,9 @@ int	mode_channel_key( Channel *current, Client *user, std::vector<std::string> r
 // "/MODE +t" active la restriction à tous les clients du Channel de changer le TOPIC.
 // Envoie un message indiquant l'état du mode au client. Par defaut [désactivé]
 
-void	mode_restricion_topic_cmd(Channel *current, Client *user, std::vector<std::string> received, int i)
+void	mode_restricion_topic_cmd(Channel *current, Client *user, std::vector<std::string> received)
 {
-	if ( received[i][0] == '-' )
+	if ( received[2][0] == '-' )
 	{
 		current->set_restriction_TOPIC_cmd(0);
 		user->send_message_in_channel( current->get_name(), "Restriction to TOPIC command is ON" );
