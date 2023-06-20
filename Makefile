@@ -18,7 +18,7 @@ SRCS =  main.cpp	\
 		PRIVMSG.cpp	\
 		JOIN.cpp	\
 		MODE.cpp	\
-		
+		INVITE.cpp	\
 
 SERV_PATH = server
 

@@ -4,6 +4,12 @@
 
 #include "Commands.hpp"
 
+int	mode_parser(Client *client, std::vector<std::string> received, Server &server)
+{
+	if (received.size() < 2)
+		client->send_message()
+}
+
 void	mode_manager(Client *client, std::vector<std::string> received, Server &server)
 {
 	if ( received[2] == "-i")
