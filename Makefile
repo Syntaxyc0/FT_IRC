@@ -20,6 +20,7 @@ SRCS =  main.cpp	\
 		MODE.cpp	\
 		PING.cpp	\
 		TOPIC.cpp	\
+		PART.cpp
 		
 
 SERV_PATH = server

@@ -24,10 +24,11 @@ int Server::shut_down()
 void	Server::command_handler(Client *client, std::vector<std::string> args) // en travaux, pas envie de faire un switch mais bon..
 {
 	// , "MODE", "KICK", "JOIN", "INVITE", "TOPIC" //a rajouter
-	std::string		command_names[9] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG", "PING", "TOPIC", "JOIN"};
-	void	(*command_functions[9])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &join_command};
-	for (int i = 0; i < 11; i++)
+	std::string		command_names[10] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG", "PING", "TOPIC", "JOIN", "PART"};
+	void	(*command_functions[10])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &join_command, &Part};
+	for (int i = 0; i < 10; i++)
 	{
+		// std::cout << command_names[i] << std::endl;
 		if (args[0] == command_names[i])
 			command_functions[i](client, args, *this);
 	}
@@ -231,6 +232,7 @@ Channel *Server::find_channel(std::string channel_name)
 {
 	for ( int i = 0; i < (int)_Channels.size(); i++ )
 	{
+		// std::cout << _Channels.at(i).get_name();
 		if ( channel_name == _Channels.at(i).get_name() )
 			return ( &_Channels.at(i) );
 	}
