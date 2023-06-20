@@ -32,6 +32,7 @@ void	join_command( Client *client, std::vector<std::string> received, Server &se
 	}
 		
 	client->send_message( client->get_nickname() + " = " + received[1] + " :" + join_message_reply( received, server ) );
+	server.find_channel( received[1] )->send_all( ":" + client->get_fullname() + " JOIN " + received[1] );
 	client->send_message( ":localhost 332 "+ client->get_nickname() + " = " + received[1] + " :" + server.find_channel( received[1] )->get_topic() );
 	client->send_message( ":localhost 353 "+ client->get_nickname() + " = " + received[1] + " :" + join_message_reply( received, server ) );
 	client->send_message( client->get_nickname() + " = " + received[1] + " :End of NAMES list" );

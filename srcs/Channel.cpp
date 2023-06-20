@@ -24,17 +24,17 @@ Channel::~Channel() {}
 //                      Setter                        //
 //****************************************************//
 
-void	Channel::set_invite_only()
+void	Channel::set_invite_only(int i)
 {
-	if (_invite_only)
+	if (!i)
 		_invite_only = 0;
 	else
 		_invite_only = 1;
 }
 
-void	Channel::set_channel_key(std::string password)
+void	Channel::set_channel_key(int i, std::string password)
 {
-	if (!password.size())
+	if (!i)
 		_channel_key = 0;
 	else
 	{
@@ -43,9 +43,9 @@ void	Channel::set_channel_key(std::string password)
 	}
 }
 
-void	Channel::set_restriction_TOPIC_cmd()
+void	Channel::set_restriction_TOPIC_cmd( int  i )
 {
-	if (_restriction_TOPIC_cmd)
+	if (!i)
 		_restriction_TOPIC_cmd = 0;
 	else 
 		_restriction_TOPIC_cmd = 1;

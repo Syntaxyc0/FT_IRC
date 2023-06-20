@@ -4,93 +4,99 @@
 
 #include "Commands.hpp"
 
-int	mode_parser(Client *client, std::vector<std::string> received, Server &server)
+void	mode_manager(Client *client, std::vector<std::string> received, Server &server)
 {
-	if (received.size() < 2)
-		client->send_message( ERR_NEEDMOREPARAMS( client->get_nickname(), "MODE" ) );
+	if ( mode_error(client, received, server))
+		return ;
+
 	for (int i = 1; i < (int)received.size(); i++)
 	{
-		if (received[i][1] == 'i')
+		if ( received[i][1] == 'i' )
 			mode_invite_only( server.find_channel( received[1] ), client, received[i][0]);
-
+		else if ( received[i][1] == 'k' )
+			i += mode_channel_key( server.find_channel( received[1] ), client, received , i);
+		else if ( received[i][1] == 't' )
+			mode_restricion_topic_cmd( server.find_channel( received[1] ), client, received,  i );
+		else if ( !strncmp("-l", received[i].c_str(), 2) )
+			mode_limit_user( server.find_channel( received[1] ), client, received );
+		else if ( received[i][1] == 'o' )
+			mode_operator_privilege(server.find_channel( received[1] ), client, received[2]);
 	}
 }
 
-void	mode_manager(Client *client, std::vector<std::string> received, Server &server)
+int	mode_error(Client *client, std::vector<std::string> received, Server &server)
 {
-	if ( received[2] == "-i")
-		mode_invite_only( server.find_channel( received[1] ), client );
-	else if ( received[2] == "-k" )
-		mode_channel_key( server.find_channel( received[1] ), client, received );
-	else if ( received[2] == "-t" )
-		mode_restricion_topic_cmd( server.find_channel( received[1] ), client );
-	else if ( !strncmp("-l", received[2].c_str(), 2) )
-		mode_limit_user( server.find_channel( received[1] ), client, received );
-	else if ( received[2] == "-o" )
-		mode_operator_privilege(server.find_channel( received[1] ), client, received[2]);
+
 }
 
 // -i set/remove invite-only channel :
-//  "/MODE -i" active le invite only, s'il est désactivé et inversement. 
+//  "/MODE -i" désactive invite-only mode.
+//  "/MODE +i" active invite-only mode.
 // Envoie un message indiquant l'état du mode au client. Par defaut [désactivé]
 
 int	mode_invite_only(Channel *current, Client *user, char sign)
 {
-	std::string message = "PRIVMSG ";
-	message += current->get_name() + " :";
-
-	if (sign == '+')
+	if ( sign == '+' )
 	{
 		current->set_invite_only(1);
-		user->send_message( message += "Invite-only mode is ON" );
+		user->send_message_in_channel( current->get_name(), "Invite-only mode is ON" );
 	}
-	else
+	else if ( sign == '-' )
 	{
 		current->set_invite_only(0);
-		user->send_message( message += "Invite-only mode is OFF" );
+		user->send_message_in_channel( current->get_name(), "Invite-only mode is OFF" );
 	}
 }
 
 // -k set/remove channel key (pw)
-// "/MODE -k (password)" active l'utilisation d'un mot de passe pour JOIN le channel s'il est précisé. Si il n'est pas précisé, il désactive la demande de mot de passe.
-// Si un mot de passe est précisé alors qu'il y en avait déja un, il est alors modifié par le nouveau.
+// "/MODE -k" desactive le channel-key;
+// "/MODE +k [password]" active le channel-key, ou change le mdp si deja activé. 
 // Envoie un message indiquant l'état du mode au client. Par defaut [désactivé]
 
-void	mode_channel_key( Channel *current, Client *user, std::vector<std::string> received )
+int	mode_channel_key( Channel *current, Client *user, std::vector<std::string> received, int i)
 {
-	std::string message = "PRIVMSG ";
-	message += current->get_name() + " :";
-
-	if ( received.size() == 3 )
-		user->send_message( message += "Channel key is OFF" );
-	else if ( current->get_channel_key() && received.size() == 4 )
-		user->send_message( message += "Channel key has been changed" );
-	else
+	if ( received[i][0] == '-' )
 	{
-		current->set_channel_key(received[3]);
-		user->send_message( message += "Channel key is ON" );
+		current->set_channel_key(0, "");
+		user->send_message_in_channel( current->get_name(), "Channel key is OFF" );
+		return (0);
 	}
+	else if ( current->get_channel_key() && received[i][0] == '+' )
+	{
+		current->set_channel_key(1, received[i + 1]);
+		user->send_message_in_channel( current->get_name(), "Channel key has been changed" );
+	}
+	else if ( !current->get_channel_key() && received[i][0] == '+' )
+	{
+		current->set_channel_key(1 , received[i + 1]);
+		user->send_message_in_channel( current->get_name(), "Channel key is ON" );
+	}
+	return (1);
 }
 
 
 // -t set/remove restriction of the topic command to channel operator
-// "/MODE -t" active la restriction à tous les clients du Channel de changer le TOPIC. S'il était activé, le désactive.
+// "/MODE -t" désactive la restriction à tous les clients du Channel de changer le TOPIC.
+// "/MODE +t" active la restriction à tous les clients du Channel de changer le TOPIC.
 // Envoie un message indiquant l'état du mode au client. Par defaut [désactivé]
 
-void	mode_restricion_topic_cmd(Channel *current, Client *user)
+void	mode_restricion_topic_cmd(Channel *current, Client *user, std::vector<std::string> received, int i)
 {
-	std::string message = "PRIVMSG ";
-	message += current->get_name() + " :";
-
-	current->set_restriction_TOPIC_cmd();
-	if (current->get_restriction_TOPIC_cmd())
-		user->send_message( message += "Restriction to TOPIC command is ON" );
+	if ( received[i][0] == '-' )
+	{
+		current->set_restriction_TOPIC_cmd(0);
+		user->send_message_in_channel( current->get_name(), "Restriction to TOPIC command is ON" );
+	}
 	else
-		user->send_message( message += "Restriction to TOPIC command is OFF" );
+	{
+		current->set_restriction_TOPIC_cmd(1);
+		user->send_message_in_channel( current->get_name(), "Restriction to TOPIC command is OFF" );
+	}
 }
 
 // -l set/remove the user limit to Channel:
-// "/MODE -l (nb)" active le nombre de Client admis dans le Channel si (nb) est précisé. Sinon, désactive la limite.
+// "/MODE -l" désactive le nombre de Client admis dans le Channel.
+// "/MODE -l [nb]" active le nombre de Client admis dans le Channel, ou change le nombre si deja activé.
 // Envoie un message indiquant l'état du mode au client. Par defaut [désactivé]
 
 void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> received)

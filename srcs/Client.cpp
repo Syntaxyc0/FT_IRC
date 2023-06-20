@@ -114,6 +114,12 @@ void	Client::send_privmessage_from(Client *source, std::string message)
 		throw	std::runtime_error(strerror(errno));
 }
 
+void	Client::send_message_in_channel(std::string channel, std::string message)
+{
+	std::string msg = "PRIVMSG " + channel + " :" + message;
+	send_message(msg);
+}
+
 std::string	Client::get_fullname()
 {
 	std::string		username;
