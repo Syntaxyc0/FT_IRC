@@ -40,20 +40,22 @@ void	join_command( Client *client, std::vector<std::string> received, Server &se
 
 bool	join_error( Client *client, std::vector<std::string> received, Server &server )
 {
+	Channel *current = server.find_channel( received[1] );
+
 	if (received.size() < 2)
 		return ( client->send_reply( ERR_NEEDMOREPARAMS( client->get_nickname(), "JOIN" ) ), true );
 
-	else if ( server.find_channel( received[1] ) && server.find_channel( received[1] )->get_user_limit() == 1 && (int)server.find_channel( received[1] )->get_channelClients().size() >=  server.find_channel( received[1] )->get_user_limit_nb() )
-		return ( client->send_reply( ERR_CHANNELISFULL( client->get_nickname(), server.find_channel( received[1] )->get_name() ) ), true );
+	else if ( current && current->get_user_limit() == 1 && (int)current->get_channelClients().size() >=  current->get_user_limit_nb() )
+		return ( client->send_reply( ERR_CHANNELISFULL( client->get_nickname(), current->get_name() ) ), true );
 
-	else if ( server.find_channel( received[1] ) && server.find_channel( received[1] )->get_channel_key() && received.size() < 3)
-		return ( client->send_reply( ERR_BADCHANNELKEY( client->get_nickname(), server.find_channel( received[1] )->get_name() ) ), true );
+	else if ( current && current->get_channel_key() && received.size() < 3)
+		return ( client->send_reply( ERR_BADCHANNELKEY( client->get_nickname(), current->get_name() ) ), true );
 
-	else if ( server.find_channel( received[1] ) && server.find_channel( received[1] )->get_channel_key() && received[3] != server.find_channel( received[1] )->get_password() )
-		return ( client->send_reply( ERR_BADCHANNELKEY( client->get_nickname(), server.find_channel( received[1] )->get_name() ) ), true );
+	else if ( current && current->get_channel_key() && received[2] != current->get_password() )
+		return ( client->send_reply( ERR_BADCHANNELKEY( client->get_nickname(), current->get_name() ) ), true );
 
-	else if ( server.find_channel( received[1] ) && server.find_channel( received[1] )->get_invite_only() )
-		return ( client->send_reply( ERR_INVITEONLYCHAN( client->get_nickname(), server.find_channel( received[1] )->get_name() ) ), true );
+	else if ( current && current->get_invite_only() )
+		return ( client->send_reply( ERR_INVITEONLYCHAN( client->get_nickname(), current->get_name() ) ), true );
 	
 	return (0);
 }

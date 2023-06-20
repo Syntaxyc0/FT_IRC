@@ -67,6 +67,7 @@ void	mode_channel_key( Channel *current, Client *user, std::vector<std::string> 
 	}
 	else if ( !current->get_channel_key() && received[2][0] == '+' )
 	{
+		std::cout << received[3] << std::endl;
 		current->set_channel_key(1 , received[3]);
 		user->send_message_in_channel( current->get_name(), "Channel key is ON" );
 	}
