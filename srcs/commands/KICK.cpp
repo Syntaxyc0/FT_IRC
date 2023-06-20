@@ -34,9 +34,6 @@ void	kick_command(Channel &current, Client &me, std::string target)
 // remove client to channel's list
 	current.kick_client( target );
 
-// remove channel to client's _current_channel
-	current.get_server()->find_client( target )->set_current_channel("");
-
 	std::string message = target;
 	target.append(" was kicked");
 	me.send_message(message);

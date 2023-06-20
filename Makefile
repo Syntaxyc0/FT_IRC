@@ -19,6 +19,9 @@ SRCS =  main.cpp	\
 		JOIN.cpp	\
 		MODE.cpp	\
 		INVITE.cpp	\
+		PING.cpp	\
+		TOPIC.cpp	\
+		
 
 SERV_PATH = server
 

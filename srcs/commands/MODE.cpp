@@ -7,7 +7,13 @@
 int	mode_parser(Client *client, std::vector<std::string> received, Server &server)
 {
 	if (received.size() < 2)
-		client->send_message()
+		client->send_message( ERR_NEEDMOREPARAMS( client->get_nickname(), "MODE" ) );
+	for (int i = 1; i < (int)received.size(); i++)
+	{
+		if (received[i][1] == 'i')
+			mode_invite_only( server.find_channel( received[1] ), client, received[i][0]);
+
+	}
 }
 
 void	mode_manager(Client *client, std::vector<std::string> received, Server &server)
@@ -28,16 +34,21 @@ void	mode_manager(Client *client, std::vector<std::string> received, Server &ser
 //  "/MODE -i" active le invite only, s'il est désactivé et inversement. 
 // Envoie un message indiquant l'état du mode au client. Par defaut [désactivé]
 
-void	mode_invite_only(Channel *current, Client *user)
+int	mode_invite_only(Channel *current, Client *user, char sign)
 {
 	std::string message = "PRIVMSG ";
 	message += current->get_name() + " :";
 
-	current->set_invite_only();
-	if (current->get_invite_only())
+	if (sign == '+')
+	{
+		current->set_invite_only(1);
 		user->send_message( message += "Invite-only mode is ON" );
+	}
 	else
+	{
+		current->set_invite_only(0);
 		user->send_message( message += "Invite-only mode is OFF" );
+	}
 }
 
 // -k set/remove channel key (pw)
