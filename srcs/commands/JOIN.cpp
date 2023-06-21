@@ -63,8 +63,9 @@ bool	join_error( Client *client, std::vector<std::string> received, Server &serv
 std::string	join_message_reply( std::vector<std::string> received, Server &server )
 {
 	std::string message;
+	Channel *current = server.find_channel( received[1] );
 
-	for ( int i = 0; i < (int)server.find_channel( received[1] )->get_channelClients().size(); i++ )
-		message += server.find_channel( received[1] )->get_channelClients().at(i) + " ";
+	for ( int i = 0; i < (int)current->get_channelClients().size(); i++ )
+		message += current->get_channelClients().at(i) + " ";
 	return ( message );
 }
