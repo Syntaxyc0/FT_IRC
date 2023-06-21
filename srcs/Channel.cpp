@@ -217,6 +217,7 @@ void	Channel::add_client( std::string user )
 
 void	Channel::kick_client( std::string user )
 {
+	std::cout << find_client_index( user );
 	_channelClients.erase(_channelClients.begin() + find_client_index( user ) );
 }
 

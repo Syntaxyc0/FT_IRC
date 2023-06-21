@@ -21,6 +21,7 @@ SRCS =  main.cpp	\
 		INVITE.cpp	\
 		PING.cpp	\
 		TOPIC.cpp	\
+		PART.cpp
 		
 
 SERV_PATH = server

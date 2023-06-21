@@ -24,16 +24,16 @@ int Server::shut_down()
 void	Server::command_handler(Client *client, std::vector<std::string> args) // en travaux, pas envie de faire un switch mais bon..
 {
 	// , "MODE", "KICK", "JOIN", "INVITE", "TOPIC" //a rajouter
-	std::string		command_names[10] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG", "PING", "TOPIC", "JOIN", "MODE"};
-	void	(*command_functions[10])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &join_command, &mode_manager};
-	for (int i = 0; i < 11; i++)
+	std::string		command_names[11] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG", "PING", "TOPIC", "JOIN", "MODE", "PART"};
+	void	(*command_functions[11])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &join_command, &mode_manager, &Part};
+	for (int i = 0; i < 10; i++)
 	{
 		if (args[0] == command_names[i])
 			command_functions[i](client, args, *this);
 	}
 }
 
-std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator it)
+void Server::handle_data(std::vector<pollfd>::iterator it)
 {
 	char buffer[1024];
 	int bytes_received = recv(it->fd , buffer, sizeof(buffer), 0);
@@ -49,38 +49,8 @@ std::vector<pollfd>::iterator Server::handle_data(std::vector<pollfd>::iterator 
 	{
 		std::vector<std::string>	received = parse(line);
 		if (!received.empty())
-		{
-			// if (!strcmp("USER", received[0].c_str()))
-			// 	User(_clientList[it->fd], received, *this);
-			// else if (!strcmp("userhost", received[0].c_str()))
-			// 	User(_clientList[it->fd], received, *this);
-			// else if (!strcmp("PASS", received[0].c_str()))
-			// 	Pass(_clientList[it->fd], received, *this);
-			// else if (!strcmp("QUIT", received[0].c_str()))
-			// 	Quit(_clientList[it->fd], received, *this);
-			// else if (!strcmp("NICK", received[0].c_str()))
-			// 	Nick(_clientList[it->fd], received, *this);
-			// else if (!strcmp("JOIN", received[0].c_str()))
-			// 	join_command(_clientList[it->fd], received, *this);
-			// else if (!strcmp("MODE", received[0].c_str()))
-			// 	mode_manager(_clientList[it->fd], received, *this);
-			// else if (!strcmp("PRIVMSG", received[0].c_str()))
-			// 	Privmsg(_clientList[it->fd], received, *this);
 			command_handler(_clientList[it->fd], received);
-			
-		}
 	}
-	// std::cout<<BLUE<<"NICK : "<<_clientList[it->fd]->get_nickname()<<END<<std::endl;
-	// std::cout<<CYAN<<"USERNAME : "<<_clientList[it->fd]->get_username() <<END<<std::endl;
-	// std::cout<<YELLOW<<"REALNAME : "<<_clientList[it->fd]->get_realname() <<END<<std::endl;
-	// std::string clean_recept;
-	// clean_recept = "";
-	// clean_recept += buffer;
-	// clean_recept.erase(clean_recept.size() - 1);
-	// std::cout <<GREEN<<"full received buffer :\n"<< buffer <<"from "<< _clientList[it->fd]->get_nickname()<<END<<std::endl;
-	// std::cout <<GREEN<<"full received buffer :\n"<< clean_recept<<"from "<< _clientList[it->fd]->get_nickname()<<END<<std::endl;
-	// std::cout<<std::endl;
-	return (it);
 }
 
 void Server::monitoring()
@@ -103,11 +73,9 @@ void Server::monitoring()
 				it = new_connection();
 			else
 			{
-				it = handle_data(it);
+				handle_data(it);
 				if (_clientList[it->fd]->get_registered() == NOT_REGISTERED) // faire la distinction entre une deco via quit et via une non authentification
-				{
 					it = disconnect(it->fd);
-				}
 				else if (_clientList[it->fd]->get_registered() == DISCONNECTED)
 				{
 					broadcast_server(_clientList[it->fd]->get_nickname() + " left the server");
@@ -129,7 +97,7 @@ std::vector<pollfd>::iterator Server::new_connection()
 	pollfd	new_poll = {fd, POLLIN, 0};
 	_sockets.push_back(new_poll);
 	// getnameinfo((sockaddr *) &client_addr, sizeof(client_addr), tmp_hostname, NI_MAXHOST, NULL, 0, 0); //tout ca pour choper son hostname.. Ils sont fou ces romains! fonction pas autorisee, pfffff
-	adduser(fd, "localhost");
+	adduser(fd, inet_ntoa(client_addr.sin_addr));
     std::cout << MAGENTA << "New connection successfull!" << END << std::endl;
 	return _sockets.begin();
 }
@@ -187,7 +155,6 @@ void	Server::adduser(int fd, std::string hostname)
 
 std::vector<pollfd>::iterator Server::disconnect(int fd)
 {
-
 	//TODO: lui faire quitter son channel actif s'il en a un
 	for (std::vector<pollfd>::iterator it =_sockets.begin(); it != _sockets.end(); it++)
 	{
