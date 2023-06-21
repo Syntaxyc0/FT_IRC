@@ -102,7 +102,7 @@ void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> re
 {
 	if ( received[2][0] == '+' )
 	{
-		int limit_nb = atoi( received[2].c_str() );
+		int limit_nb = atoi( received[2].c_str() + 2 );
 		
 		std::cout << limit_nb << std::endl;
 
