@@ -296,7 +296,7 @@ The event we're interested in is mostly POLLIN. Let's change our code.
 
 First of, poll reacts when there is an incoming connection on our fd, for this we use the POLLIN event
 
-    struct pollfd fds[SOMAXCONN + 1] = {0};
+    struct pollfd fds[SOMAXCONN] = {0};
     fds[0].fd = listen_socket;
     fds[0].events = POLL_IN;
 
@@ -310,7 +310,7 @@ Let's do the same for our client sockets.
 
 We also need to change our loop, instead of trying to create a new socket each time we get to the beginning of our loop, we should create one only if fds[0].revents (our listen_socket) = POLLIN. Meaning there is new data on the file descriptor AKA a new client connection.
 
-    struct pollfd fds[SOMAXCONN + 1] = {0};
+    struct pollfd fds[SOMAXCONN] = {0};
     fds[0].fd = listen_socket;
     fds[0].events = POLL_IN;
     size_t i = 1;
