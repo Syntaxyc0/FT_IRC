@@ -217,8 +217,8 @@ void	Channel::add_client( std::string user )
 
 void	Channel::kick_client( std::string user )
 {
-	std::cout << find_client_index( user );
-	_channelClients.erase(_channelClients.begin() + find_client_index( user ) );
+	if ( find_client_index( user ) >= 0 )
+		_channelClients.erase(_channelClients.begin() + find_client_index( user ) );
 }
 
 void	Channel::send_privmsg_all(std::string source, std::string message )
