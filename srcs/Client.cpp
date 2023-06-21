@@ -41,6 +41,11 @@ void	Client::set_register(int state)
 	_is_registered = state;
 }
 
+void	Client::set_add_channel(Channel *new_channel)
+{
+	_channelList.push_back( new_channel->get_name() );
+}
+
 //****************************************************//
 //                      Getter                        //
 //****************************************************//
@@ -73,6 +78,11 @@ std::string Client::get_nickname()
 int	Client::get_registered()
 {
 	return _is_registered;
+}
+
+std::vector<std::string>	Client::get_channelList()
+{
+	return _channelList;
 }
 
 //****************************************************//

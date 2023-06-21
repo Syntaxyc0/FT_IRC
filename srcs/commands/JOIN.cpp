@@ -15,27 +15,30 @@
 
 void	join_command( Client *client, std::vector<std::string> received, Server &server )
 {
-	Channel *current = server.find_channel( received[1] );
 
 	if ( join_error( client, received, server ) )
-	{
 		return ;
-	}
 
-	if ( !current )
+	if ( !server.find_channel( received[1] ) )
 	{
 		Channel ret(received[1], client->get_nickname(), server);
 		server.add_Channels( ret );
 	}
 	else
 	{
-		current->send_all( ":" + client->get_fullname() + " JOIN " + received[1] );
-		current->add_client( client->get_nickname() );
+		server.find_channel( received[1] )->add_client( client->get_nickname() );
 	}
-		
-	client->send_message( client->get_nickname() + " = " + received[1] + " :" + join_message_reply( received, server ) );
-	client->send_message( client->get_nickname() + " = " + received[1] + " :" + current->get_topic() );
-	client->send_message( client->get_nickname() + " = " + received[1] + " :End of NAMES list" );
+
+	Channel *current = server.find_channel( received[1] );
+
+	client->set_add_channel(current);
+	for (int i = 0; i < (int)client->get_channelList().size(); i++)
+		std::cout <<  client->get_channelList()[i] << std::endl;
+	current->send_all( ":" + client->get_fullname() + " JOIN " + received[1] );
+	if ( current->get_topic().size() )
+		client->send_message_in_channel( current->get_name(), client->get_nickname() + " = " + received[1] + " :" + current->get_topic() );
+	client->send_message_in_channel( current->get_name(), client->get_nickname() + " = " + received[1] + " :" + join_message_reply( received, server ) );
+	client->send_message_in_channel( current->get_name(), client->get_nickname() + " = " + received[1] + " :End of NAMES list" );
 }
 
 bool	join_error( Client *client, std::vector<std::string> received, Server &server )
