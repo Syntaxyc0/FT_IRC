@@ -17,11 +17,12 @@ class Channel;
 class	Client
 {
 	private:
-			int 			_fd;
-			std::string		_hostname;
-			std::string		_username;
-			std::string		_realname;
-			std::string		_nickname;
+			int 						_fd;
+			std::string					_hostname;
+			std::string					_username;
+			std::string					_realname;
+			std::string					_nickname;
+			std::vector<std::string>	_channelList;
 
 			int			_is_registered;
 
@@ -38,24 +39,26 @@ class	Client
 			void			set_username(std::string name);
 			void			set_realname(std::string name);
 			void			set_nickname(std::string name);
+			void			set_add_channel(Channel* new_channel);
 
 		// Getters
 
-			int				get_fd();
-			int				get_registered();	
-			std::string		get_hostname();
-			std::string		get_username();
-			std::string		get_realname();
-			std::string		get_nickname();
-			std::string		get_current_channel();
-			std::string		get_fullname();
-
+			int							get_fd();
+			int							get_registered();	
+			std::string					get_hostname();
+			std::string					get_username();
+			std::string					get_realname();
+			std::string					get_nickname();
+			std::string					get_current_channel();
+			std::string					get_fullname();
+			std::vector<std::string>	get_channelList();
 
 		// Functions
 
 		void	send_reply(std::string message);
 		void	send_message(std::string message);
 		void	send_privmessage_from(Client *source, std::string message);
+		void	send_message_in_channel( std::string channel, std::string message);
 
 };
 

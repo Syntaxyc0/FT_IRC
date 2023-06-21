@@ -18,6 +18,7 @@ SRCS =  main.cpp	\
 		PRIVMSG.cpp	\
 		JOIN.cpp	\
 		MODE.cpp	\
+		INVITE.cpp	\
 		PING.cpp	\
 		TOPIC.cpp	\
 		PART.cpp

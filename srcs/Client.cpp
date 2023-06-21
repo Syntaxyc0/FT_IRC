@@ -41,6 +41,11 @@ void	Client::set_register(int state)
 	_is_registered = state;
 }
 
+void	Client::set_add_channel(Channel *new_channel)
+{
+	_channelList.push_back( new_channel->get_name() );
+}
+
 //****************************************************//
 //                      Getter                        //
 //****************************************************//
@@ -73,6 +78,11 @@ std::string Client::get_nickname()
 int	Client::get_registered()
 {
 	return _is_registered;
+}
+
+std::vector<std::string>	Client::get_channelList()
+{
+	return _channelList;
 }
 
 //****************************************************//
@@ -112,6 +122,12 @@ void	Client::send_privmessage_from(Client *source, std::string message)
 	ret += ":" + source->get_fullname() + " PRIVMSG " + _nickname + " :" + message + "\r\n";
 	if (send(_fd, ret.c_str(), ret.size(), 0) == -1)
 		throw	std::runtime_error(strerror(errno));
+}
+
+void	Client::send_message_in_channel(std::string channel, std::string message)
+{
+	std::string msg = "PRIVMSG " + channel + " :" + message;
+	send_message(msg);
 }
 
 std::string	Client::get_fullname()

@@ -9,15 +9,17 @@
 // le client invité est déjà sur le channel.
 // Un message s'affichera si la commande s'execute avec succès.
 
-void	invite_command( Client *client, std::vector<std::string> received, Server &server );
+void	invite_command( Client *client, std::vector<std::string> received, Server &server )
 {
-	if ( invite_error( client ) )
+	if ( invite_error( client, received, server) )
 		return;
 
 	// add client to channel's list
-	current.add_client( received[1] );
+	server.find_channel( received[2] )->send_all( ":" + client->get_fullname() + " JOIN " + received[1] );
+	server.find_channel( received[2] )->add_client( received[1] );
 
-	client->send_message( "PRIVMSG " + server.find_channel( received[2] ) + " :" + server.find_client( received[1] ).get_nickname() + " has joined channel" );
+	server.find_client( received[1] )->send_message( client->get_nickname() + " = " + received[1] + " :" + join_message_reply( received, server ) );
+	server.find_client( received[1] )->send_message( client->get_nickname() + " = " + received[1] + " :End of NAMES list" );
 }
 
 bool	invite_error( Client *client, std::vector<std::string> received, Server &server )
@@ -34,11 +36,11 @@ bool	invite_error( Client *client, std::vector<std::string> received, Server &se
 	else if ( !server.find_channel( received[2] )->is_operator( client->get_nickname() ) )
 		return ( client->send_reply( ERR_CHANOPRIVSNEEDED( client->get_nickname(), server.find_channel( received[2] )->get_name() ) ), true );
 
-	else if ( server.find_channel( received[2] )->is_channelClient( server.find_client(  ) ) )
-		return ( client->send_reply( ERR_USERONCHANNEL( client->get_nickname(), target,  server.find_channel( received[2] )->get_name() ) ), true );
+	else if ( server.find_channel( received[2] )->is_channelClient( server.find_client( received[1] )->get_nickname() ) )
+		return ( client->send_reply( ERR_USERONCHANNEL( client->get_nickname(), server.find_client( received[1] )->get_nickname(),  server.find_channel( received[2] )->get_name() ) ), true );
 
-	else if ( (int)current.get_channelClients().size() >= current.get_user_limit_nb() )
+	else if ( (int)server.find_channel( received[2] )->get_channelClients().size() >= server.find_channel( received[2] )->get_user_limit_nb() )
 		return ( client->send_reply( ERR_LIMITREACHED( server.find_channel( received[2] )->get_name() ) ), true );
 
-	return ( false )
+	return ( false );
 }
