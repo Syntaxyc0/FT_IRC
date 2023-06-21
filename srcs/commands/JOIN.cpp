@@ -15,26 +15,26 @@
 
 void	join_command( Client *client, std::vector<std::string> received, Server &server )
 {
+	Channel *current = server.find_channel( received[1] );
+
 	if ( join_error( client, received, server ) )
 	{
 		return ;
 	}
 
-	if ( !server.find_channel( received[1] ) )
+	if ( !current )
 	{
 		Channel ret(received[1], client->get_nickname(), server);
 		server.add_Channels( ret );
 	}
 	else
 	{
-		server.find_channel( received[1] )->send_all( ":" + client->get_fullname() + " JOIN " + received[1] );
-		server.find_channel( received[1] )->add_client( client->get_nickname() );
+		current->send_all( ":" + client->get_fullname() + " JOIN " + received[1] );
+		current->add_client( client->get_nickname() );
 	}
 		
 	client->send_message( client->get_nickname() + " = " + received[1] + " :" + join_message_reply( received, server ) );
-	server.find_channel( received[1] )->send_all( ":" + client->get_fullname() + " JOIN " + received[1] );
-	client->send_message( ":localhost 332 "+ client->get_nickname() + " = " + received[1] + " :" + server.find_channel( received[1] )->get_topic() );
-	client->send_message( ":localhost 353 "+ client->get_nickname() + " = " + received[1] + " :" + join_message_reply( received, server ) );
+	client->send_message( client->get_nickname() + " = " + received[1] + " :" + current->get_topic() );
 	client->send_message( client->get_nickname() + " = " + received[1] + " :End of NAMES list" );
 }
 
