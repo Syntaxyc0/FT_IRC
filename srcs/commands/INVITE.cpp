@@ -18,7 +18,7 @@ void	invite_command( Client *client, std::vector<std::string> received, Server &
 	server.find_channel( received[2] )->send_all( ":" + client->get_fullname() + " JOIN " + received[1] );
 	server.find_channel( received[2] )->add_client( received[1] );
 
-	server.find_client( received[1] )->send_message( client->get_nickname() + " = " + received[1] + " :" + join_message_reply( received, server ) );
+	server.find_client( received[1] )->send_message( client->get_nickname() + " = " + received[1] + " :" + channel_list_user( received, server ) );
 	server.find_client( received[1] )->send_message( client->get_nickname() + " = " + received[1] + " :End of NAMES list" );
 }
 

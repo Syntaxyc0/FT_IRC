@@ -35,7 +35,7 @@ void		invite_command( Client *client, std::vector<std::string> received, Server 
 bool		invite_error( Client *client, std::vector<std::string> received, Server &server );
 void		join_command( Client *client, std::vector<std::string> received, Server &server );
 bool		join_error( Client *client, std::vector<std::string> received, Server &server );
-std::string	join_message_reply( std::vector<std::string> received, Server &server );
+std::string	channel_list_user( std::vector<std::string> received, Server &server );
 
 // MODE COMMAND
 
