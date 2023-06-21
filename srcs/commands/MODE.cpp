@@ -125,7 +125,9 @@ void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> re
 // "MODE -o [target]" Si le client est au moins operator, il peut donner les pivilèges à n'importe qui.
 // Seul le primordial peut retirer les privilèges. Envoie un message annonçant le nouvel operator, ou le client aayant été retrogradé.
 
-void	mode_operator_privilege(Channel *current, Client *user, std::string target)
+void	mode_operator_privilege(Channel *current, Client *user, std::vector<std::string> received)
 {
+	if ( received[2][0] == '-')
+		
 	current->operator_privilege(user, target);
 } 

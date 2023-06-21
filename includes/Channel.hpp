@@ -57,7 +57,7 @@ class Channel
 
 // FUNCTION
 
-		void				operator_privilege( Client *me, std::string target );
+		void				operator_privilege( Client *me, std::string target, int sign );
 
 		int					is_primordial( std::string target );
 		int					is_operator( std::string target );

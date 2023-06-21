@@ -130,21 +130,21 @@ std::string	Channel::get_topic()
 //                     Function                       //
 //****************************************************//
 
-void	Channel::operator_privilege(Client *me, std::string target)
+void	Channel::operator_privilege( Client *me, std::string target, int sign )
 {
-	if ( !is_primordial(me->get_nickname()) || !is_operator(me->get_nickname()) )
+	if ( !is_primordial( me->get_nickname() ) || !is_operator( me->get_nickname() ) )
 	{
 		me->send_reply( ERR_CHANOPRIVSNEEDED( me->get_nickname(), _name ) );
 		return;
 	}
 
-	if (is_primordial(target))
+	if ( is_primordial( target ) )
 	{
 		me->send_reply( ERR_NOPRIMORDIAL( me->get_nickname(), _name ) );
 		return;
 	}
 
-	if (!is_channelClient(target))
+	if ( !is_channelClient( target ) )
 	{
 		me->send_reply("Client not found in this channel");
 		return;
