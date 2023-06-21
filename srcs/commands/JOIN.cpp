@@ -32,8 +32,6 @@ void	join_command( Client *client, std::vector<std::string> received, Server &se
 	Channel *current = server.find_channel( received[1] );
 
 	client->set_add_channel(current);
-	for (int i = 0; i < (int)client->get_channelList().size(); i++)
-		std::cout <<  client->get_channelList()[i] << std::endl;
 	current->send_all( ":" + client->get_fullname() + " JOIN " + received[1] );
 	if ( current->get_topic().size() )
 		client->send_message_in_channel( current->get_name(), client->get_nickname() + " = " + received[1] + " :" + current->get_topic() );
