@@ -51,13 +51,10 @@ void	Channel::set_restriction_TOPIC_cmd( int  i )
 		_restriction_TOPIC_cmd = 1;
 }
 
-void	Channel::set_user_limit(int limit, Client *user, std::string channel_name)
+void	Channel::set_user_limit( int limit )
 {
-	if (limit < 0 && !_user_limit)
-	{
-		user->send_message("PRIVMSG" + channel_name + "Error: User limit can't be less than 1");
+	if (limit < 0 && _user_limit)
 		return;
-	}
 	if (limit)
 	{
 		_user_limit = 1;
@@ -132,7 +129,7 @@ std::string	Channel::get_topic()
 
 void	Channel::operator_privilege( Client *me, std::string target, int sign )
 {
-	if ( !is_primordial( me->get_nickname() ) || !is_operator( me->get_nickname() ) )
+	if ( !is_operator( me->get_nickname() ) )
 	{
 		me->send_reply( ERR_CHANOPRIVSNEEDED( me->get_nickname(), _name ) );
 		return;
@@ -146,24 +143,23 @@ void	Channel::operator_privilege( Client *me, std::string target, int sign )
 
 	if ( !is_channelClient( target ) )
 	{
-		me->send_reply("Client not found in this channel");
+		me->send_message_in_channel( _name, "Client not found in this channel" );
 		return;
 	}
 
-	if (!is_operator(target))
+	if (sign)
 	{
-		_operators.erase( _operators.begin() + find_client_index( target ) );
-		std::string message = target;
-		message.append( " is now channel operator" );
-		this->send_all( message );
+		if ( is_operator(target) )
+			return;
+		_operators.push_back( target );
+		this->send_all( target + " is now channel operator" );
 	}
-
-	if (is_primordial( me->get_nickname()) && is_operator(target) && me->get_nickname() != target )
+	else
 	{
-		std::string message2 = target;
+		if ( !is_operator(target) && me->get_nickname() != target )
+			return;
 		_operators.erase( _operators.begin() + find_operator_index( target )) ;
-		message2.append( " is not anymore operator" );
-		this->send_all( message2 );
+		this->send_all( target + " is not anymore operator" );
 	}
 }
 
@@ -233,5 +229,5 @@ void	Channel::send_privmsg_all(std::string source, std::string message )
 void	Channel::send_all( std::string message )
 {
 	for (int i = 0; i < (int)_channelClients.size(); i++)
-		_server->find_client( _channelClients.at(i) )->send_message( message );
+		_server->find_client( _channelClients[i] )->send_message_in_channel( _name, message );
 }

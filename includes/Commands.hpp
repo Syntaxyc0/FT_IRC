@@ -45,7 +45,7 @@ void	mode_invite_only(Channel *current, Client *user, char sign);
 void	mode_channel_key(Channel *current, Client *user, std::vector<std::string> received);
 void	mode_restricion_topic_cmd(Channel *current, Client *user, std::vector<std::string> received);
 void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> received);
-void	mode_operator_privilege(Channel *current, Client *user, std::string target);
+void	mode_operator_privilege(Channel *current, Client *user, std::vector<std::string> received);
 
 
 void	User(Client *client, std::vector<std::string> args, Server &serv);

@@ -37,7 +37,7 @@ class Channel
 // SETTER
 		void						set_invite_only( int i );
 		void						set_channel_key( int i, std::string password );
-		void						set_user_limit( int limit, Client *user, std::string channel_name);
+		void						set_user_limit( int limit );
 		void						set_restriction_TOPIC_cmd( int i );
 		void						set_topic( std::string name );
 

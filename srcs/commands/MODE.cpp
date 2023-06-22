@@ -18,7 +18,7 @@ void	mode_manager(Client *client, std::vector<std::string> received, Server &ser
 	else if ( received[2][1] == 'l' )
 		mode_limit_user( server.find_channel( received[1] ), client, received );
 	else if ( received[2][1] == 'o' )
-		mode_operator_privilege(server.find_channel( received[1] ), client, received[2]);
+		mode_operator_privilege(server.find_channel( received[1] ), client, received);
 }
 
 int	mode_error(Client *client, std::vector<std::string> received, Server &server)
@@ -40,11 +40,13 @@ void	mode_invite_only(Channel *current, Client *user, char sign)
 	{
 		current->set_invite_only(1);
 		user->send_message_in_channel( current->get_name(), "Invite-only mode is ON" );
+		user->send_message( ":" + user->get_fullname() + " MODE " + current->get_name() + "+i" );
 	}
 	else if ( sign == '-' )
 	{
 		current->set_invite_only(0);
 		user->send_message_in_channel( current->get_name(), "Invite-only mode is OFF" );
+		user->send_message( ":" + user->get_fullname() + " MODE " + current->get_name() + "-i" );
 	}
 }
 
@@ -55,21 +57,26 @@ void	mode_invite_only(Channel *current, Client *user, char sign)
 
 void	mode_channel_key( Channel *current, Client *user, std::vector<std::string> received)
 {
+	if ( received[2][0] == '+' && (int)received.size() < 4 )
+		return ( user->send_message_in_channel( current->get_name(), "Error: password missing" ) );
+
 	if ( received[2][0] == '-' )
 	{
 		current->set_channel_key(0, "");
 		user->send_message_in_channel( current->get_name(), "Channel key is OFF" );
+		user->send_message( ":" + user->get_fullname() + " MODE " + current->get_name() + "-k" );
 	}
 	else if ( current->get_channel_key() && received[2][0] == '+' )
 	{
 		current->set_channel_key(1, received[3]);
 		user->send_message_in_channel( current->get_name(), "Channel key has been changed" );
+		user->send_message( ":" + user->get_fullname() + " MODE " + current->get_name() + "+k");
 	}
 	else if ( !current->get_channel_key() && received[2][0] == '+' )
 	{
-		std::cout << received[3] << std::endl;
 		current->set_channel_key(1 , received[3]);
 		user->send_message_in_channel( current->get_name(), "Channel key is ON" );
+		user->send_message( ":" + user->get_fullname() + " MODE " + current->get_name() + "+k");
 	}
 }
 
@@ -83,13 +90,15 @@ void	mode_restricion_topic_cmd(Channel *current, Client *user, std::vector<std::
 {
 	if ( received[2][0] == '-' )
 	{
-		current->set_restriction_TOPIC_cmd(0);
+		current->set_restriction_TOPIC_cmd(1);
 		user->send_message_in_channel( current->get_name(), "Restriction to TOPIC command is ON" );
+		user->send_message( ":" + user->get_fullname() + " MODE " + current->get_name() + "+t");
 	}
 	else
 	{
-		current->set_restriction_TOPIC_cmd(1);
+		current->set_restriction_TOPIC_cmd(0);
 		user->send_message_in_channel( current->get_name(), "Restriction to TOPIC command is OFF" );
+		user->send_message( ":" + user->get_fullname() + " MODE " + current->get_name() + "-t");
 	}
 }
 
@@ -104,20 +113,20 @@ void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> re
 	{
 		int limit_nb = atoi( received[2].c_str() + 2 );
 		
-		std::cout << limit_nb << std::endl;
-
 		if ( limit_nb < (int)current->get_channelClients().size() )
 			user->send_message_in_channel( current->get_name(), "Error : the limit cannot be less than the current number of users in that channel" );
 		else
 		{
-			current->set_user_limit( limit_nb, user , current->get_name());
+			current->set_user_limit( limit_nb );
 			user->send_message_in_channel( current->get_name(), "User limit is " + received[2].erase( 0, 2 ) );
+			user->send_message( ":" + user->get_fullname() + " MODE " + current->get_name() + "+l");
 		}
 	}
 	else if ( received[2][0] == '-' )
 	{
-		current->set_user_limit( -1, user, current->get_name());
+		current->set_user_limit( -1 );
 		user->send_message_in_channel( current->get_name(), "User limit is OFF" );
+		user->send_message( ":" + user->get_fullname() + " MODE " + current->get_name() + "-l");
 	}
 }
 
@@ -127,7 +136,14 @@ void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> re
 
 void	mode_operator_privilege(Channel *current, Client *user, std::vector<std::string> received)
 {
-	if ( received[2][0] == '-')
-		
-	current->operator_privilege(user, target);
+	if ( received[2][0] == '-' )
+	{
+		current->operator_privilege(user, received[3], 0);
+		user->send_message( ":" + user->get_fullname() + " MODE " + current->get_name() + "-o" + received[3] );
+	}
+	else if ( received[2][0] == '+' )
+	{
+		current->operator_privilege(user, received[3], 1);
+		user->send_message( ":" + user->get_fullname() + " MODE " + current->get_name() + "+o" + received[3] );
+	}
 } 
