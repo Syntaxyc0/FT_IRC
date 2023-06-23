@@ -14,22 +14,21 @@ void	Quit( Client *client, std::vector<std::string> args, Server &serv )
 				reason += " ";
 		}
 	}
-	quit_channels( client, args, serv );
 	serv.broadcast_server(":" + client->get_fullname() + " QUIT :" + reason);
+	quit_channels( client, serv );
 	client->set_register(DISCONNECTED);
 }
 
-void	quit_channels( Client *client, std::vector<std::string> args, Server &serv )
+void	quit_channels( Client *client, Server &serv )
 {
 	std::vector<std::string> channel_list = client->get_channelList();
 
 	for ( int i = 0; i < (int)channel_list.size(); i++ )
-	{	
-		Channel *channel = serv.find_channel( channel_list[i] );
-		std::vector<std::string> operators = channel->get_operators();
-
-		if ( client->get_nickname() == channel_list[i] )
-			operators.erase( operators.begin() + channel->find_operator_index( client->get_nickname() ) ) ;
-			
+	{
+		serv.find_channel( channel_list[i] )->kick_client( client->get_nickname() );
+		for (int o = 0; o < (int)serv.find_channel( channel_list[i] )->get_channelClients().size(); o++ )
+			std::cout << serv.find_channel( channel_list[i] )->get_channelClients()[o] << std::endl;
+		for (int o = 0; o < (int)serv.find_channel( channel_list[i] )->get_operators().size(); o++ )
+			std::cout << serv.find_channel( channel_list[i] )->get_operators()[o] << std::endl;
 	}
 }
