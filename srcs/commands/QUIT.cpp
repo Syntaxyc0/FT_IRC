@@ -14,12 +14,12 @@ void	Quit( Client *client, std::vector<std::string> args, Server &serv )
 				reason += " ";
 		}
 	}
-	quit_channel( client, args, serv );
+	quit_channels( client, args, serv );
 	serv.broadcast_server(":" + client->get_fullname() + " QUIT :" + reason);
 	client->set_register(DISCONNECTED);
 }
 
-void	quit_channel( Client *client, std::vector<std::string> args, Server &serv )
+void	quit_channels( Client *client, std::vector<std::string> args, Server &serv )
 {
 	std::vector<std::string> channel_list = client->get_channelList();
 
