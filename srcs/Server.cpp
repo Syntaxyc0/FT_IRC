@@ -24,9 +24,9 @@ int Server::shut_down()
 void	Server::command_handler(Client *client, std::vector<std::string> args) // en travaux, pas envie de faire un switch mais bon..
 {
 	// , "MODE", "KICK", "JOIN", "INVITE", "TOPIC" //a rajouter
-	std::string		command_names[11] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG", "PING", "TOPIC", "JOIN", "MODE", "PART"};
-	void	(*command_functions[11])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &join_command, &mode_manager, &Part};
-	for (int i = 0; i < 11; i++)
+	std::string		command_names[12] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG", "PING", "TOPIC", "JOIN", "MODE", "PART", "INVITE"};
+	void	(*command_functions[12])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &Join, &Mode, &Part, &Invite};
+	for (int i = 0; i < 12; i++)
 	{
 		if (args[0] == command_names[i])
 			command_functions[i](client, args, *this);

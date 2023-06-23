@@ -53,8 +53,6 @@ void	Channel::set_restriction_TOPIC_cmd( int  i )
 
 void	Channel::set_user_limit( int limit )
 {
-	if (limit < 0 && _user_limit)
-		return;
 	if (limit)
 	{
 		_user_limit = 1;
@@ -111,6 +109,11 @@ Server *Channel::get_server()
 std::vector<std::string> Channel::get_channelClients()
 {
 	return (_channelClients);
+}
+
+std::vector<std::string> Channel::get_operators()
+{
+	return (_operators);
 }
 
 std::string	Channel::get_password()

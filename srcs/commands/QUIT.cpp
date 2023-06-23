@@ -1,6 +1,6 @@
 #include "Commands.hpp"
 
-void	Quit(Client *client, std::vector<std::string> args, Server &serv)
+void	Quit( Client *client, std::vector<std::string> args, Server &serv )
 {
 	(void)	serv;
 	(void)	args;
@@ -14,6 +14,22 @@ void	Quit(Client *client, std::vector<std::string> args, Server &serv)
 				reason += " ";
 		}
 	}
+	quit_channel( client, args, serv );
 	serv.broadcast_server(":" + client->get_fullname() + " QUIT :" + reason);
 	client->set_register(DISCONNECTED);
+}
+
+void	quit_channel( Client *client, std::vector<std::string> args, Server &serv )
+{
+	std::vector<std::string> channel_list = client->get_channelList();
+
+	for ( int i = 0; i < (int)channel_list.size(); i++ )
+	{	
+		Channel *channel = serv.find_channel( channel_list[i] );
+		std::vector<std::string> operators = channel->get_operators();
+
+		if ( client->get_nickname() == channel_list[i] )
+			operators.erase( operators.begin() + channel->find_operator_index( client->get_nickname() ) ) ;
+			
+	}
 }

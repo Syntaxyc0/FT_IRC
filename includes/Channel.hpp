@@ -46,6 +46,7 @@ class Channel
 		std::string					get_name();
 		Server						*get_server();
 		std::vector<std::string>	get_channelClients();
+		std::vector<std::string>	get_operators();
 		std::string					get_topic();
 
 		bool						get_invite_only();

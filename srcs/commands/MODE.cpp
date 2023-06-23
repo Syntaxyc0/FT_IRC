@@ -4,12 +4,14 @@
 
 #include "Commands.hpp"
 
-void	mode_manager(Client *client, std::vector<std::string> received, Server &server)
+void	Mode(Client *client, std::vector<std::string> received, Server &server)
 {
 	if ( mode_error(client, received, server))
 		return ;
 
-	if ( received[2][1] == 'i' && server.find_channel( received[1] ))
+	if (received.size() < 3)
+		return ;
+	else if ( received[2][1] == 'i' && server.find_channel( received[1] ))
 		mode_invite_only( server.find_channel( received[1] ), client, received[2][0]);
 	else if ( received[2][1] == 'k' )
 		mode_channel_key( server.find_channel( received[1] ), client, received);
@@ -124,7 +126,7 @@ void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> re
 	}
 	else if ( received[2][0] == '-' )
 	{
-		current->set_user_limit( -1 );
+		current->set_user_limit( 0 );
 		user->send_message_in_channel( current->get_name(), "User limit is OFF" );
 		user->send_message( ":" + user->get_fullname() + " MODE " + current->get_name() + "-l");
 	}
