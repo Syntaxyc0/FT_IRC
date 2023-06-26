@@ -46,6 +46,8 @@ void	Privmsg(Client *client, std::vector<std::string> args, Server &serv)
 			client->send_message(args[1] + " :No such nick");
 			return ;
 		}
+		else if (args[1] == client->get_nickname())
+			return ;
 		std::string message(args[2]);
 		for (unsigned int i = 3; i < args.size();i++)
 		{
