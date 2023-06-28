@@ -4,6 +4,7 @@
 
 void	Nick(Client *client, std::vector<std::string> args, Server &serv)
 {
+	std::string name = args[1];
 	if (args.size() == 1)
 	{
 		client->send_reply(ERR_NONICKNAMEGIVEN(client->get_hostname()));
@@ -12,22 +13,22 @@ void	Nick(Client *client, std::vector<std::string> args, Server &serv)
 	if (serv.find_client(args[1]))
 	{
 		// client->send_reply(ERR_NICKNAMEINUSE(client->get_hostname(), args[1]));
-		client->send_message(args[1] + ": Nickname is already in use");
-		return ;
+		client->send_message(name + ": Nickname is already in use");
+		while (serv.find_client(name))
+			name += "_";
 	}
 	if (client->get_registered() != 3 && client->get_registered() != 4)
 	{	
 		if (client->get_registered() == PASS_CHECKED)
 		{
-			client->set_nickname(args[1]);
+			client->set_nickname(name);
 			client->set_register(NICK_CHECKED);
 		}
 		else
 			client->set_register(NOT_REGISTERED);
 		return ;
 	}
-	serv.broadcast_server(":" + client->get_fullname() + " NICK " + args[1]);
-	client->set_nickname(args[1]);
+	serv.broadcast_server(":" + client->get_fullname() + " NICK " + name);
 }
 // erreurs possibles
 
