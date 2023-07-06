@@ -20,14 +20,14 @@ void	Invite( Client *client, std::vector<std::string> received, Server &server )
 
 	// Reply from user command
 	client->send_reply( RPL_INVITING( client->get_nickname(), target_nick, channel->get_name() ) );
-	client->send_message_in_channel( channel->get_name(), client->get_fullname() + " INVITE " + target_nick + " " + channel->get_name() );
+	client->send_message( client->get_nickname() + " INVITE " + target_nick + " " + channel->get_name() );
 
 	// add client to channel
 	channel->add_client( received[1] );
 	client->set_add_channel( channel );
 
 	//message
-	channel->send_all( ":" + target->get_fullname() + " JOIN " + received[1] );
+	channel->send_all( target->get_nickname() + " has joined " + received[2] );
 	if ( channel->get_topic().size() )
 		client->send_reply( RPL_TOPIC(target_nick, channel->get_name(), channel->get_topic() ) );
 	target->send_reply( "353 " + target_nick + " = " + received[2] + " :" + channel_list_user( received[2], server ) );
@@ -55,7 +55,7 @@ bool	invite_error( Client *client, std::vector<std::string> received, Server &se
 	else if ( channel->is_channelClient( server.find_client( received[1] )->get_nickname() ) )
 		return ( client->send_reply( ERR_USERONCHANNEL( nickname, server.find_client( received[1] )->get_nickname(),  channel_name ) ), true );
 
-	else if ( channel->get_invite_only() && (int)channel->get_channelClients().size() >= channel->get_user_limit_nb() )
+	else if ( channel->get_user_limit() && (int)channel->get_channelClients().size() >= channel->get_user_limit_nb() )
 		return ( client->send_reply( ERR_CHANNELISFULL( client->get_nickname(), channel_name ) ), true );
 
 	return ( false );

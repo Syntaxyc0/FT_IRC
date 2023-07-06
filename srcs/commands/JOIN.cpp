@@ -32,7 +32,7 @@ void	Join( Client *client, std::vector<std::string> received, Server &server )
 	client->set_add_channel( channel );
 
 	// message
-	// channel->send_all( ":" + client->get_fullname() + " JOIN " + received[1] );
+	channel->send_all( client->get_nickname() + " has joined " + received[1] );
 	if ( channel->get_topic().size() )
 		client->send_reply( RPL_TOPIC(client->get_nickname(), channel->get_name(), channel->get_topic() ) );
 	client->send_reply( "353 " + client->get_nickname() + " = " + received[1] + " :" + channel_list_user( received[1], server ) );
@@ -52,7 +52,7 @@ bool	join_error( Client *client, std::vector<std::string> received, Server &serv
 	else if ( channel && channel->get_channel_key() && ( received.size() < 3 || received[2] != channel->get_password() ) )
 		return ( client->send_reply( ERR_BADCHANNELKEY( client->get_nickname(), channel->get_name() ) ), true );
 
-	else if ( channel && channel->get_invite_only() )
+	else if ( channel && channel->get_invite_only() && !channel->is_channelClient( client->get_nickname() ) )
 		return ( client->send_reply( ERR_INVITEONLYCHAN( client->get_nickname(), channel->get_name() ) ), true );
 
 	return (0);
