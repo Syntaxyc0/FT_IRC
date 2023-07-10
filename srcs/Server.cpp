@@ -25,7 +25,7 @@ void	Server::command_handler(Client *client, std::vector<std::string> args)
 {
 	// , "MODE", "KICK", "JOIN", "INVITE", "TOPIC" //a rajouter
 	std::string		command_names[12] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG", "PING", "TOPIC", "JOIN", "MODE", "PART", "KICK"};
-	void	(*command_functions[12])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &join_command, &mode_manager, &Part, &kick};
+	void	(*command_functions[12])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &Join, &Mode, &Part, &kick};
 	for (int i = 0; i < 12; i++)
 	{
 		if (args[0] == command_names[i])
