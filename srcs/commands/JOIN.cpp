@@ -63,16 +63,11 @@ std::string	channel_list_user( std::string channel_name, Server &server )
 	std::string message;
 	Channel *channel = server.find_channel( channel_name );
 
-<<<<<<< HEAD
 	for ( int i = 0; i < (int)channel->get_channelClients().size(); i++ )
-		message += channel->get_channelClients().at(i) + " ";
-=======
-	for ( int i = 0; i < (int)current->get_channelClients().size(); i++ )
 	{
-		if (current->is_operator(current->get_channelClients().at(i)))
+		if (channel->is_operator(channel->get_channelClients().at(i)))
 			message += '@';
-		message += current->get_channelClients().at(i) + " ";
+		message += channel->get_channelClients().at(i) + " ";
 	}
->>>>>>> main
 	return ( message );
 }
