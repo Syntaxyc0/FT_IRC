@@ -194,7 +194,7 @@ Client  *Server::find_client(std::string nickname)
 	return (0);
 }
 
-Channel *Server::find_channel(std::string channel_name)
+Channel *Server::find_channel( std::string channel_name )
 {
 	for ( int i = 0; i < (int)_Channels.size(); i++ )
 	{
@@ -202,6 +202,15 @@ Channel *Server::find_channel(std::string channel_name)
 			return ( &_Channels.at(i) );
 	}
 	return (0);
+}
+
+void	Server::del_channel( std::string channel_name )
+{
+	for ( int i = 0; i < (int)_Channels.size(); i++ )
+	{
+		if ( channel_name == _Channels.at(i).get_name() )
+			_Channels.erase( _Channels.begin() + i );
+	}
 }
 
 //****************************************************//

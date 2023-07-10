@@ -40,6 +40,8 @@ class Channel
 		void						set_user_limit( int limit );
 		void						set_restriction_TOPIC_cmd( int i );
 		void						set_topic( std::string name );
+		void						set_primo( std::string new_primo );
+		void						add_operator( std::string client );
 
 // GETTER
 

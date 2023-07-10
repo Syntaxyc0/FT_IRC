@@ -67,6 +67,16 @@ void	Channel::set_topic(std::string newtopic)
 	_topic = newtopic;
 }
 
+void	Channel::set_primo( std::string new_primo )
+{
+	_primordial = new_primo;
+}
+
+void	Channel::add_operator( std::string client )
+{
+	_operators.push_back( client );
+}
+
 //****************************************************//
 //                      Getter                        //
 //****************************************************//
@@ -234,7 +244,7 @@ void	Channel::send_privmsg_all(std::string source, std::string message )
 void	Channel::send_all( std::string message )
 {
 	for (int i = 0; i < (int)_channelClients.size(); i++)
-		_server->find_client( _channelClients.at(i) )->send_message( message );
+		_server->find_client( _channelClients.at(i) )->send_message_in_channel( _name ,message );
 }
 
 void	Channel::send_everyone_else( std::string message, std::string name)

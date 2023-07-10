@@ -59,6 +59,7 @@ void	quit_channels( Client *client, Server &serv );
 void	Ping(Client *client, std::vector<std::string> args, Server &server);
 void	Topic(Client *client, std::vector<std::string> args, Server &serv);
 void	Part(Client *client, std::vector<std::string> args, Server &serv);
+void	heritance(std::vector<std::string> args, Server &serv, int index);
 
 
 
