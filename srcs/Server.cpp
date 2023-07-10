@@ -21,12 +21,12 @@ int Server::shut_down()
     return (0);
 }
 
-void	Server::command_handler(Client *client, std::vector<std::string> args) // en travaux, pas envie de faire un switch mais bon..
+void	Server::command_handler(Client *client, std::vector<std::string> args)
 {
 	// , "MODE", "KICK", "JOIN", "INVITE", "TOPIC" //a rajouter
-	std::string		command_names[11] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG", "PING", "TOPIC", "JOIN", "MODE", "PART"};
-	void	(*command_functions[11])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &join_command, &mode_manager, &Part};
-	for (int i = 0; i < 11; i++)
+	std::string		command_names[12] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG", "PING", "TOPIC", "JOIN", "MODE", "PART", "KICK"};
+	void	(*command_functions[12])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &join_command, &mode_manager, &Part, &kick};
+	for (int i = 0; i < 12; i++)
 	{
 		if (args[0] == command_names[i])
 			command_functions[i](client, args, *this);
@@ -48,6 +48,8 @@ void Server::handle_data(std::vector<pollfd>::iterator it)
 	while (std::getline(ss, line))
 	{
 		std::vector<std::string>	received = parse(line);
+		for (std::vector<std::string>::iterator it = received.begin(); it != received.end(); it++)
+			std::cout<<GREEN<<*it<<END<<std::endl;
 		if (!received.empty())
 			command_handler(_clientList[it->fd], received);
 	}
@@ -69,12 +71,12 @@ void Server::monitoring()
 		}
 		else if (revents & POLLIN) //nouvelle requete
 		{
-			if (it->fd == _sockets.begin()->fd) //nouvelle connexion
+			if (it->fd == _sockets.begin()->fd)
 				it = new_connection();
 			else
 			{
 				handle_data(it);
-				if (_clientList[it->fd]->get_registered() == NOT_REGISTERED) // faire la distinction entre une deco via quit et via une non authentification
+				if (_clientList[it->fd]->get_registered() == NOT_REGISTERED)
 					it = disconnect(it->fd);
 				else if (_clientList[it->fd]->get_registered() == DISCONNECTED)
 				{
@@ -89,14 +91,12 @@ void Server::monitoring()
 
 std::vector<pollfd>::iterator Server::new_connection()
 {
-	// char tmp_hostname[NI_MAXHOST];
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
 	int fd = accept(_listening_socket, (sockaddr *)&client_addr, &client_addr_len);
     errorin(fd == -1, "Failed to accept incoming connection.\n");
 	pollfd	new_poll = {fd, POLLIN, 0};
 	_sockets.push_back(new_poll);
-	// getnameinfo((sockaddr *) &client_addr, sizeof(client_addr), tmp_hostname, NI_MAXHOST, NULL, 0, 0); //tout ca pour choper son hostname.. Ils sont fou ces romains! fonction pas autorisee, pfffff
 	adduser(fd, inet_ntoa(client_addr.sin_addr));
     std::cout << MAGENTA << "New connection successfull!" << END << std::endl;
 	return _sockets.begin();

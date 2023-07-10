@@ -18,16 +18,17 @@
 
 void	Privmsg(Client *client, std::vector<std::string> args, Server &serv)
 {
-	if (args.size() <= 2)
+	if (args.size() < 2)
 	{
-		client->send_reply(ERR_NEEDMOREPARAMS(client->get_nickname(), "PRIVMSG"));
+		client->send_reply(ERR_NORECIPIENT(client->get_hostname()));
 		return ;
 	}
 	else if (!args[1].compare(0 , 1, "#")) //msg a un channel
 	{
 		if (!serv.find_channel(args[1].erase(0, 0)))
 		{
-			client->send_message(args[1].erase(0, 0) + " :No such Channel");
+			client->send_message(ERR_NOSUCHNICK(client->get_nickname(), args[1]));
+			// client->send_message(args[1] + " :No such Channel");
 			return ;
 		}
 		std::string message("");
@@ -43,7 +44,7 @@ void	Privmsg(Client *client, std::vector<std::string> args, Server &serv)
 	{
 		if (!serv.find_client(args[1]))
 		{
-			client->send_message(args[1] + " :No such nick");
+			client->send_message(ERR_NOSUCHNICK(client->get_nickname(), args[1]));
 			return ;
 		}
 		else if (args[1] == client->get_nickname())

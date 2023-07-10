@@ -31,6 +31,7 @@ std::vector<std::string> parse(std::string input);
 bool					check_auth(Client *client);
 
 void		kick_command( Channel &current, Client &me, std::string target );
+void		kick(Client *client, std::vector<std::string> args, Server &server);
 void		invite_command( Client *client, std::vector<std::string> received, Server &server );
 bool		invite_error( Client *client, std::vector<std::string> received, Server &server );
 void		join_command( Client *client, std::vector<std::string> received, Server &server );
