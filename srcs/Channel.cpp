@@ -226,8 +226,8 @@ void	Channel::add_client( std::string user )
 
 void	Channel::kick_client( std::string user )
 {
-	if ( is_operator( user ) )
-		_operators.erase( _operators.begin() + find_operator_index( user ) );
+	// if ( is_operator( user ) )
+	// 	_operators.erase( _operators.begin() + find_operator_index( user ) );
 	if ( is_channelClient( user ) )
 		_channelClients.erase( _channelClients.begin() + find_client_index( user ) );
 }
