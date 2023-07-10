@@ -37,12 +37,6 @@ std::vector<std::string> parse(std::string input)
 	if (!input.empty())
 		args.push_back(input);
 	return args;
-	// input.erase(std::remove(input.begin(), input.end(), '\r'), input.end());
-	// std::string tmp;
-	// std::stringstream	rest(input);
-	// while (rest >> tmp )
-	// 	args.push_back(tmp);
-	// return args;
 }
 
 

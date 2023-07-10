@@ -9,32 +9,70 @@
 // il ne peut pas kick d'autre operateur (s'il essaie un message d'erreur lui sera retourné).
 // Un message confirmant son action lui sera envoyé, ainsi qu'au client ayant été sujet au kick.
 
-void	kick_command(Channel &current, Client &me, std::string target)
+// void	kick_command(Channel &current, Client &me, std::string target)
+// {
+// 	if (!target.size())
+// 	{
+// 		me.send_message( ERR_NEEDMOREPARAMS( me.get_nickname(), "KICK" ) );
+// 		return;
+// 	}
+// 	if ( !current.is_channelClient( target ) )
+// 	{
+// 		me.send_message( ERR_NOTONCHANNEL( target, current.get_name() ) );
+// 	}
+// 	if ( !current.is_operator( me.get_nickname() ) )
+// 	{
+// 		me.send_message( ERR_CHANOPRIVSNEEDED( me.get_nickname(), current.get_name() ) );
+// 		return;
+// 	}
+// 	if ( current.is_operator( target ) )
+// 	{
+// 		me.send_message( ERR_CANTKICKOPE( target, current.get_name() ) );
+// 		return;
+// 	}
+
+// // remove client to channel's list
+// 	current.kick_client( target );
+
+// 	std::string message = target;
+	
+// 	target.append(" was kicked");
+// 	me.send_message(message);
+// }
+
+void	kick(Client *client, std::vector<std::string> args, Server &server)
 {
-	if (!target.size())
+	if (args.size() < 3)
 	{
-		me.send_message( ERR_NEEDMOREPARAMS( me.get_nickname(), "KICK" ) );
-		return;
+		client->send_message(ERR_NEEDMOREPARAMS(client->get_nickname(), "KICK"));
+		return ;
 	}
-	if ( !current.is_channelClient( target ) )
+	Channel *chan = server.find_channel(args[1]);
+	if (!chan)
 	{
-		me.send_message( ERR_NOTONCHANNEL( target, current.get_name() ) );
+		client->send_message(ERR_NOSUCHCHANNEL(client->get_nickname(), args[1]));
+		return ;
 	}
-	if ( !current.is_operator( me.get_nickname() ) )
+	if (!chan->is_operator(client->get_nickname()))
 	{
-		me.send_message( ERR_CHANOPRIVSNEEDED( me.get_nickname(), current.get_name() ) );
-		return;
+		client->send_message(ERR_CHANOPRIVSNEEDED(client->get_nickname(), chan->get_name()));
+		return ;
 	}
-	if ( current.is_operator( target ) )
+	if (!chan->is_channelClient(client->get_nickname()))
 	{
-		me.send_message( ERR_CANTKICKOPE( target, current.get_name() ) );
-		return;
+		client->send_message(ERR_NOTONCHANNEL(client->get_nickname(), chan->get_name()));
+		return ;
 	}
-
-// remove client to channel's list
-	current.kick_client( target );
-
-	std::string message = target;
-	target.append(" was kicked");
-	me.send_message(message);
+	if (!chan->is_channelClient(args[2]))
+	{
+		client->send_message(ERR_USERNOTINCHANNEL(args[2], chan->get_name()));
+		return ;
+	}
+	if (chan->is_operator(args[2]))
+	{
+		client->send_message(ERR_CANTKICKOPE(args[2], chan->get_name()));
+		return ;
+	}
+	chan->send_all(":" + client->get_fullname() + " KICK " + chan->get_name() + " " + args[2] + " :kicked");
+	chan->kick_client(args[2]);
 }

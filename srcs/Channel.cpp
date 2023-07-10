@@ -220,6 +220,7 @@ void	Channel::kick_client( std::string user )
 		_operators.erase( _operators.begin() + find_operator_index( user ) );
 	if ( find_client_index( user ) >= 0 )
 		_channelClients.erase(_channelClients.begin() + find_client_index( user ) );
+
 }
 
 void	Channel::send_privmsg_all(std::string source, std::string message )
@@ -234,5 +235,15 @@ void	Channel::send_privmsg_all(std::string source, std::string message )
 void	Channel::send_all( std::string message )
 {
 	for (int i = 0; i < (int)_channelClients.size(); i++)
-		_server->find_client( _channelClients[i] )->send_message_in_channel( _name, message );
+		_server->find_client( _channelClients.at(i) )->send_message( message );
+}
+
+void	Channel::send_everyone_else( std::string message, std::string name)
+{
+	for (int i = 0; i < (int)_channelClients.size(); i++)
+	{
+		Client *user = _server->find_client( _channelClients.at(i) );
+		if (user->get_nickname() != name)
+			user->send_message( message );
+	}
 }
