@@ -13,6 +13,7 @@ bool	check_auth(Client *client)
 
 void	User(Client *client, std::vector<std::string> args, Server &serv)
 {
+	(void)	serv;
 	if (args.size() < 5)
 	{
 		client->send_reply(ERR_NEEDMOREPARAMS(client->get_hostname(), "USER"));
@@ -30,7 +31,7 @@ void	User(Client *client, std::vector<std::string> args, Server &serv)
 	{
 		client->set_register(REGISTERED);
 		// client->send_reply(RPL_WELCOME(client->get_nickname(), client->get_username(), client->get_hostname()));
-		client->send_message(":localhost 001 " + client->get_nickname() + " :Welcome to IRC " + client->get_nickname()+"!"+client->get_username()+"@localhost");
+		client->send_message(":localhost 001 " + client->get_nickname() + " :Welcome to IRC " + client->get_fullname());
 		std::cout<<MAGENTA<<client->get_nickname()<<" has registered"<<END<<std::endl;
 	}
 	else
@@ -38,5 +39,5 @@ void	User(Client *client, std::vector<std::string> args, Server &serv)
 		client->set_register(NOT_REGISTERED);
 		return ;
 	}
-	serv.broadcast_server(client->get_nickname() + " has joined the server");
+	// serv.broadcast_server(client->get_nickname() + " has joined the server");
 }

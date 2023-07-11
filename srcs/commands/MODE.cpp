@@ -29,7 +29,7 @@ int	mode_error(Client *client, std::vector<std::string> received, Server &server
 	return (0);
 }
 
-// -i set/remove invite-only channel :
+// -i set/remove invite-only channel :	
 //  "/MODE -i" désactive invite-only mode.
 //  "/MODE +i" active invite-only mode.
 // Envoie un message indiquant l'état du mode au client. Par defaut [désactivé]
