@@ -22,7 +22,7 @@ void	Nick(Client *client, std::vector<std::string> args, Server &serv)
 	}
 	if (!check_nick(args[1]))
 	{
-		// client->send_reply(ERR_ERRONEUSNICKNAME(client->get_nickname(), args[1]));
+		client->send_reply(ERR_ERRONEUSNICKNAME(client->get_nickname(), args[1]));
 		return ;
 	}
 	if (serv.find_client(args[1]))
