@@ -50,19 +50,23 @@ class Server
         std::vector<Channel>			_Channels;
 	
     public:
+
         Server();
         ~Server();
         Server &operator=(Server const &a);
         Server(const char *port, const char *password);
-        void monitoring();
-        int shut_down();
+
+		void	monitoring();
+		int 	shut_down();
 		void	adduser(int fd, std::string hostname);
 		void	command_handler(Client *client, std::vector<std::string> args);
 		void	sig_handler(int);
-        void	handle_data(std::vector<pollfd>::iterator it);
-        void    errorin(bool err, const char *msg);
-        Client      *find_client(std::string nickname);
-        Channel     *find_channel(std::string channel_name);
+		void	handle_data(std::vector<pollfd>::iterator it);
+		void	errorin(bool err, const char *msg);
+
+		Client	*find_client(std::string nickname);
+		Channel	*find_channel(std::string channel_name);
+		void	del_channel( std::string channel_name );
 
 		void	broadcast_server(std::string message);
 

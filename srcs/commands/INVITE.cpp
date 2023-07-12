@@ -9,38 +9,54 @@
 // le client invité est déjà sur le channel.
 // Un message s'affichera si la commande s'execute avec succès.
 
-void	invite_command( Client *client, std::vector<std::string> received, Server &server )
+void	Invite( Client *client, std::vector<std::string> received, Server &server )
 {
 	if ( invite_error( client, received, server) )
 		return;
 
-	// add client to channel's list
-	server.find_channel( received[2] )->send_all( ":" + client->get_fullname() + " JOIN " + received[1] );
-	server.find_channel( received[2] )->add_client( received[1] );
+	Channel* channel = server.find_channel( received[2] );
+	Client *target = server.find_client( received[1] );
+	std::string target_nick = target->get_nickname();
 
-	server.find_client( received[1] )->send_message( client->get_nickname() + " = " + received[1] + " :" + channel_list_user( received, server ) );
-	server.find_client( received[1] )->send_message( client->get_nickname() + " = " + received[1] + " :End of NAMES list" );
+	// Reply from user command
+	client->send_reply( RPL_INVITING( client->get_nickname(), target_nick, channel->get_name() ) );
+	client->send_message( client->get_nickname() + " INVITE " + target_nick + " " + channel->get_name() );
+
+	// add client to channel
+	channel->add_client( received[1] );
+	client->set_add_channel( channel );
+
+	//message
+	channel->send_all( target->get_nickname() + " has joined " + received[2] );
+	if ( channel->get_topic().size() )
+		client->send_reply( RPL_TOPIC(target_nick, channel->get_name(), channel->get_topic() ) );
+	target->send_reply( "353 " + target_nick + " = " + received[2] + " :" + channel_list_user( received[2], server ) );
+	target->send_reply( "366 " + target_nick + " " + received[2] + " :End of NAMES list" );
 }
 
 bool	invite_error( Client *client, std::vector<std::string> received, Server &server )
 {
+	Channel* channel = server.find_channel( received[2] );
+	std::string channel_name = channel->get_name();
+	std::string nickname = client->get_nickname();
+
 	if ( received.size() != 3 )
-		return ( client->send_reply( ERR_NEEDMOREPARAMS( client->get_nickname(), "INVITE" ) ), true );
+		return ( client->send_reply( ERR_NEEDMOREPARAMS( nickname, "INVITE" ) ), true );
 
-	else if ( !server.find_channel( received[2] ) )
-		return ( client->send_reply( ERR_NOSUCHCHANNEL( client->get_nickname(), server.find_channel( received[2] )->get_name() ) ), true );
+	else if ( !channel )
+		return ( client->send_reply( ERR_NOSUCHCHANNEL( nickname, channel_name ) ), true );
 
-	else if ( !server.find_channel( received[2] )->is_channelClient( client->get_nickname() ) )
-		return ( client->send_reply( ERR_NOTONCHANNEL( client->get_nickname(), server.find_channel( received[2] )->get_name() ) ), true );
+	else if ( !channel->is_channelClient( nickname ) )
+		return ( client->send_reply( ERR_NOTONCHANNEL( nickname, channel_name ) ), true );
 
-	else if ( !server.find_channel( received[2] )->is_operator( client->get_nickname() ) )
-		return ( client->send_reply( ERR_CHANOPRIVSNEEDED( client->get_nickname(), server.find_channel( received[2] )->get_name() ) ), true );
+	else if ( !channel->is_operator( nickname ) )
+		return ( client->send_reply( ERR_CHANOPRIVSNEEDED( nickname, channel_name ) ), true );
 
-	else if ( server.find_channel( received[2] )->is_channelClient( server.find_client( received[1] )->get_nickname() ) )
-		return ( client->send_reply( ERR_USERONCHANNEL( client->get_nickname(), server.find_client( received[1] )->get_nickname(),  server.find_channel( received[2] )->get_name() ) ), true );
+	else if ( channel->is_channelClient( server.find_client( received[1] )->get_nickname() ) )
+		return ( client->send_reply( ERR_USERONCHANNEL( nickname, server.find_client( received[1] )->get_nickname(),  channel_name ) ), true );
 
-	else if ( (int)server.find_channel( received[2] )->get_channelClients().size() >= server.find_channel( received[2] )->get_user_limit_nb() )
-		return ( client->send_reply( ERR_LIMITREACHED( server.find_channel( received[2] )->get_name() ) ), true );
+	else if ( channel->get_user_limit() && (int)channel->get_channelClients().size() >= channel->get_user_limit_nb() )
+		return ( client->send_reply( ERR_CHANNELISFULL( client->get_nickname(), channel_name ) ), true );
 
 	return ( false );
 }

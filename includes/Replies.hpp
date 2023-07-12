@@ -35,7 +35,7 @@
 # define ERR_ALREADYREGISTERED(client)						"462 " + client + " :You may not reregister"
 # define ERR_PASSWDMISMATCH(client)							"464 " + client + " :Password incorrect"
 # define ERR_CHANNELISFULL(client, channel)					"471 " + client + " " + channel + " :Cannot join channel, user limit reached"
-# define ERR_INVITEONLYCHAN(client, channel)				"472 " + client + " " + channel + " :Cannot join channel (+i)"
+# define ERR_INVITEONLYCHAN(client, channel)				"473 " + client + " " + channel + " :Cannot join channel (+i)"
 # define ERR_BANNEDFROMCHAN(client, channel)				"474 " + client + " " + channel + " :Cannot join channel (+b)"
 # define ERR_BADCHANNELKEY(client, channel)					"475 " + client + " " + channel + " :Cannot join channel (+k)"
 # define ERR_BADCHANMASK(channel)							"476 " + channel + " :Bad channel Mask"
@@ -47,7 +47,5 @@
 
 # define ERR_NOPRIMORDIAL(client, channel)					client + " " + channel + ": You're not the primordial channel operator"
 # define ERR_CANTKICKOPE(client, channel)					client + " " + channel + ": operator can't be kicked"
-# define ERR_LIMITREACHED(channel)							channel + ": user limit reached"
-
 
 #endif

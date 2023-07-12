@@ -24,9 +24,9 @@ int Server::shut_down()
 void	Server::command_handler(Client *client, std::vector<std::string> args)
 {
 	// , "MODE", "KICK", "JOIN", "INVITE", "TOPIC" //a rajouter
-	std::string		command_names[12] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG", "PING", "TOPIC", "JOIN", "MODE", "PART", "KICK"};
-	void	(*command_functions[12])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &join_command, &mode_manager, &Part, &kick};
-	for (int i = 0; i < 12; i++)
+	std::string		command_names[13] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG", "PING", "TOPIC", "JOIN", "MODE", "PART", "KICK", "INVITE"};
+	void	(*command_functions[13])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &Join, &Mode, &Part, &kick, &Invite};
+	for (int i = 0; i < 13; i++)
 	{
 		if (args[0] == command_names[i])
 			command_functions[i](client, args, *this);
@@ -48,8 +48,8 @@ void Server::handle_data(std::vector<pollfd>::iterator it)
 	while (std::getline(ss, line))
 	{
 		std::vector<std::string>	received = parse(line);
-		for (std::vector<std::string>::iterator it = received.begin(); it != received.end(); it++)
-			std::cout<<GREEN<<*it<<END<<std::endl;
+		//for (std::vector<std::string>::iterator it = received.begin(); it != received.end(); it++)
+			//std::cout<<GREEN<<*it<<END<<std::endl;
 		if (!received.empty())
 			command_handler(_clientList[it->fd], received);
 	}
@@ -194,7 +194,7 @@ Client  *Server::find_client(std::string nickname)
 	return (0);
 }
 
-Channel *Server::find_channel(std::string channel_name)
+Channel *Server::find_channel( std::string channel_name )
 {
 	for ( int i = 0; i < (int)_Channels.size(); i++ )
 	{
@@ -202,6 +202,15 @@ Channel *Server::find_channel(std::string channel_name)
 			return ( &_Channels.at(i) );
 	}
 	return (0);
+}
+
+void	Server::del_channel( std::string channel_name )
+{
+	for ( int i = 0; i < (int)_Channels.size(); i++ )
+	{
+		if ( channel_name == _Channels.at(i).get_name() )
+			_Channels.erase( _Channels.begin() + i );
+	}
 }
 
 //****************************************************//
