@@ -24,6 +24,7 @@ void	Invite( Client *client, std::vector<std::string> received, Server &server )
 
 	// add client to channel
 	channel->add_invite( received[1] );
+	target->send_message( "You've been invited on " + channel->get_name() );
 }
 
 bool	invite_error( Client *client, std::vector<std::string> received, Server &server )
