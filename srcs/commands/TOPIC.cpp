@@ -6,10 +6,10 @@ void	Topic(Client *client, std::vector<std::string> args, Server &server)
 
 	if (args.size() < 2)
 	{
-		client->send_reply(ERR_NEEDMOREPARAMS(client->get_hostname(), "TOPIC"));
+		client->send_message(ERR_NEEDMOREPARAMS(client->get_hostname(), "TOPIC"));
 		return ;
 	}
-	chan = server.find_channel("#" + args[1]);
+	chan = server.find_channel(args[1]);
 	if (!chan)
 	{
 		return ;
@@ -24,11 +24,11 @@ void	Topic(Client *client, std::vector<std::string> args, Server &server)
 	else
 	{
 		if (chan->get_restriction_TOPIC_cmd() && !chan->is_operator(client->get_nickname()))
-			client->send_reply(ERR_CHANOPRIVSNEEDED(client->get_nickname(), chan->get_name()));
+			client->send_message(ERR_CHANOPRIVSNEEDED(client->get_nickname(), chan->get_name()));
 		else
 		{
 			chan->set_topic(args[2]);
-			chan->send_all( ":localhost 332 "+ client->get_nickname() + " " + args[1] + " :" + args[2] );
+			chan->send_all_clients( ":localhost 332 "+ client->get_nickname() + " " + args[1] + " " + args[2] );
 		}
 	}
 

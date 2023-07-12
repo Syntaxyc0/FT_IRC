@@ -80,7 +80,7 @@ void Server::monitoring()
 					it = disconnect(it->fd);
 				else if (_clientList[it->fd]->get_registered() == DISCONNECTED)
 				{
-					broadcast_server(_clientList[it->fd]->get_nickname() + " left the server");
+					// broadcast_server(_clientList[it->fd]->get_nickname() + " left the server");
 					it = disconnect(it->fd);
 				}
 			}
