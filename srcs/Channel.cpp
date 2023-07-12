@@ -77,6 +77,11 @@ void	Channel::add_operator( std::string client )
 	_operators.push_back( client );
 }
 
+void	Channel::add_invite( std::string invite )
+{
+	_invite_list.push_back( invite );
+}
+
 //****************************************************//
 //                      Getter                        //
 //****************************************************//
@@ -134,6 +139,11 @@ std::string	Channel::get_password()
 std::string	Channel::get_topic()
 {
 	return (_topic);
+}
+
+std::vector<std::string> Channel::get_invite()
+{
+	return (_invite_list);
 }
 
 //****************************************************//
@@ -199,6 +209,14 @@ int	Channel::is_primordial( std::string target )
 	return (0);
 }
 
+int	Channel::is_invited( std::string target )
+{
+	for (int i = 0; i < (int)_invite_list.size(); i++)
+		if (_invite_list.at(i) == target)
+			return (1);
+	return (0);
+}
+
 int	Channel::find_client_index( std::string target )
 {
 	for (int i = 0; i < (int)_channelClients.size(); i++)
@@ -219,6 +237,16 @@ int	Channel::find_operator_index( std::string target )
 	return (-1);
 }
 
+int	Channel::find_invited_index( std::string target )
+{
+	for (int i = 0; i < (int)_invite_list.size(); i++)
+	{
+		if (_invite_list.at(i) == target)
+			return (i);
+	}
+	return (-1);
+}
+
 void	Channel::add_client( std::string user )
 {
 	_channelClients.push_back( user );
@@ -226,10 +254,16 @@ void	Channel::add_client( std::string user )
 
 void	Channel::kick_client( std::string user )
 {
-	if ( is_operator( user ) )
-		_operators.erase( _operators.begin() + find_operator_index( user ) );
+	// if ( is_operator( user ) )
+	// 	_operators.erase( _operators.begin() + find_operator_index( user ) );
 	if ( is_channelClient( user ) )
 		_channelClients.erase( _channelClients.begin() + find_client_index( user ) );
+}
+
+void	Channel::remove_from_invite_list( std::string user )
+{
+	if ( is_invited( user ) )
+		_invite_list.erase( _invite_list.begin() + find_invited_index( user ) );
 }
 
 void	Channel::send_privmsg_all(std::string source, std::string message )

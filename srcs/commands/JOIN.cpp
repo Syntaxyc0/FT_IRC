@@ -33,6 +33,9 @@ void	Join( Client *client, std::vector<std::string> received, Server &server )
 	if (server.find_channel( received[1] )->get_topic() != "")
 		client->send_message( ":localhost 332 "+ client->get_nickname() + " " + received[1] + " " + server.find_channel( received[1] )->get_topic() );
 	client->send_message( ":localhost 353 "+ client->get_nickname() + " = " + received[1] + " :" + channel_list_user( received[1], server ) );
+
+	if ( current->is_invited( client->get_nickname() ) )
+		current->remove_from_invite_list( client->get_nickname() );
 }
 
 bool	join_error( Client *client, std::vector<std::string> received, Server &server )
@@ -51,7 +54,7 @@ bool	join_error( Client *client, std::vector<std::string> received, Server &serv
 	else if ( current && current->get_channel_key() && received[2] != current->get_password() )
 		return ( client->send_reply( ERR_BADCHANNELKEY( client->get_nickname(), current->get_name() ) ), true );
 
-	else if ( current && current->get_invite_only() )
+	else if ( current && current->get_invite_only() && !current->is_invited( client->get_nickname() ) )
 		return ( client->send_reply( ERR_INVITEONLYCHAN( client->get_nickname(), current->get_name() ) ), true );
 	
 	return (0);

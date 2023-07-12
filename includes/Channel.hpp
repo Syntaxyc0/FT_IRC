@@ -19,6 +19,8 @@ class Channel
 		std::vector<std::string>	_operators;			// Les modo dont dans _channelClient && _operators;
 		std::string					_primordial;		// Le primordial est dans les 3
 		Server						*_server;
+		std::vector<std::string>	_invite_list;
+
 
 // MODE
 		bool						_invite_only;			//set to 0 when init
@@ -42,6 +44,7 @@ class Channel
 		void						set_topic( std::string name );
 		void						set_primo( std::string new_primo );
 		void						add_operator( std::string client );
+		void						add_invite( std::string invite );
 
 // GETTER
 
@@ -50,6 +53,7 @@ class Channel
 		std::vector<std::string>	get_channelClients();
 		std::vector<std::string>	get_operators();
 		std::string					get_topic();
+		std::vector<std::string>	get_invite();
 
 		bool						get_invite_only();
 		bool						get_channel_key();
@@ -65,9 +69,12 @@ class Channel
 		int					is_primordial( std::string target );
 		int					is_operator( std::string target );
 		int					is_channelClient( std::string target );
+		int					is_invited( std::string target );
+		void				remove_from_invite_list( std::string user );
 
 		int					find_client_index( std::string target );
 		int					find_operator_index( std::string target );
+		int					find_invited_index( std::string target );
 
 		void				add_client( std::string user );
 		void				kick_client( std::string user );
