@@ -73,6 +73,16 @@ void	kick(Client *client, std::vector<std::string> args, Server &server)
 		client->send_message(ERR_CANTKICKOPE(args[2], chan->get_name()));
 		return ;
 	}
-	chan->send_all(":" + client->get_fullname() + " KICK " + chan->get_name() + " " + args[2] + " :kicked");
+	std::string reason = ":No reason";
+	if (args.size() > 3)
+	{
+		reason = args[3];
+		for (std::vector<std::string>::iterator it = args.begin() + 4; it != args.end(); it++)
+		{
+			reason += " ";
+			reason += *it;
+		}
+	}
+	chan->send_all(":" + client->get_fullname() + " KICK " + chan->get_name() + " " + args[2] + " " + reason);
 	chan->kick_client(args[2]);
 }
