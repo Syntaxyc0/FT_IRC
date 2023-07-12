@@ -247,6 +247,12 @@ void	Channel::send_all( std::string message )
 		_server->find_client( _channelClients.at(i) )->send_message_in_channel( _name ,message );
 }
 
+void	Channel::send_all_clients(std::string message)
+{
+	for (int i = 0; i < (int)_channelClients.size(); i++)
+		_server->find_client( _channelClients.at(i) )->send_message(message );
+}
+
 void	Channel::send_everyone_else( std::string message, std::string name)
 {
 	for (int i = 0; i < (int)_channelClients.size(); i++)

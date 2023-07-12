@@ -28,7 +28,7 @@ void	Topic(Client *client, std::vector<std::string> args, Server &server)
 		else
 		{
 			chan->set_topic(args[2]);
-			chan->send_all( ":localhost 332 "+ client->get_nickname() + " " + args[1] + " " + args[2] );
+			chan->send_all_clients( ":localhost 332 "+ client->get_nickname() + " " + args[1] + " " + args[2] );
 		}
 	}
 
