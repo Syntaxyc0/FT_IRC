@@ -23,15 +23,7 @@ void	Invite( Client *client, std::vector<std::string> received, Server &server )
 	client->send_message( client->get_nickname() + " INVITE " + target_nick + " " + channel->get_name() );
 
 	// add client to channel
-	channel->add_client( received[1] );
-	client->set_add_channel( channel );
-
-	//message
-	channel->send_all( target->get_nickname() + " has joined " + received[2] );
-	if ( channel->get_topic().size() )
-		client->send_reply( RPL_TOPIC(target_nick, channel->get_name(), channel->get_topic() ) );
-	target->send_reply( "353 " + target_nick + " = " + received[2] + " :" + channel_list_user( received[2], server ) );
-	target->send_reply( "366 " + target_nick + " " + received[2] + " :End of NAMES list" );
+	channel->add_invite( received[1] );
 }
 
 bool	invite_error( Client *client, std::vector<std::string> received, Server &server )
@@ -42,6 +34,9 @@ bool	invite_error( Client *client, std::vector<std::string> received, Server &se
 
 	if ( received.size() != 3 )
 		return ( client->send_reply( ERR_NEEDMOREPARAMS( nickname, "INVITE" ) ), true );
+
+	else if ( !server.find_client( received[1] ) )
+		return ( client->send_reply( ERR_NOSUCHNICK( nickname, received[1] ) ), true );
 
 	else if ( !channel )
 		return ( client->send_reply( ERR_NOSUCHCHANNEL( nickname, channel_name ) ), true );
