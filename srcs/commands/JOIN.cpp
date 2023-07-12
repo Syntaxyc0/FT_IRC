@@ -54,7 +54,7 @@ bool	join_error( Client *client, std::vector<std::string> received, Server &serv
 	else if ( current && current->get_channel_key() && received[2] != current->get_password() )
 		return ( client->send_reply( ERR_BADCHANNELKEY( client->get_nickname(), current->get_name() ) ), true );
 
-	else if ( current && current->get_invite_only() && current->is_invited( received[1] ) )
+	else if ( current && current->get_invite_only() && !current->is_invited( client->get_nickname() ) )
 		return ( client->send_reply( ERR_INVITEONLYCHAN( client->get_nickname(), current->get_name() ) ), true );
 	
 	return (0);

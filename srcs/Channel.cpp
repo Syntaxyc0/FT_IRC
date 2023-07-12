@@ -263,7 +263,7 @@ void	Channel::kick_client( std::string user )
 void	Channel::remove_from_invite_list( std::string user )
 {
 	if ( is_invited( user ) )
-		_invite_list.erase( _channelClients.begin() + find_invited_index( user ) );
+		_invite_list.erase( _invite_list.begin() + find_invited_index( user ) );
 }
 
 void	Channel::send_privmsg_all(std::string source, std::string message )
