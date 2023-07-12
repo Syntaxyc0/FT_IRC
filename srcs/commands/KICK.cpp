@@ -83,6 +83,6 @@ void	kick(Client *client, std::vector<std::string> args, Server &server)
 			reason += *it;
 		}
 	}
-	chan->send_all(":" + client->get_fullname() + " KICK " + chan->get_name() + " " + args[2] + " " + reason);
+	chan->send_all_clients(":" + client->get_fullname() + " KICK " + chan->get_name() + " " + args[2] + " " + reason);
 	chan->kick_client(args[2]);
 }
