@@ -26,13 +26,13 @@ void	Join( Client *client, std::vector<std::string> received, Server &server )
 	else if ( !server.find_channel( received[1] )->is_channelClient( client->get_nickname() ) )
 		server.find_channel( received[1] )->add_client( client->get_nickname() );
 
-	Channel *current = server.find_channel( received[1] );
+	Channel *channel = server.find_channel( received[1] );
 
 	client->set_add_channel(current);
 	current->send_everyone_else( ":" + client->get_fullname() + " JOIN " + received[1], client->get_nickname());
 	if (server.find_channel( received[1] )->get_topic() != "")
 		client->send_message( ":localhost 332 "+ client->get_nickname() + " " + received[1] + " " + server.find_channel( received[1] )->get_topic() );
-	client->send_message( ":localhost 353 "+ client->get_nickname() + " = " + received[1] + " :" + channel_list_user( received[1], server ) );
+	client->send_message( ":localhost 353 "+ client->get_nickname() + " = " + received[1] + " :" + channel_list_user( received, server ) );
 }
 
 bool	join_error( Client *client, std::vector<std::string> received, Server &server )
