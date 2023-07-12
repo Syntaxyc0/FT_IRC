@@ -30,7 +30,6 @@ void	Invite( Client *client, std::vector<std::string> received, Server &server )
 bool	invite_error( Client *client, std::vector<std::string> received, Server &server )
 {
 	Channel* channel = server.find_channel( received[2] );
-	std::string channel_name = channel->get_name();
 	std::string nickname = client->get_nickname();
 
 	if ( received.size() != 3 )
@@ -40,19 +39,19 @@ bool	invite_error( Client *client, std::vector<std::string> received, Server &se
 		return ( client->send_reply( ERR_NOSUCHNICK( nickname, received[1] ) ), true );
 
 	else if ( !channel )
-		return ( client->send_reply( ERR_NOSUCHCHANNEL( nickname, channel_name ) ), true );
+		return ( client->send_reply( ERR_NOSUCHCHANNEL( nickname, received[2] ) ), true );
 
 	else if ( !channel->is_channelClient( nickname ) )
-		return ( client->send_reply( ERR_NOTONCHANNEL( nickname, channel_name ) ), true );
+		return ( client->send_reply( ERR_NOTONCHANNEL( nickname, channel->get_name() ) ), true );
 
 	else if ( !channel->is_operator( nickname ) )
-		return ( client->send_reply( ERR_CHANOPRIVSNEEDED( nickname, channel_name ) ), true );
+		return ( client->send_reply( ERR_CHANOPRIVSNEEDED( nickname, channel->get_name() ) ), true );
 
 	else if ( channel->is_channelClient( server.find_client( received[1] )->get_nickname() ) )
-		return ( client->send_reply( ERR_USERONCHANNEL( nickname, server.find_client( received[1] )->get_nickname(),  channel_name ) ), true );
+		return ( client->send_reply( ERR_USERONCHANNEL( nickname, server.find_client( received[1] )->get_nickname(),  channel->get_name() ) ), true );
 
 	else if ( channel->get_user_limit() && (int)channel->get_channelClients().size() >= channel->get_user_limit_nb() )
-		return ( client->send_reply( ERR_CHANNELISFULL( client->get_nickname(), channel_name ) ), true );
+		return ( client->send_reply( ERR_CHANNELISFULL( client->get_nickname(), channel->get_name() ) ), true );
 
 	return ( false );
 }
