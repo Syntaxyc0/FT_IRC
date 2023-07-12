@@ -26,17 +26,13 @@ void	Join( Client *client, std::vector<std::string> received, Server &server )
 	else if ( !server.find_channel( received[1] )->is_channelClient( client->get_nickname() ) )
 		server.find_channel( received[1] )->add_client( client->get_nickname() );
 
-	Channel *channel = server.find_channel( received[1] );
+	Channel *current = server.find_channel( received[1] );
 
-	// add client to channel
-	client->set_add_channel( channel );
-
-	// message
-	channel->send_all( client->get_nickname() + " has joined " + received[1] );
-	if ( channel->get_topic().size() )
-		client->send_reply( RPL_TOPIC(client->get_nickname(), channel->get_name(), channel->get_topic() ) );
-	client->send_reply( "353 " + client->get_nickname() + " = " + received[1] + " :" + channel_list_user( received[1], server ) );
-	client->send_reply( "366 " + client->get_nickname() + " " + received[1] + " :End of NAMES list" );
+	client->set_add_channel(current);
+	current->send_everyone_else( ":" + client->get_fullname() + " JOIN " + received[1], client->get_nickname());
+	if (server.find_channel( received[1] )->get_topic() != "")
+		client->send_message( ":localhost 332 "+ client->get_nickname() + " " + received[1] + " " + server.find_channel( received[1] )->get_topic() );
+	client->send_message( ":localhost 353 "+ client->get_nickname() + " = " + received[1] + " :" + channel_list_user( received[1], server ) );
 }
 
 bool	join_error( Client *client, std::vector<std::string> received, Server &server )
