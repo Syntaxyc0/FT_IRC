@@ -6,7 +6,7 @@ bool	check_nick(std::string nick)
 {
 	for (unsigned int i = 0; i < nick.size(); i++)
 	{
-		if (!isalnum(nick[i]) && nick[i] != '\\' && nick[i] != '|' && nick[i] != '{' && nick[i] != '}' && nick[i] != '[' && nick[i] != ']')
+		if (!isalnum(nick[i]) && nick[i] != '\\' && nick[i] != '|' && nick[i] != '{' && nick[i] != '}' && nick[i] != '[' && nick[i] != ']' && nick[i] != '_')
 			return false;
 	}
 	return true;
@@ -44,6 +44,7 @@ void	Nick(Client *client, std::vector<std::string> args, Server &serv)
 		return ;
 	}
 	serv.broadcast_server(":" + client->get_fullname() + " NICK " + name);
+	client->set_nickname(name);
 }
 
 

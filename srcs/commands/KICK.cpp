@@ -53,19 +53,19 @@ void	kick(Client *client, std::vector<std::string> args, Server &server)
 		client->send_message(ERR_NOSUCHCHANNEL(client->get_nickname(), args[1]));
 		return ;
 	}
-	if (!chan->is_operator(client->get_nickname()))
-	{
-		client->send_message(ERR_CHANOPRIVSNEEDED(client->get_nickname(), chan->get_name()));
-		return ;
-	}
 	if (!chan->is_channelClient(client->get_nickname()))
 	{
 		client->send_message(ERR_NOTONCHANNEL(client->get_nickname(), chan->get_name()));
 		return ;
 	}
+	if (!chan->is_operator(client->get_nickname()))
+	{
+		client->send_message_in_channel(args[1], "Operator privileges requested");
+		return ;
+	}
 	if (!chan->is_channelClient(args[2]))
 	{
-		client->send_message(ERR_USERNOTINCHANNEL(args[2], chan->get_name()));
+		client->send_message_in_channel(args[1], args[2] + " is not on the channel");
 		return ;
 	}
 	if (chan->is_operator(args[2]))
