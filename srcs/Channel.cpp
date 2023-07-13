@@ -296,3 +296,13 @@ void	Channel::send_everyone_else( std::string message, std::string name)
 			user->send_message( message );
 	}
 }
+
+void	Channel::change_nick(std::string oldnick, std::string newnick)
+{
+	if (find_client_index(oldnick) != -1)
+		_channelClients[find_client_index(oldnick)] = newnick;
+	if (find_operator_index(oldnick) != -1)
+		_operators[find_operator_index(oldnick)] = newnick;
+	if (find_invited_index(oldnick) != -1)
+		_invite_list[find_invited_index(oldnick)] = newnick;
+}

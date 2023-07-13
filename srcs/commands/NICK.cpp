@@ -44,6 +44,13 @@ void	Nick(Client *client, std::vector<std::string> args, Server &serv)
 		return ;
 	}
 	serv.broadcast_server(":" + client->get_fullname() + " NICK " + name);
+	std::vector<std::string> chanlist = client->get_channelList();
+	for (std::vector<std::string>::iterator it = chanlist.begin(); it != chanlist.end(); it++)
+	{
+		Channel *chan = serv.find_channel(*it);
+		if (chan)
+			chan->change_nick(client->get_nickname(), name);
+	}
 	client->set_nickname(name);
 }
 
@@ -63,5 +70,3 @@ void	Nick(Client *client, std::vector<std::string> args, Server &serv)
 //   "<client> <nick> :Nickname collision KILL from <user>@<host>"
 
 
-
-	
