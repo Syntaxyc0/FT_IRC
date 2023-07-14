@@ -23,7 +23,6 @@ int Server::shut_down()
 
 void	Server::command_handler(Client *client, std::vector<std::string> args)
 {
-	// , "MODE", "KICK", "JOIN", "INVITE", "TOPIC" //a rajouter
 	std::string		command_names[13] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG", "PING", "TOPIC", "JOIN", "MODE", "PART", "KICK", "INVITE"};
 	void	(*command_functions[13])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &Join, &Mode, &Part, &kick, &Invite};
 	for (int i = 0; i < 13; i++)
@@ -39,6 +38,7 @@ void Server::handle_data(std::vector<pollfd>::iterator it)
 	int bytes_received = recv(it->fd , buffer, sizeof(buffer), 0);
 	buffer[bytes_received] = '\0';
 
+	std::cout << GREEN << "\t[RECEIVED]"<<END<<std::endl;
 	std::cout << buffer << std::endl;
 
 	std::string			tmp_buffer(buffer);
@@ -48,8 +48,6 @@ void Server::handle_data(std::vector<pollfd>::iterator it)
 	while (std::getline(ss, line))
 	{
 		std::vector<std::string>	received = parse(line);
-		//for (std::vector<std::string>::iterator it = received.begin(); it != received.end(); it++)
-			//std::cout<<GREEN<<*it<<END<<std::endl;
 		if (!received.empty())
 			command_handler(_clientList[it->fd], received);
 	}
@@ -60,7 +58,6 @@ void Server::monitoring()
 	errorin(poll(&(*_sockets.begin()), _sockets.size(), 1000) == -1, " Failed poll() execution.\n");
 	for (std::vector<pollfd>::iterator it = _sockets.begin(); it != _sockets.end(); it++)
 	{
-		// std::cout<<GREEN<<"size "<< _sockets.size()<<" fd "<< it->fd<<" revents "<<it->revents<<END<<std::endl;
 		short revents = it->revents;
 		it->revents = 0;
 		if (revents & POLLHUP || revents & POLLERR) //deco de _clienList[it->fd]
@@ -80,7 +77,6 @@ void Server::monitoring()
 					it = disconnect(it->fd);
 				else if (_clientList[it->fd]->get_registered() == DISCONNECTED)
 				{
-					// broadcast_server(_clientList[it->fd]->get_nickname() + " left the server");
 					it = disconnect(it->fd);
 				}
 			}
@@ -98,7 +94,8 @@ std::vector<pollfd>::iterator Server::new_connection()
 	pollfd	new_poll = {fd, POLLIN, 0};
 	_sockets.push_back(new_poll);
 	adduser(fd, inet_ntoa(client_addr.sin_addr));
-    std::cout << MAGENTA << "New connection successfull!" << END << std::endl;
+    std::cout << MAGENTA << "\tNew connection successfull!" << END << std::endl;
+	std::cout<<std::endl;
 	return _sockets.begin();
 }
 
@@ -150,7 +147,6 @@ void	Server::adduser(int fd, std::string hostname)
 {
 	Client *newuser = new Client(fd, hostname);
 	_clientList.insert(std::make_pair(fd, newuser));
-	std::cout<<GREEN<<"New user added"<<" fd : "<<fd<<" hostname "<<hostname<<END<<std::endl;	//DEBUG
 }
 
 std::vector<pollfd>::iterator Server::disconnect(int fd)
@@ -161,9 +157,9 @@ std::vector<pollfd>::iterator Server::disconnect(int fd)
 		if (it->fd == fd)
 		{
 			if (_clientList[it->fd]->get_nickname() != "")
-				std::cout << MAGENTA << _clientList[it->fd]->get_nickname() << " has disconnected" << END << std::endl;
+				std::cout << MAGENTA <<"\t"<< _clientList[it->fd]->get_nickname() << " has disconnected\n" << END << std::endl;
 			else
-				std::cout << MAGENTA << "Registration failed, user disconnected" << END << std::endl;
+				std::cout << MAGENTA << "\tRegistration failed, user disconnected\n" << END << std::endl;
 			_sockets.erase(it);
 			delete(_clientList.at(fd));
 			_clientList.erase(fd);
