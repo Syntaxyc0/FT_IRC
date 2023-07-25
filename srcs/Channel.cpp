@@ -154,7 +154,7 @@ void	Channel::operator_privilege( Client *me, std::string target, int sign )
 {
 	if ( me->get_nickname() == target )
 	{
-		me->send_message_in_channel( _name, "You can't target yourself" );
+		me->send_message_in_channel( _name, "Error: You can't use your nickname" );
 		return;
 	}
 
