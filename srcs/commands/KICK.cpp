@@ -40,49 +40,54 @@
 // 	me.send_message(message);
 // }
 
-void	kick(Client *client, std::vector<std::string> args, Server &server)
+void	kick( Client *client, std::vector<std::string> args, Server &server )
 {
-	if (args.size() < 3)
+	if ( args.size() < 3 )
 	{
-		client->send_message(ERR_NEEDMOREPARAMS(client->get_nickname(), "KICK"));
+		client->send_reply( ERR_NEEDMOREPARAMS( client->get_nickname(), "KICK" ) );
 		return ;
 	}
-	Channel *chan = server.find_channel(args[1]);
-	if (!chan)
+	Channel *chan = server.find_channel( args[1] );
+	if ( !chan )
 	{
-		client->send_message(ERR_NOSUCHCHANNEL(client->get_nickname(), args[1]));
+		client->send_reply( ERR_NOSUCHCHANNEL( client->get_nickname(), args[1] ) );
 		return ;
 	}
-	if (!chan->is_operator(client->get_nickname()))
+	if ( client->get_nickname() == args[2] )
 	{
-		client->send_message(ERR_CHANOPRIVSNEEDED(client->get_nickname(), chan->get_name()));
+		client->send_message_in_channel( args[1], "You can't kick yourself" );
 		return ;
 	}
-	if (!chan->is_channelClient(client->get_nickname()))
+	if ( !chan->is_operator( client->get_nickname() ) )
 	{
-		client->send_message(ERR_NOTONCHANNEL(client->get_nickname(), chan->get_name()));
+		client->send_reply( ERR_CHANOPRIVSNEEDED( client->get_nickname(), chan->get_name() ) );
 		return ;
 	}
-	if (!chan->is_channelClient(args[2]))
+	if ( !chan->is_channelClient( client->get_nickname() ) )
 	{
-		client->send_message(ERR_USERNOTINCHANNEL(args[2], chan->get_name()));
+		client->send_reply( ERR_NOTONCHANNEL( client->get_nickname(), chan->get_name() ) );
 		return ;
 	}
-	if (chan->is_operator(args[2]))
+	if ( !chan->is_channelClient(args[2]) )
 	{
-		client->send_message(ERR_CANTKICKOPE(args[2], chan->get_name()));
+		client->send_reply( ERR_USERNOTINCHANNEL( args[2], chan->get_name() ) );
+		return ;
+	}
+	if ( chan->is_operator( args[2] ) )
+	{
+		client->send_reply( ERR_CANTKICKOPE( args[2], chan->get_name() ) );
 		return ;
 	}
 	std::string reason = ":No reason";
-	if (args.size() > 3)
+	if ( args.size() > 3 )
 	{
 		reason = args[3];
-		for (std::vector<std::string>::iterator it = args.begin() + 4; it != args.end(); it++)
+		for ( std::vector<std::string>::iterator it = args.begin() + 4; it != args.end(); it++ )
 		{
 			reason += " ";
 			reason += *it;
 		}
 	}
-	chan->send_all(":" + client->get_fullname() + " KICK " + chan->get_name() + " " + args[2] + " " + reason);
-	chan->kick_client(args[2]);
+	chan->send_all( ":" + client->get_fullname() + " KICK " + chan->get_name() + " " + args[2] + " " + reason );
+	chan->kick_client( args[2] );
 }

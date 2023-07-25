@@ -6,8 +6,8 @@
 
 void	Mode(Client *client, std::vector<std::string> received, Server &server)
 {
-	if ( mode_error(client, received, server))
-		return ;
+	// if ( mode_error(client, received, server))
+	// 	return ;
 
 	if (received.size() < 3)
 		return ;

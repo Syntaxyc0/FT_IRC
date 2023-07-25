@@ -152,6 +152,12 @@ std::vector<std::string> Channel::get_invite()
 
 void	Channel::operator_privilege( Client *me, std::string target, int sign )
 {
+	if ( me->get_nickname() == target )
+	{
+		me->send_message_in_channel( _name, "You can't target yourself" );
+		return;
+	}
+
 	if ( !is_operator( me->get_nickname() ) )
 	{
 		me->send_reply( ERR_CHANOPRIVSNEEDED( me->get_nickname(), _name ) );
