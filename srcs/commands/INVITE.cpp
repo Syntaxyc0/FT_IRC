@@ -35,6 +35,9 @@ bool	invite_error( Client *client, std::vector<std::string> received, Server &se
 	if ( received.size() != 3 )
 		return ( client->send_reply( ERR_NEEDMOREPARAMS( nickname, "INVITE" ) ), true );
 
+	else if ( received[1] == nickname )
+		return( client->send_reply( "Error: you can't invite yourself" ), true );
+
 	else if ( !server.find_client( received[1] ) )
 		return ( client->send_reply( ERR_NOSUCHNICK( nickname, received[1] ) ), true );
 

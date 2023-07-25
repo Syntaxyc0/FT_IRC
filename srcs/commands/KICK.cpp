@@ -55,7 +55,7 @@ void	kick( Client *client, std::vector<std::string> args, Server &server )
 	}
 	if ( client->get_nickname() == args[2] )
 	{
-		client->send_message_in_channel( args[1], "You can't kick yourself" );
+		client->send_reply( "Error: You can't kick yourself" );
 		return ;
 	}
 	if ( !chan->is_operator( client->get_nickname() ) )
