@@ -14,7 +14,6 @@
 #include "Commands.hpp"
 void	Join( Client *client, std::vector<std::string> received, Server &server )
 {
-
 	if ( join_error( client, received, server ) )
 		return ;
 
