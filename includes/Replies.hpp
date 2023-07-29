@@ -2,7 +2,7 @@
 
 # define REPLIES_HPP
 
-# define RPL_WELCOME(nick, user, host)						"001 " + nick   + "!" + user + "@" + host
+# define RPL_WELCOME(nickname, fullname)						"001 " + nickname + " :Welcome to IRC " + fullname
 
 # define RPL_UMODEIS(client, modes)							"221 " + client + " " + modes
 

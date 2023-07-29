@@ -30,9 +30,9 @@ void	User(Client *client, std::vector<std::string> args, Server &serv)
 	if (client->get_registered() == NICK_CHECKED)
 	{
 		client->set_register(REGISTERED);
-		// client->send_reply(RPL_WELCOME(client->get_nickname(), client->get_username(), client->get_hostname()));
-		client->send_message(":localhost 001 " + client->get_nickname() + " :Welcome to IRC " + client->get_fullname());
+		client->send_reply(RPL_WELCOME(client->get_nickname(), client->get_fullname()));
 		std::cout<<MAGENTA<<client->get_nickname()<<" has registered"<<END<<std::endl;
+		std::cout<<std::endl;
 	}
 	else
 	{

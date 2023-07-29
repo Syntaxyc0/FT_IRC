@@ -76,6 +76,7 @@ class Channel
 		int					find_operator_index( std::string target );
 		int					find_invited_index( std::string target );
 
+		void				change_nick(std::string oldnick, std::string newnick);
 		void				add_client( std::string user );
 		void				kick_client( std::string user );
 		void				send_all( std::string message );
