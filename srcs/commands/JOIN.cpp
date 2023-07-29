@@ -23,7 +23,7 @@ void	Join( Client *client, std::vector<std::string> received, Server &server )
 		Channel ret(received[1], client->get_nickname(), server);
 		server.add_Channels( ret );
 	}
-	else
+	else if ( !server.find_channel( received[1] )->is_channelClient( client->get_nickname() ) )
 		server.find_channel( received[1] )->add_client( client->get_nickname() );
 
 	Channel *current = server.find_channel( received[1] );
