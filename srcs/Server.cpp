@@ -32,12 +32,14 @@ void	Server::command_handler(Client *client, std::vector<std::string> args)
 	}
 }
 
-void Server::handle_data(std::vector<pollfd>::iterator it)
+bool Server::handle_data(std::vector<pollfd>::iterator it)
 {
 	char buffer[1024];
 	int bytes_received = recv(it->fd , buffer, sizeof(buffer), 0);
 	buffer[bytes_received] = '\0';
 
+	if (!bytes_received) //tentative de resolution de ctrl-c
+		return (false);
 	std::cout << GREEN << "\t[RECEIVED]"<<END<<std::endl;
 	std::cout << buffer << std::endl;
 
@@ -51,6 +53,7 @@ void Server::handle_data(std::vector<pollfd>::iterator it)
 		if (!received.empty())
 			command_handler(_clientList[it->fd], received);
 	}
+	return (true);
 }
 
 void Server::monitoring()
@@ -72,13 +75,12 @@ void Server::monitoring()
 				it = new_connection();
 			else
 			{
-				handle_data(it);
-				if (_clientList[it->fd]->get_registered() == NOT_REGISTERED)
+				if (!handle_data(it))
 					it = disconnect(it->fd);
-				else if (_clientList[it->fd]->get_registered() == DISCONNECTED)
-				{
+				// if (_clientList[it->fd]->get_registered() == NOT_REGISTERED) //mise en commentaire pour nc
+					// it = disconnect(it->fd);
+				if (_clientList[it->fd]->get_registered() == DISCONNECTED)
 					it = disconnect(it->fd);
-				}
 			}
 		}
 	}
