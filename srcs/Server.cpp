@@ -103,10 +103,9 @@ void Server::init_server()
 {
     _listening_socket = socket(AF_INET, SOCK_STREAM, 0);//listen socket
     errorin(_listening_socket == -1, strerror(errno));
-    int flags = fcntl(_listening_socket, F_GETFL);
 	int optval = 1;
 	setsockopt(_listening_socket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int));
-    fcntl(_listening_socket, F_SETFL, flags | O_NONBLOCK);//non blocking flags set
+    fcntl(_listening_socket, F_SETFL, O_NONBLOCK);//non blocking flags set
 	struct	sockaddr_in	serv = {};
     std::memset(&serv, 0, sizeof(serv));
 	serv.sin_family = AF_INET;
@@ -129,7 +128,6 @@ Server::~Server()
 	if (!_clientList.empty())
 		for (std::map<int, Client*>::iterator it = _clientList.begin(); it != _clientList.end(); it++)
 			delete(it->second);
-    fcntl(_listening_socket, F_SETFL, O_RDONLY);
     for (std::vector<pollfd>::iterator it = _sockets.begin(); it != _sockets.end(); it++)
     {
         if (it->fd)
