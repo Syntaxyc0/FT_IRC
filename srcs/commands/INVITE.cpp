@@ -51,8 +51,10 @@ bool	invite_error( Client *client, std::vector<std::string> received, Server &se
 		return ( client->send_reply( ERR_CHANOPRIVSNEEDED( nickname, channel->get_name() ) ), true );
 
 	else if ( channel->is_channelClient( server.find_client( received[1] )->get_nickname() ) )
+	{
+		client->send_reply( "loool " );
 		return ( client->send_reply( ERR_USERONCHANNEL( nickname, server.find_client( received[1] )->get_nickname(),  channel->get_name() ) ), true );
-
+	}
 	else if ( channel->get_user_limit() && (int)channel->get_channelClients().size() >= channel->get_user_limit_nb() )
 		return ( client->send_reply( ERR_CHANNELISFULL( client->get_nickname(), channel->get_name() ) ), true );
 
