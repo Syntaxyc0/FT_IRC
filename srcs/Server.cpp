@@ -79,7 +79,7 @@ void Server::monitoring()
 					it = disconnect(it->fd);
 				// if (_clientList[it->fd]->get_registered() == NOT_REGISTERED) //mise en commentaire pour nc
 					// it = disconnect(it->fd);
-				if (_clientList[it->fd]->get_registered() == DISCONNECTED)
+				else if (_clientList[it->fd]->get_registered() == DISCONNECTED)
 					it = disconnect(it->fd);
 			}
 		}
