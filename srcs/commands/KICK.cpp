@@ -60,7 +60,7 @@ void	kick( Client *client, std::vector<std::string> args, Server &server )
 	}
 	if ( !chan->is_operator( client->get_nickname() ) )
 	{
-		client->send_reply( ERR_CHANOPRIVSNEEDED( client->get_nickname(), chan->get_name() ) );
+		client->send_reply( "Error: You're not channel's operator" );
 		return ;
 	}
 	if ( !chan->is_channelClient( client->get_nickname() ) )

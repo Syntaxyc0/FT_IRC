@@ -138,6 +138,11 @@ void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> re
 
 void	mode_operator_privilege(Channel *current, Client *user, std::vector<std::string> received)
 {
+	if ( received.size() < 4	)
+	{
+		user->send_reply( ERR_NEEDMOREPARAMS( user->get_nickname(), "MODE" ) );
+		return ;
+	}
 	if ( received[2][0] == '-' )
 	{
 		current->operator_privilege(user, received[3], 0);

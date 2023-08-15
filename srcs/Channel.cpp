@@ -160,7 +160,7 @@ void	Channel::operator_privilege( Client *me, std::string target, int sign )
 
 	if ( !is_operator( me->get_nickname() ) )
 	{
-		me->send_reply( ERR_CHANOPRIVSNEEDED( me->get_nickname(), _name ) );
+		me->send_reply( "Error: You're not channel's operator" );
 		return;
 	}
 
