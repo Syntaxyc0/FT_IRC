@@ -154,13 +154,13 @@ void	Channel::operator_privilege( Client *me, std::string target, int sign )
 {
 	if ( me->get_nickname() == target )
 	{
-		me->send_reply( "Error: You can't use your nickname" );
+		me->send_reply( me->get_nickname() + " " + _name + " :You can't use your nickname" );
 		return;
 	}
 
 	if ( !is_operator( me->get_nickname() ) )
 	{
-		me->send_reply( "Error: You're not channel's operator" );
+		me->send_reply( me->get_nickname() + " " + _name + " :You're not channel's operator" );
 		return;
 	}
 
@@ -172,7 +172,7 @@ void	Channel::operator_privilege( Client *me, std::string target, int sign )
 
 	if ( !is_channelClient( target ) )
 	{
-		me->send_reply( ERR_USERNOTINCHANNEL( target, _name ) );
+		me->send_reply( target + " " + _name + " :They aren't on that channel" );
 		return;
 	}
 
