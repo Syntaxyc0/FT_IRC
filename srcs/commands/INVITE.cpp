@@ -5,9 +5,6 @@
 #include "Commands.hpp"
 
 // "/INVITE [user.nickname]" Invite un client sur le channel de l'utilisateur.
-// Erreur si : le client n'existe pas, l'utilisateur n'est pas dams un channel ,si il n'est pas opérateur de cette channel ou
-// le client invité est déjà sur le channel.
-// Un message s'affichera si la commande s'execute avec succès.
 
 void	Invite( Client *client, std::vector<std::string> received, Server &server )
 {
@@ -48,15 +45,13 @@ bool	invite_error( Client *client, std::vector<std::string> received, Server &se
 		return ( client->send_reply( ERR_NOTONCHANNEL( nickname, channel->get_name() ) ), true );
 
 	else if ( !channel->is_operator( nickname ) )
-		return ( client->send_reply( ERR_CHANOPRIVSNEEDED( nickname, channel->get_name() ) ), true );
+		return ( client->send_reply( nickname + " " + channel->get_name() + ": You're not channel operator"), true );
 
 	else if ( channel->is_channelClient( server.find_client( received[1] )->get_nickname() ) )
-	{
-		client->send_reply( "loool " );
 		return ( client->send_reply( ERR_USERONCHANNEL( nickname, server.find_client( received[1] )->get_nickname(),  channel->get_name() ) ), true );
-	}
+
 	else if ( channel->get_user_limit() && (int)channel->get_channelClients().size() >= channel->get_user_limit_nb() )
-		return ( client->send_reply( ERR_CHANNELISFULL( client->get_nickname(), channel->get_name() ) ), true );
+		return ( client->send_reply( client->get_nickname() + " " + channel->get_name() + ": Channel is full" ), true );
 
 	return ( false );
 }

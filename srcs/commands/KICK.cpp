@@ -47,7 +47,9 @@ void	kick( Client *client, std::vector<std::string> args, Server &server )
 		client->send_reply( ERR_NEEDMOREPARAMS( client->get_nickname(), "KICK" ) );
 		return ;
 	}
+
 	Channel *chan = server.find_channel( args[1] );
+
 	if ( !chan )
 	{
 		client->send_reply( ERR_NOSUCHCHANNEL( client->get_nickname(), args[1] ) );
@@ -55,12 +57,7 @@ void	kick( Client *client, std::vector<std::string> args, Server &server )
 	}
 	if ( client->get_nickname() == args[2] )
 	{
-		client->send_reply( "Error: You can't kick yourself" );
-		return ;
-	}
-	if ( !chan->is_operator( client->get_nickname() ) )
-	{
-		client->send_reply( "Error: You're not channel's operator" );
+		client->send_reply( client->get_nickname() + " " + chan->get_name() + ": You can't kick yourself" );
 		return ;
 	}
 	if ( !chan->is_channelClient( client->get_nickname() ) )
@@ -68,9 +65,14 @@ void	kick( Client *client, std::vector<std::string> args, Server &server )
 		client->send_reply( ERR_NOTONCHANNEL( client->get_nickname(), chan->get_name() ) );
 		return ;
 	}
+	if ( !chan->is_operator( client->get_nickname() ) )
+	{
+		client->send_reply( client->get_nickname() + " " + chan->get_name() + ": You're not channel's operator" );
+		return ;
+	}
 	if ( !chan->is_channelClient(args[2]) )
 	{
-		client->send_reply( ERR_USERNOTINCHANNEL( args[2], chan->get_name() ) );
+		client->send_reply( args[2] + " " + chan->get_name() + " :They aren't on that channel" );
 		return ;
 	}
 	if ( chan->is_operator( args[2] ) )
@@ -79,7 +81,7 @@ void	kick( Client *client, std::vector<std::string> args, Server &server )
 		return ;
 	}
 	std::string reason = ":No reason";
-	if ( args.size() > 3 )
+	if ( args[3].size() > 1)
 	{
 		reason = args[3];
 		for ( std::vector<std::string>::iterator it = args.begin() + 4; it != args.end(); it++ )
@@ -91,3 +93,4 @@ void	kick( Client *client, std::vector<std::string> args, Server &server )
 	chan->send_all( ":" + client->get_fullname() + " KICK " + chan->get_name() + " " + args[2] + " " + reason );
 	chan->kick_client( args[2] );
 }
+ 
