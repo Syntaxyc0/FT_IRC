@@ -15,10 +15,11 @@ class   Channel;
 enum state
 {
 	NOT_REGISTERED = 0,
-	PASS_CHECKED = 1,
-	NICK_CHECKED = 2,
-	REGISTERED = 3,
-	DISCONNECTED = 4
+	AWAITING_AUTH = 1,
+	PASS_CHECKED = 2,
+	NICK_CHECKED = 3,
+	REGISTERED = 4,
+	DISCONNECTED = 5
 };
 
 
@@ -49,7 +50,7 @@ void	mode_restricion_topic_cmd( Channel *current, Client *user, std::vector<std:
 void	mode_limit_user( Channel *current, Client *user, std::vector<std::string> received );
 void	mode_operator_privilege( Channel *current, Client *user, std::vector<std::string> received );
 
-
+void	Cap(Client *client, std::vector<std::string> args, Server &serv);
 void	User(Client *client, std::vector<std::string> args, Server &serv);
 void	Nick(Client *client, std::vector<std::string> args, Server &serv);
 void    Pass(Client *client, std::vector<std::string> args, Server &serv);

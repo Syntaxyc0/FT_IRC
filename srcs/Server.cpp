@@ -23,9 +23,9 @@ int Server::shut_down()
 
 void	Server::command_handler(Client *client, std::vector<std::string> args)
 {
-	std::string		command_names[13] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG", "PING", "TOPIC", "JOIN", "MODE", "PART", "KICK", "INVITE"};
-	void	(*command_functions[13])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &Join, &Mode, &Part, &kick, &Invite};
-	for (int i = 0; i < 13; i++)
+	std::string		command_names[14] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG", "PING", "TOPIC", "JOIN", "MODE", "PART", "KICK", "INVITE", "CAP"};
+	void	(*command_functions[14])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &Join, &Mode, &Part, &kick, &Invite, &Cap};
+	for (int i = 0; i < 14; i++)
 	{
 		if (args[0] == command_names[i])
 			command_functions[i](client, args, *this);

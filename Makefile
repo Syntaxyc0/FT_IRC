@@ -11,6 +11,7 @@ SRCS =  main.cpp	\
 		Channel.cpp	\
 		Parser.cpp	\
 		Server.cpp	\
+		CAP.cpp		\
 		USER.cpp	\
 		PASS.cpp	\
 		NICK.cpp	\
