@@ -3,7 +3,7 @@
 void	Ping(Client *client, std::vector<std::string> args, Server &server)
 {
 	(void)server;
-	if (client->get_registered() != REGISTERED)
+	if (check_command_access(client))
 		return ;
 	else if (args.size() < 2)
 	{

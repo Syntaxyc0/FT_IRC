@@ -51,6 +51,7 @@ void	mode_limit_user( Channel *current, Client *user, std::vector<std::string> r
 void	mode_operator_privilege( Channel *current, Client *user, std::vector<std::string> received );
 
 void	Cap(Client *client, std::vector<std::string> args, Server &serv);
+int 	check_command_access(Client *client);
 void	User(Client *client, std::vector<std::string> args, Server &serv);
 void	Nick(Client *client, std::vector<std::string> args, Server &serv);
 void    Pass(Client *client, std::vector<std::string> args, Server &serv);

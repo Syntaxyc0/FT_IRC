@@ -47,5 +47,6 @@
 
 # define ERR_NOPRIMORDIAL(client, channel)					client + " " + channel + ": You're not the primordial channel operator"
 # define ERR_CANTKICKOPE(client, channel)					client + " " + channel + ": Operators can't be kicked"
+# define ERR_AUTH											"You're not authenticated"
 
 #endif

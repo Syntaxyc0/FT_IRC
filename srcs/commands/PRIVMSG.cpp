@@ -18,6 +18,8 @@
 
 void	Privmsg(Client *client, std::vector<std::string> args, Server &serv)
 {
+	if (check_command_access(client))
+		return ;
 	if (args.size() < 2)
 	{
 		client->send_reply(ERR_NORECIPIENT(client->get_hostname()));

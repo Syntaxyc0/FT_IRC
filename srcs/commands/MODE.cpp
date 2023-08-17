@@ -9,7 +9,9 @@ void	Mode(Client *client, std::vector<std::string> received, Server &server)
 	// if ( mode_error(client, received, server))
 	// 	return ;
 
-	if (received.size() < 3)
+	if (check_command_access(client))
+		return ;
+	else if (received.size() < 3)
 		return ;
 	else if ( received[2][1] == 'i' && server.find_channel( received[1] ))
 		mode_invite_only( server.find_channel( received[1] ), client, received[2][0]);
