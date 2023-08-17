@@ -39,7 +39,8 @@ bool Server::handle_data(std::vector<pollfd>::iterator it)
 	int bytes_received = recv(it->fd , buffer, sizeof(buffer), 0);
 	buffer[bytes_received] = '\0';
 
-	if (!bytes_received) //tentative de resolution de ctrl-c
+	std::cout << "bytes: " << bytes_received << "\n";
+	if (!bytes_received || bytes_received < 0) //tentative de resolution de ctrl-c
 		return (false);
 	std::cout << GREEN << "\t[RECEIVED]"<<END<<std::endl;
 	std::cout << buffer << std::endl;
@@ -62,12 +63,13 @@ void Server::monitoring()
 	errorin(poll(&(*_sockets.begin()), _sockets.size(), 1000) == -1, " Failed poll() execution.\n");
 	for (std::vector<pollfd>::iterator it = _sockets.begin(); it != _sockets.end(); it++)
 	{
+		usleep(100);
 		short revents = it->revents;
 		it->revents = 0;
 		if (revents & POLLHUP || revents & POLLERR) //deco de _clienList[it->fd]
 		{
 			if (revents & POLLERR)
-				std::cerr << RED << "/!\\ Warning: An error occurred on a file descriptor." << END << std::endl;
+				std::cerr << YELLOW << "Interrupted connection with file descriptor." << END << std::endl;
 			it = disconnect(it->fd);
 		}
 		else if (revents & POLLIN) //nouvelle requete
@@ -75,7 +77,7 @@ void Server::monitoring()
 			if (it->fd == _sockets.begin()->fd)
 			{
 				if (_sockets.size() < 100)
-					it = new_connection();
+					new_connection();
 				else
 					std::cerr << RED << "/!\\ Warning: Max connections reached: " << 100 << END << std::endl;
 			}
@@ -168,11 +170,11 @@ std::vector<pollfd>::iterator Server::disconnect(int fd)
 				std::cout << MAGENTA <<"\t"<< _clientList[it->fd]->get_nickname() << " has disconnected\n" << END << std::endl;
 			else
 				std::cout << MAGENTA << "\tRegistration failed, user disconnected\n" << END << std::endl;
-			_sockets.erase(it);
+			it = _sockets.erase(it);
 			delete(_clientList.at(fd));
 			_clientList.erase(fd);
 			close(fd);
-			return _sockets.begin();
+			return it;
 		}
 	}
 	return _sockets.begin();
