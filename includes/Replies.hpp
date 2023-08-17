@@ -25,7 +25,6 @@
 # define ERR_NOTEXTTOSEND(client)							"412 " + client + " :No text to send"
 # define ERR_NONICKNAMEGIVEN(client)						"431 " + client + " :No nickname given"
 # define ERR_ERRONEUSNICKNAME(client, nick)					"432 " + client + " " + nick + " :Erroneus nickname"
-# define ERR_NICKNAMEINUSE(client, nick)					"433 " + client + " " + nick + " :Nickname is already in use"
 # define ERR_NICKCOLLISION(client, nick, user, host)		"436 " + client + " " + nick + " :Nickname collision KILL from " + user + "@" + host
 # define ERR_USERNOTINCHANNEL(client, channel)				"441 " + client + " " + channel + " :They aren't on that channel" 
 # define ERR_NOTONCHANNEL(client, channel)					"442 " + client + " " + channel + " :You're not on that channel"
@@ -48,5 +47,6 @@
 # define ERR_NOPRIMORDIAL(client, channel)					client + " " + channel + ": You're not the primordial channel operator"
 # define ERR_CANTKICKOPE(client, channel)					client + " " + channel + ": Operators can't be kicked"
 # define ERR_AUTH											"You're not authenticated"
+# define ERR_NICKNAMEINUSE(nick)							nick + ": Nickname is already in use"
 
 #endif
