@@ -188,7 +188,7 @@ void	Channel::operator_privilege( Client *me, std::string target, int sign )
 		if ( !is_operator(target) && me->get_nickname() != target )
 			return;
 		_operators.erase( _operators.begin() + find_operator_index( target )) ;
-		this->send_all( target + " is not anymore operator" );
+		this->send_all( target + " is no longer operator" );
 	}
 }
 

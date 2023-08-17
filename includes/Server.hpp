@@ -67,6 +67,7 @@ class Server
 		Client	*find_client(std::string nickname);
 		Channel	*find_channel(std::string channel_name);
 		void	del_channel( std::string channel_name );
+		void	quit_channels( Client *client, Server &serv );
 
 		void	broadcast_server(std::string message);
 

@@ -25,6 +25,7 @@ void	Server::command_handler(Client *client, std::vector<std::string> args)
 {
 	std::string		command_names[14] = {"USER", "userhost", "PASS", "QUIT", "NICK", "PRIVMSG", "PING", "TOPIC", "JOIN", "MODE", "PART", "KICK", "INVITE", "CAP"};
 	void	(*command_functions[14])(Client *, std::vector<std::string>, Server &) = {&User, &User, &Pass, &Quit, &Nick, &Privmsg, &Ping, &Topic, &Join, &Mode, &Part, &kick, &Invite, &Cap};
+
 	for (int i = 0; i < 14; i++)
 	{
 		if (args[0] == command_names[i])
@@ -152,6 +153,8 @@ void	Server::adduser(int fd, std::string hostname)
 std::vector<pollfd>::iterator Server::disconnect(int fd)
 {
 	//TODO: lui faire quitter son channel actif s'il en a un
+	quit_channels(_clientList[fd], *this);
+
 	for (std::vector<pollfd>::iterator it =_sockets.begin(); it != _sockets.end(); it++)
 	{
 		if (it->fd == fd)
@@ -168,6 +171,22 @@ std::vector<pollfd>::iterator Server::disconnect(int fd)
 		}
 	}
 	return _sockets.begin();
+}
+
+void	Server::quit_channels( Client *client, Server &serv )
+{
+	std::vector<std::string> channel_list = client->get_channelList();
+
+	for ( int i = 0; i < (int)channel_list.size(); i++ )
+	{
+		Channel *channel = serv.find_channel( channel_list[i] );
+
+		channel->kick_client( client->get_nickname() );
+		for (int o = 0; o < (int)channel->get_channelClients().size(); o++ )
+			std::cout << channel->get_channelClients()[o] << std::endl;
+		for (int o = 0; o < (int)channel->get_operators().size(); o++ )
+			std::cout << channel->get_operators()[o] << std::endl;
+	}
 }
 
 void	Server::broadcast_server(std::string message)
