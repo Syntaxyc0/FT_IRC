@@ -73,7 +73,12 @@ void Server::monitoring()
 		else if (revents & POLLIN) //nouvelle requete
 		{
 			if (it->fd == _sockets.begin()->fd)
-				it = new_connection();
+			{
+				if (_sockets.size() < 100)
+					it = new_connection();
+				else
+					std::cerr << RED << "/!\\ Warning: Max connections reached: " << 100 << END << std::endl;
+			}
 			else
 			{
 				if (!handle_data(it))

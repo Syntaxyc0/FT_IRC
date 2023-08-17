@@ -5,20 +5,6 @@
 
 #define WHITESPACES " "
 
-
-std::string	get_command(std::string line)
-{
-	std::string ret = "";
-	size_t start = line.find_first_not_of(WHITESPACES);
-	if (start != std::string::npos)
-		ret = line.substr(start);
-	size_t	end = line.find_first_of(WHITESPACES);
-	if (end != std::string::npos)
-		ret = ret.substr(0, end);
-	ret = ret.substr(0, ret.find(' '));
-	return (ret);
-}
-
 std::vector<std::string> parse(std::string input)
 {
 	std::vector<std::string> args;

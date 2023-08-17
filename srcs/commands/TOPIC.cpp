@@ -4,6 +4,8 @@ void	Topic(Client *client, std::vector<std::string> args, Server &server)
 {
 	Channel *chan;
 
+	if (check_command_access(client))
+		return ;
 	if (args.size() < 2)
 	{
 		client->send_message(ERR_NEEDMOREPARAMS(client->get_hostname(), "TOPIC"));

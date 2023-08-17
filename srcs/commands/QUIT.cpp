@@ -5,6 +5,8 @@ void	Quit( Client *client, std::vector<std::string> args, Server &serv )
 	(void)	serv;
 	(void)	args;
 	std::string reason = "";
+	if (check_command_access(client))
+		return ;
 	if (args.size() != 1)
 	{
 		for (unsigned int i = 1; i < args.size() ; i++)

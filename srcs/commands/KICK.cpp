@@ -42,6 +42,9 @@
 
 void	kick( Client *client, std::vector<std::string> args, Server &server )
 {
+	if (check_command_access(client))
+		return ;
+
 	if ( args.size() < 3 )
 	{
 		client->send_reply( ERR_NEEDMOREPARAMS( client->get_nickname(), "KICK" ) );
@@ -90,7 +93,7 @@ void	kick( Client *client, std::vector<std::string> args, Server &server )
 			reason += *it;
 		}
 	}
-	chan->send_all( ":" + client->get_fullname() + " KICK " + chan->get_name() + " " + args[2] + " " + reason );
+	chan->send_all_clients( ":" + client->get_fullname() + " KICK " + chan->get_name() + " " + args[2] + " " + reason );
 	chan->kick_client( args[2] );
 }
  

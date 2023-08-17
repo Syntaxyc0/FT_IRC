@@ -41,7 +41,10 @@ bool	join_error( Client *client, std::vector<std::string> received, Server &serv
 {
 	Channel *current = server.find_channel( received[1] );
 
-	if (received.size() < 2)
+	if (check_command_access(client))
+		return ( true );
+
+	else if (received.size() < 2)
 		return ( client->send_reply( ERR_NEEDMOREPARAMS( client->get_nickname(), "JOIN" ) ), true );
 
 	else if ( current && current->get_user_limit() == 1 && (int)current->get_channelClients().size() >=  current->get_user_limit_nb() )

@@ -29,7 +29,10 @@ bool	invite_error( Client *client, std::vector<std::string> received, Server &se
 	Channel* channel = server.find_channel( received[2] );
 	std::string nickname = client->get_nickname();
 
-	if ( received.size() != 3 )
+	if (check_command_access(client))
+		return ( true );
+
+	else if ( received.size() != 3 )
 		return ( client->send_reply( ERR_NEEDMOREPARAMS( nickname, "INVITE" ) ), true );
 
 	else if ( received[1] == nickname )

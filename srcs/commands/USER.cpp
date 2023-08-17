@@ -31,7 +31,7 @@ void	User(Client *client, std::vector<std::string> args, Server &serv)
 	{
 		client->set_register(REGISTERED);
 		client->send_reply(RPL_WELCOME(client->get_nickname(), client->get_fullname()));
-		std::cout<<MAGENTA<<client->get_nickname()<<" has registered"<<END<<std::endl;
+		std::cout<<MAGENTA<<"\t"<<client->get_nickname()<<" has registered"<<END<<std::endl;
 		std::cout<<std::endl;
 	}
 	else

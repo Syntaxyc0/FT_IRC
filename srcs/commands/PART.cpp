@@ -7,6 +7,8 @@ void	Part(Client *client, std::vector<std::string> args, Server &serv)
 {
 	Channel *channel = 0;
 
+	if (check_command_access(client))
+		return ;
 	for (unsigned long i = 1; i < args.size(); i++)
 	{
 		channel = serv.find_channel( args[i] );

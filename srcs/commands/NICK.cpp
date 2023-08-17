@@ -27,7 +27,7 @@ void	Nick(Client *client, std::vector<std::string> args, Server &serv)
 	}
 	if (serv.find_client(args[1]))
 	{
-		client->send_reply(ERR_NICKNAMEINUSE(client->get_hostname(), args[1]));
+		client->send_reply(ERR_NICKNAMEINUSE(args[1]));
 		while (serv.find_client(name))
 			name += "_";
 	}
