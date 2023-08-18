@@ -43,7 +43,7 @@ void	Privmsg(Client *client, std::vector<std::string> args, Server &serv)
 			message += args[i];
 			message += " ";
 		}
-		serv.find_channel(args[1].erase(0, 0))->send_privmsg_all(client->get_nickname(), ":" +client->get_fullname() + " PRIVMSG " + args[1]+ " :" + message);
+		serv.find_channel(args[1].erase(0, 0))->send_privmsg_all(client->get_nickname(), ":" +client->get_fullname() + " PRIVMSG " + args[1]+ " " + message);
 		return ;
 	}
 	else
