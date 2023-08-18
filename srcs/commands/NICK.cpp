@@ -14,12 +14,12 @@ bool	check_nick(std::string nick)
 
 void	Nick(Client *client, std::vector<std::string> args, Server &serv)
 {
-	std::string name = args[1];
-	if (args.size() == 1)
+	if (args.size() < 2)
 	{
 		client->send_reply(ERR_NONICKNAMEGIVEN(client->get_nickname()));
 		return ;
 	}
+	std::string name = args[1];
 	if (!check_nick(args[1]))
 	{
 		client->send_reply(ERR_ERRONEUSNICKNAME(client->get_nickname(), args[1]));

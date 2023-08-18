@@ -9,6 +9,10 @@ void	Part(Client *client, std::vector<std::string> args, Server &serv)
 
 	if (check_command_access(client))
 		return ;
+
+	if (args.size() < 2)
+		return ( client->send_reply( ERR_NEEDMOREPARAMS( client->get_nickname(), "PART" ) ));
+
 	for (unsigned long i = 1; i < args.size(); i++)
 	{
 		channel = serv.find_channel( args[i] );

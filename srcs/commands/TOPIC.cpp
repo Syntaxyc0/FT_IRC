@@ -26,7 +26,7 @@ void	Topic(Client *client, std::vector<std::string> args, Server &server)
 	else
 	{
 		if (chan->get_restriction_TOPIC_cmd() && !chan->is_operator(client->get_nickname()))
-			client->send_message(ERR_CHANOPRIVSNEEDED(client->get_nickname(), chan->get_name()));
+			client->send_message( client->get_nickname() + " " + chan->get_name() + " :You're not channel operator" );
 		else
 		{
 			chan->set_topic(args[2]);

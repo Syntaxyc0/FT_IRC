@@ -8,7 +8,7 @@
 
 void    Pass(Client *client, std::vector<std::string> args, Server &serv)
 {
-    if (args.empty())
+    if (args.size() < 2)
     {
         client->send_reply(ERR_NEEDMOREPARAMS(client->get_hostname(), "PASS"));
         return ;

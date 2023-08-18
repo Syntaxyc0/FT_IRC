@@ -26,16 +26,17 @@ void	Invite( Client *client, std::vector<std::string> received, Server &server )
 
 bool	invite_error( Client *client, std::vector<std::string> received, Server &server )
 {
-	Channel* channel = server.find_channel( received[2] );
 	std::string nickname = client->get_nickname();
 
 	if (check_command_access(client))
 		return ( true );
 
-	else if ( received.size() != 3 )
+	if ( received.size() != 3 )
 		return ( client->send_reply( ERR_NEEDMOREPARAMS( nickname, "INVITE" ) ), true );
 
-	else if ( received[1] == nickname )
+	Channel* channel = server.find_channel( received[2] );
+
+	if ( received[1] == nickname )
 		return( client->send_reply( "Error: you can't invite yourself" ), true );
 
 	else if ( !server.find_client( received[1] ) )

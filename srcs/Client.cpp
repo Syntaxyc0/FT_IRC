@@ -107,7 +107,7 @@ void	Client::send_message(std::string message)
 void	Client::send_privmessage_from(Client *source, std::string message)
 {
 	std::string ret = "";
-	ret += ":" + source->get_fullname() + " PRIVMSG " + _nickname + " :" + message + "\r\n";
+	ret += ":" + source->get_fullname() + " PRIVMSG " + _nickname + " " + message + "\r\n";
 	if (send(_fd, ret.c_str(), ret.size(), 0) == -1)
 		throw	std::runtime_error(strerror(errno));
 }
