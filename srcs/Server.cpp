@@ -169,7 +169,7 @@ std::vector<pollfd>::iterator Server::disconnect(int fd)
 				std::cout << MAGENTA <<"\t"<< _clientList[it->fd]->get_nickname() << " has disconnected\n" << END << std::endl;
 			else
 				std::cout << MAGENTA << "\tRegistration failed, user disconnected\n" << END << std::endl;
-			// it = _sockets.erase(it);
+			_sockets.erase(it);
 			delete(_clientList.at(fd));
 			_clientList.erase(fd);
 			close(fd);
