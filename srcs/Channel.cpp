@@ -13,7 +13,7 @@ _name(name), _primordial(primordial)
 	_server = &server;
 	_invite_only = 0;
 	_channel_key = 0;
-	_restriction_TOPIC_cmd = 0;
+	_restriction_TOPIC_cmd = 1;
 	_user_limit = 0;
 	_user_limit_nb = 0;
 }

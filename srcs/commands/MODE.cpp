@@ -87,7 +87,7 @@ void	mode_channel_key( Channel *current, Client *user, std::vector<std::string> 
 
 void	mode_restricion_topic_cmd(Channel *current, Client *user, std::vector<std::string> received)
 {
-	if ( received[2][0] == '-' )
+	if ( received[2][0] == '+' )
 	{
 		current->set_restriction_TOPIC_cmd(1);
 		user->send_message_in_channel( current->get_name(), "Restriction to TOPIC command is ON" );
@@ -106,16 +106,26 @@ void	mode_restricion_topic_cmd(Channel *current, Client *user, std::vector<std::
 
 void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> received)
 {
+	if ( received.size() < 4 )
+		return ( user->send_reply( ERR_NEEDMOREPARAMS( user->get_nickname(), "MODE +l" ) ) );
+
+	if ( !isdigit( received[3][0] ) )
+		return ( user->send_message_in_channel( current->get_name(), "Error : argument must be a positive number" ) );
+
 	if ( received[2][0] == '+' )
 	{
-		int limit_nb = atoi( received[2].c_str() + 2 );
+		int limit_nb = atoi( received[3].c_str() );
 		
 		if ( limit_nb < (int)current->get_channelClients().size() )
 			user->send_message_in_channel( current->get_name(), "Error : the limit cannot be less than the current number of users in that channel" );
 		else
 		{
+			std::stringstream ss;
+			ss << limit_nb;
+			std::string limit_number_str = ss.str();
+
 			current->set_user_limit( limit_nb );
-			user->send_message_in_channel( current->get_name(), "User limit is " + received[2].erase( 0, 2 ) );
+			user->send_message_in_channel( current->get_name(), "User limit is " + limit_number_str );
 		}
 	}
 	else if ( received[2][0] == '-' )

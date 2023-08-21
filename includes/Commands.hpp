@@ -8,6 +8,7 @@
 # include "Replies.hpp"
 # include <sstream>
 # include <cstdlib>
+# include <stdlib.h>
 
 class	Client;
 class   Channel;
