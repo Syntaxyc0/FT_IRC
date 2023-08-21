@@ -6,8 +6,13 @@
 
 void	Mode(Client *client, std::vector<std::string> received, Server &server)
 {
-	// if ( mode_error(client, received, server))
-	// 	return ;
+	if ( received.size() < 3 )
+		return ( client->send_reply( ERR_NEEDMOREPARAMS( client->get_nickname(), "MODE" ) ) );
+
+	Channel *channel = server.find_channel( received[1] );
+
+	if ( !channel && received[1] != client->get_nickname() )
+		return ( client->send_reply( ERR_NOSUCHCHANNEL( client->get_nickname(), received[1] ) ) ); 
 
 	if (check_command_access(client))
 		return ;
@@ -25,13 +30,6 @@ void	Mode(Client *client, std::vector<std::string> received, Server &server)
 		mode_operator_privilege(server.find_channel( received[1] ), client, received);
 }
 
-int	mode_error(Client *client, std::vector<std::string> received, Server &server)
-{
-	(void)client;
-	(void)server;
-	(void)received;
-	return (0);
-}
 
 // -i set/remove invite-only channel :	
 //  "/MODE -i" désactive invite-only mode.
@@ -106,14 +104,15 @@ void	mode_restricion_topic_cmd(Channel *current, Client *user, std::vector<std::
 
 void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> received)
 {
-	if ( received.size() < 4 )
-		return ( user->send_reply( ERR_NEEDMOREPARAMS( user->get_nickname(), "MODE +l" ) ) );
-
-	if ( !isdigit( received[3][0] ) || received[3][0] == '0')
-		return ( user->send_message_in_channel( current->get_name(), "Error : argument must be a positive number" ) );
 
 	if ( received[2][0] == '+' )
 	{
+		if ( received.size() < 4 )
+			return ( user->send_reply( ERR_NEEDMOREPARAMS( user->get_nickname(), "MODE +l" ) ) );
+
+		if ( !isdigit( received[3][0] ) || received[3][0] == '0')
+			return ( user->send_message_in_channel( current->get_name(), "Error : argument must be a positive number" ) );
+
 		int limit_nb = atoi( received[3].c_str() );
 		
 		if ( limit_nb < (int)current->get_channelClients().size() )
@@ -130,6 +129,9 @@ void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> re
 	}
 	else if ( received[2][0] == '-' )
 	{
+		if ( received.size() < 3 )
+			return ( user->send_reply( ERR_NEEDMOREPARAMS( user->get_nickname(), "MODE +l" ) ) );
+
 		current->set_user_limit( 0 );
 		user->send_message_in_channel( current->get_name(), "User limit is OFF" );
 	}

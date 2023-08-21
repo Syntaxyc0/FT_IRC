@@ -44,7 +44,6 @@ std::string	channel_list_user( std::string channel_name, Server &server );
 // MODE COMMAND
 
 void	Mode( Client *client, std::vector<std::string> received, Server &server );
-int		mode_error( Client *client, std::vector<std::string> received, Server &server );
 void	mode_invite_only( Channel *current, Client *user, char sign );
 void	mode_channel_key( Channel *current, Client *user, std::vector<std::string> received );
 void	mode_restricion_topic_cmd( Channel *current, Client *user, std::vector<std::string> received );
