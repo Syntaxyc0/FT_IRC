@@ -11,7 +11,10 @@ void	Mode(Client *client, std::vector<std::string> received, Server &server)
 
 	Channel *channel = server.find_channel( received[1] );
 
-	if ( !channel && received[1] != client->get_nickname() )
+	if ( received[1] == client->get_nickname() )
+		return ;
+
+	if ( !channel )
 		return ( client->send_reply( ERR_NOSUCHCHANNEL( client->get_nickname(), received[1] ) ) ); 
 
 	if (check_command_access(client))
