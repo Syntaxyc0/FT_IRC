@@ -56,6 +56,8 @@ void	Privmsg(Client *client, std::vector<std::string> args, Server &serv)
 		else if (args[1] == client->get_nickname())
 			return ;
 		std::string message(args[2]);
+		if (args.size() >= 3)
+			message += " ";
 		for (unsigned int i = 3; i < args.size();i++)
 		{
 			message += args[i];

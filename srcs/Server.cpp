@@ -188,10 +188,10 @@ void	Server::quit_channels( Client *client, Server &serv )
 		Channel *channel = serv.find_channel( channel_list[i] );
 
 		channel->kick_client( client->get_nickname() );
-		for (int o = 0; o < (int)channel->get_channelClients().size(); o++ )
-			std::cout << channel->get_channelClients()[o] << std::endl;
-		for (int o = 0; o < (int)channel->get_operators().size(); o++ )
-			std::cout << channel->get_operators()[o] << std::endl;
+		// for (int o = 0; o < (int)channel->get_channelClients().size(); o++ )
+		// 	std::cout << channel->get_channelClients()[o] << std::endl;
+		// for (int o = 0; o < (int)channel->get_operators().size(); o++ )
+		// 	std::cout << channel->get_operators()[o] << std::endl;
 	}
 }
 
