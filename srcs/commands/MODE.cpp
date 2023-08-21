@@ -109,7 +109,7 @@ void	mode_limit_user(Channel *current, Client *user, std::vector<std::string> re
 	if ( received.size() < 4 )
 		return ( user->send_reply( ERR_NEEDMOREPARAMS( user->get_nickname(), "MODE +l" ) ) );
 
-	if ( !isdigit( received[3][0] ) )
+	if ( !isdigit( received[3][0] ) || received[3][0] == '0')
 		return ( user->send_message_in_channel( current->get_name(), "Error : argument must be a positive number" ) );
 
 	if ( received[2][0] == '+' )
