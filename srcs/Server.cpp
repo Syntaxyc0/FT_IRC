@@ -114,7 +114,6 @@ void Server::monitoring()
 		it->revents = 0;
 		if (revents & POLLHUP || revents & POLLERR) //deco de _clienList[it->fd]
 		{
-			std::cout << "\n3";
 			if (revents & POLLERR)
 				std::cerr << YELLOW << "Interrupted connection with file descriptor." << END << std::endl;
 			it = disconnect(it->fd);
