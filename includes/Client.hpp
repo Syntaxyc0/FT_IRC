@@ -8,6 +8,7 @@
 # include <iostream>
 # include <sstream>
 # include <vector>
+# include <deque>
 # include "Channel.hpp"
 # include "Server.hpp"
 
@@ -23,6 +24,7 @@ class	Client
 			std::string					_realname;
 			std::string					_nickname;
 			std::vector<std::string>	_channelList;
+			std::deque<std::string>	_msg;
 
 			int			_is_registered;
 
@@ -53,7 +55,8 @@ class	Client
 			std::vector<std::string>	get_channelList();
 
 		// Functions
-
+		void	send_final();
+		void	queue_msg(std::string message);
 		void	send_reply(std::string message);
 		void	send_message(std::string message);
 		void	send_privmessage_from(Client *source, std::string message);

@@ -57,42 +57,29 @@ bool Server::handle_data(std::vector<pollfd>::iterator it)
 	return (true);
 }
 
-void Server::monitoring()
+std::vector<pollfd>::iterator Server::disconnect(int fd)
 {
-	errorin(poll(&(*_sockets.begin()), _sockets.size(), 1000) == -1, " Failed poll() execution.\n");
-	for (std::vector<pollfd>::iterator it = _sockets.begin(); it != _sockets.end(); it++)
+	//TODO: lui faire quitter son channel actif s'il en a un
+	quit_channels(_clientList[fd], *this);
+	std::vector<pollfd>::iterator it =_sockets.begin();
+	while(it != _sockets.end())
 	{
-		usleep(100);
-		short revents = it->revents;
-		it->revents = 0;
-		if (revents & POLLHUP || revents & POLLERR) //deco de _clienList[it->fd]
+		if (it->fd == fd)
 		{
-			if (revents & POLLERR)
-				std::cerr << YELLOW << "Interrupted connection with file descriptor." << END << std::endl;
-			it = disconnect(it->fd);
-		}
-		else if (revents & POLLIN) //nouvelle requete
-		{
-			if (it->fd == _sockets.begin()->fd)
-			{
-				if (_sockets.size() < 100)
-					it = new_connection();
-				else
-					std::cerr << RED << "/!\\ Warning: Max connections reached: " << 100 << END << std::endl;
-			}
+			if (_clientList[it->fd]->get_nickname() != "")
+				std::cout << MAGENTA <<"\t"<< _clientList[it->fd]->get_nickname() << " has disconnected\n" << END << std::endl;
 			else
-			{
-				if (!handle_data(it))
-					it = disconnect(it->fd);
-				else if (_clientList[it->fd]->get_registered() == NOT_REGISTERED) //mise en commentaire pour nc
-					it = disconnect(it->fd);
-				else if (_clientList[it->fd]->get_registered() == DISCONNECTED)
-					it = disconnect(it->fd);
-			}
+				std::cout << MAGENTA << "\tRegistration failed, user disconnected\n" << END << std::endl;
+			it = _sockets.erase(it);
+			delete(_clientList.at(fd));
+			_clientList.erase(fd);
+			close(fd);
+			return it;
 		}
+		it++;
 	}
+	return _sockets.begin();
 }
-
 
 std::vector<pollfd>::iterator Server::new_connection()
 {
@@ -100,13 +87,54 @@ std::vector<pollfd>::iterator Server::new_connection()
     socklen_t client_addr_len = sizeof(client_addr);
 	int fd = accept(_listening_socket, (sockaddr *)&client_addr, &client_addr_len);
     errorin(fd == -1, "Failed to accept incoming connection.\n");
-	pollfd	new_poll = {fd, POLLIN, 0};
+	pollfd	new_poll = {fd, POLLIN | POLLOUT, 0};
 	_sockets.push_back(new_poll);
 	adduser(fd, inet_ntoa(client_addr.sin_addr));
     std::cout << MAGENTA << "\tNew connection successfull!" << END << std::endl;
 	std::cout<<std::endl;
 	return _sockets.begin();
 }
+
+
+void Server::monitoring()
+{
+	errorin(poll(&(*_sockets.begin()), _sockets.size(), 1000) == -1, " Failed poll() execution.\n");
+	std::vector<pollfd>::iterator it = _sockets.begin();
+	if (it->revents & POLLIN) //nouvelle requete
+	{
+		if (_sockets.size() < 100)
+			it = new_connection();
+		else
+			std::cerr << RED << "/!\\ Warning: Max connections reached: " << 100 << END << std::endl;
+		it++;
+	}
+	while(it != _sockets.end())
+	{
+		short revents = it->revents;
+		it->revents = 0;
+		if (revents & POLLHUP || revents & POLLERR) //deco de _clienList[it->fd]
+		{
+			std::cout << "\n3";
+			if (revents & POLLERR)
+				std::cerr << YELLOW << "Interrupted connection with file descriptor." << END << std::endl;
+			it = disconnect(it->fd);
+		}
+		else
+		{
+			if (revents & POLLOUT)
+				_clientList[it->fd]->send_final();
+			if (revents & POLLIN)
+			{
+				if (!handle_data(it))
+					it = disconnect(it->fd);
+				else if (_clientList[it->fd]->get_registered() == NOT_REGISTERED || _clientList[it->fd]->get_registered() == DISCONNECTED)
+					it = disconnect(it->fd);
+			}
+			else
+				it++;
+		}
+	}
+} 
 
 void Server::init_server()
 {
@@ -154,29 +182,6 @@ void	Server::adduser(int fd, std::string hostname)
 {
 	Client *newuser = new Client(fd, hostname);
 	_clientList.insert(std::make_pair(fd, newuser));
-}
-
-std::vector<pollfd>::iterator Server::disconnect(int fd)
-{
-	//TODO: lui faire quitter son channel actif s'il en a un
-	quit_channels(_clientList[fd], *this);
-
-	for (std::vector<pollfd>::iterator it =_sockets.begin(); it != _sockets.end(); it++)
-	{
-		if (it->fd == fd)
-		{
-			if (_clientList[it->fd]->get_nickname() != "")
-				std::cout << MAGENTA <<"\t"<< _clientList[it->fd]->get_nickname() << " has disconnected\n" << END << std::endl;
-			else
-				std::cout << MAGENTA << "\tRegistration failed, user disconnected\n" << END << std::endl;
-			_sockets.erase(it);
-			delete(_clientList.at(fd));
-			_clientList.erase(fd);
-			close(fd);
-			return _sockets.begin();
-		}
-	}
-	return _sockets.begin();
 }
 
 void	Server::quit_channels( Client *client, Server &serv )

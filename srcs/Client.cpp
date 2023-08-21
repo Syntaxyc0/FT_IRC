@@ -92,24 +92,39 @@ std::vector<std::string>	Client::get_channelList()
 void	Client::send_reply(std::string message)
 {
 	std::string 	reply = ":localhost " + message + "\r\n";
-	if (send(_fd, reply.c_str(), reply.size(), 0) == -1)
-		throw	std::runtime_error(strerror(errno));
+	queue_msg(reply);
 }
+
+void	Client::queue_msg(std::string message)
+{
+	_msg.push_back(message);
+}
+
+
+void	Client::send_final()
+{
+	while(!_msg.empty())
+	{
+		std::string message = _msg.front();
+       if (send(_fd, message.c_str(), message.size(), 0) == -1)
+            throw std::runtime_error(strerror(errno));
+        _msg.pop_front();
+	}
+}
+
 
 void	Client::send_message(std::string message)
 {
 	std::string ret(message);
 	ret += "\r\n";
-	if (send(_fd, ret.c_str(), ret.size(), 0) == -1)
-		throw	std::runtime_error(strerror(errno));
+	queue_msg(ret);
 }
 
 void	Client::send_privmessage_from(Client *source, std::string message)
 {
 	std::string ret = "";
 	ret += ":" + source->get_fullname() + " PRIVMSG " + _nickname + " " + message + "\r\n";
-	if (send(_fd, ret.c_str(), ret.size(), 0) == -1)
-		throw	std::runtime_error(strerror(errno));
+	queue_msg(ret);
 }
 
 void	Client::send_message_in_channel(std::string channel, std::string message)
