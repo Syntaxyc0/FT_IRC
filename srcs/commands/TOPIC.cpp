@@ -31,7 +31,7 @@ void	Topic(Client *client, std::vector<std::string> args, Server &server)
 		{
 
 			std::string topic(args[2]);
-			if (args.size() > 2)
+			if (args.size() > 3)
 			{
 				for ( std::vector<std::string>::iterator it = args.begin() + 3; it != args.end(); it++ )
 				{
