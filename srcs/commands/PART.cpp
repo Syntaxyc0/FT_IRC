@@ -13,19 +13,32 @@ void	Part(Client *client, std::vector<std::string> args, Server &serv)
 	if (args.size() < 2)
 		return ( client->send_reply( ERR_NEEDMOREPARAMS( client->get_nickname(), "PART" ) ));
 
-	for (unsigned long i = 1; i < args.size(); i++)
-	{
-		channel = serv.find_channel( args[i] );
+	channel = serv.find_channel( args[1] );
 
-		if ( !channel )
-			client->send_message( ERR_NOSUCHCHANNEL( client->get_nickname(), args[i] ) );
-		else if ( ( channel && channel->find_client_index( client->get_nickname() ) == -1 ) )
-			client->send_message( ERR_NOTONCHANNEL(client->get_nickname(), args[i] ) );
-		else
+	if ( !channel )
+	{
+		client->send_message( ERR_NOSUCHCHANNEL( client->get_nickname(), args[1] ) );
+		return ;
+	}
+	else if ( ( channel && channel->find_client_index( client->get_nickname() ) == -1 ) )
+	{
+		client->send_message( ERR_NOTONCHANNEL(client->get_nickname(), args[1] ) );
+		return ;
+	}
+	else
+	{
+		std::string reason = "";
+		if (args.size() > 2)
 		{
-			channel->send_all_clients(":" + client->get_fullname() + " PART " + args[i] + " ");
-			channel->kick_client(client->get_nickname());
+			reason = args[2];
+			for ( std::vector<std::string>::iterator it = args.begin() + 3; it != args.end(); it++ )
+			{
+				reason += " ";
+				reason += *it;
+			}
 		}
+		channel->send_all_clients(":" + client->get_fullname() + " PART " + channel->get_name() + " " + reason);
+		channel->kick_client(client->get_nickname());
 	}
 }
 
