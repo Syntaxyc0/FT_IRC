@@ -22,7 +22,9 @@
 #include "Color.h"
 #include "Commands.hpp"
 #include <map>
-#include <signal.h>
+#include <signal.h> 
+
+# define MAX_CONN 100
 
 extern int				 exit_state;
 

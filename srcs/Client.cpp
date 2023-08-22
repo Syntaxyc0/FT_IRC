@@ -106,8 +106,14 @@ void	Client::send_final()
 	while(!_msg.empty())
 	{
 		std::string message = _msg.front();
-       if (send(_fd, message.c_str(), message.size(), 0) == -1)
-            throw std::runtime_error(strerror(errno));
+		try {
+       			if (send(_fd, message.c_str(), message.size(), 0) == -1)
+            		throw std::runtime_error(strerror(errno));
+			}
+		catch(std::exception & e)
+		{
+			std::cerr << BLUE << "\t" << e.what() << END << std::endl;
+		}
         _msg.pop_front();
 	}
 }

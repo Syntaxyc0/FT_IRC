@@ -86,7 +86,11 @@ std::vector<pollfd>::iterator Server::new_connection()
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
 	int fd = accept(_listening_socket, (sockaddr *)&client_addr, &client_addr_len);
-    errorin(fd == -1, "Failed to accept incoming connection.\n");
+	if (fd == -1)
+	{
+		std::cerr << RED << "/!\\ Failed to accept incoming connection. " << END << std::endl;
+		return _sockets.begin();
+	}
 	pollfd	new_poll = {fd, POLLIN | POLLOUT, 0};
 	_sockets.push_back(new_poll);
 	adduser(fd, inet_ntoa(client_addr.sin_addr));
@@ -100,14 +104,14 @@ void Server::monitoring()
 {
 	errorin(poll(&(*_sockets.begin()), _sockets.size(), 1000) == -1, " Failed poll() execution.\n");
 	std::vector<pollfd>::iterator it = _sockets.begin();
-	if (it->revents & POLLIN) //nouvelle requete
+	if (it->revents & POLLIN && _sockets.size() < MAX_CONN + 1) //nouvelle requete
 	{
-		if (_sockets.size() < 100)
-			it = new_connection();
-		else
-			std::cerr << RED << "/!\\ Warning: Max connections reached: " << 100 << END << std::endl;
-		it++;
+		it = new_connection();
+		if (_sockets.size() == MAX_CONN)
+			std::cerr << RED << "/!\\ Warning: Max connections reached: " << MAX_CONN << END << std::endl;
 	}
+	it->revents = 0;
+	it++;
 	while(it != _sockets.end())
 	{
 		short revents = it->revents;
